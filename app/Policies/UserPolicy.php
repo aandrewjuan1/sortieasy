@@ -3,6 +3,7 @@
 namespace App\Policies;
 
 use App\Models\User;
+use App\Enums\UserRole;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class UserPolicy
@@ -15,8 +16,8 @@ class UserPolicy
      * @param  \App\Models\User  $user
      * @return bool
      */
-    public function viewAdminDashboard(User $user)
-    {
-        return $user->role === 'admin';
-    }
+    public function viewAdminDashboard(User $user): bool
+{
+    return $user->role === UserRole::Admin;
+}
 }

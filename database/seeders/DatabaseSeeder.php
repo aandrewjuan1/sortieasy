@@ -3,11 +3,12 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-use App\Enums\UserRole;  // Import the UserRole enum
 use App\Models\Product;
 use App\Models\Supplier;
 use App\Models\Transaction;
+use App\Enums\TransactionType;
 use Illuminate\Database\Seeder;
+use App\Enums\UserRole;  // Import the UserRole enum
 
 class DatabaseSeeder extends Seeder
 {
@@ -36,12 +37,29 @@ class DatabaseSeeder extends Seeder
         ]);
 
         // Create realistic suppliers
-        Supplier::factory()->count(5)->create();
+        Supplier::factory()->count(50)->create();
 
         // Create realistic products, each associated with a supplier
-        Product::factory()->count(5)->create();
+        Product::factory()->count(50)->create();
 
-        // Create realistic transactions (both purchases and sales)
-        Transaction::factory()->count(10)->create();
+        // Generate 25 'purchase' transactions
+        Transaction::factory()->count(25)->create([
+            'type' => TransactionType::Purchase->value,
+        ]);
+
+        // Generate 25 'sale' transactions
+        Transaction::factory()->count(25)->create([
+            'type' => TransactionType::Sale->value,
+        ]);
+
+        // Generate 25 'return' transactions
+        Transaction::factory()->count(25)->create([
+            'type' => TransactionType::Return->value,
+        ]);
+
+        // Generate 25 'adjustment' transactions
+        Transaction::factory()->count(25)->create([
+            'type' => TransactionType::Adjustment->value,
+        ]);
     }
 }

@@ -1,5 +1,5 @@
 <?php
-// database/factories/ProductFactory.php
+
 namespace Database\Factories;
 
 use App\Models\Product;
@@ -12,26 +12,52 @@ class ProductFactory extends Factory
 
     public function definition()
     {
-        $products = [
-            ['name' => 'Dell XPS 13', 'category' => 'Laptops', 'price' => 999.99, 'cost' => 750.00, 'quantity_in_stock' => 100, 'reorder_threshold' => 10, 'safety_stock' => 5],
-            ['name' => 'Apple iPhone 13', 'category' => 'Smartphones', 'price' => 799.00, 'cost' => 600.00, 'quantity_in_stock' => 200, 'reorder_threshold' => 20, 'safety_stock' => 10],
-            ['name' => 'HP OfficeJet Pro 9015', 'category' => 'Printers', 'price' => 179.99, 'cost' => 150.00, 'quantity_in_stock' => 50, 'reorder_threshold' => 5, 'safety_stock' => 3],
-            ['name' => 'Logitech MX Master 3', 'category' => 'Peripherals', 'price' => 99.99, 'cost' => 60.00, 'quantity_in_stock' => 150, 'reorder_threshold' => 10, 'safety_stock' => 5],
-            ['name' => 'Sony WH-1000XM4', 'category' => 'Headphones', 'price' => 348.00, 'cost' => 250.00, 'quantity_in_stock' => 75, 'reorder_threshold' => 10, 'safety_stock' => 5],
+        // Randomly decide the quantity_in_stock and reorder_threshold for each product
+        $quantityInStock = $this->faker->numberBetween(0, 20); // Random stock between 0 and 20
+        $reorderThreshold = $this->faker->numberBetween(5, 10);  // Reorder threshold between 5 and 10
+        $safetyStock = $this->faker->numberBetween(3, 5); // Safety stock between 3 and 5
+
+        // Create random stock status: low stock, normal stock, or overstocked
+        $quantityInStock = $this->generateStockQuantity($quantityInStock, $reorderThreshold);
+
+        return [
+            'name' => $this->faker->word() . ' ' . $this->faker->word(),
+            'description' => $this->faker->paragraph(),
+            'category' => $this->faker->word(),
+            'sku' => strtoupper($this->faker->unique()->lexify('???-#####')),
+            'price' => $this->faker->randomFloat(2, 10, 500),  // Price between 10 and 500
+            'cost' => $this->faker->randomFloat(2, 5, 300),  // Cost between 5 and 300
+            'quantity_in_stock' => $quantityInStock,
+            'reorder_threshold' => $reorderThreshold,
+            'safety_stock' => $safetyStock,
+            'last_restocked' => $this->faker->date(),
+            'supplier_id' => Supplier::factory(),  // Assuming a Supplier model exists, adjust if not
+            'created_at' => now(),
+            'updated_at' => now(),
         ];
+    }
 
-        // Select a random product from the array
-        $product = $products[array_rand($products)];
+    /**
+     * Randomly assign stock quantity based on the reorder threshold to simulate different stock levels.
+     *
+     * @param int $quantityInStock
+     * @param int $reorderThreshold
+     * @return int
+     */
+    private function generateStockQuantity($quantityInStock, $reorderThreshold)
+    {
+        // Randomly decide whether to generate low, normal, or overstocked products
+        $stockStatus = $this->faker->randomElement(['low', 'normal', 'overstocked']);
 
-        // Create a new supplier for the product
-        $supplier = Supplier::factory()->create();
-
-        // Generate a unique SKU by appending a random string
-        $sku = strtoupper(str_replace(' ', '-', $product['name'])) . '-' . strtoupper(uniqid());
-
-        return array_merge($product, [
-            'sku' => $sku,  // Assign the unique SKU
-            'supplier_id' => $supplier->id, // Assign the supplier
-        ]);
+        if ($stockStatus == 'low') {
+            // Low stock (below reorder threshold)
+            return $this->faker->numberBetween(0, $reorderThreshold - 1);
+        } elseif ($stockStatus == 'normal') {
+            // Normal stock (within a reasonable range, above reorder threshold)
+            return $this->faker->numberBetween($reorderThreshold, $reorderThreshold + 10);
+        } else {
+            // Overstocked (more than double the reorder threshold)
+            return $this->faker->numberBetween($reorderThreshold * 2, $reorderThreshold * 3);
+        }
     }
 }
