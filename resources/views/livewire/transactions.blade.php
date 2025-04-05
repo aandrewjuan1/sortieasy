@@ -24,6 +24,15 @@
                 <option value="return">Return</option>
                 <option value="adjustment">Adjustment</option>
             </select>
+
+            {{-- Per Page --}}
+            <select wire:model.live="perPage"
+                class="w-full md:w-32 border rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                <option value="5">5 per page</option>
+                <option value="10">10 per page</option>
+                <option value="25">25 per page</option>
+                <option value="50">50 per page</option>
+            </select>
         </div>
     </div>
 
@@ -32,9 +41,9 @@
             <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-gray-50">
                     <tr>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-300" wire:click="setSortBy('name')">
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-300" wire:click="setSortBy('created_at')">
                             <button class="flex items-center uppercase">
-                                <flux:icon.calendar class="size-4 mr-2"/>
+                                <flux:icon.calendar variant="solid" class="size-4 mr-2"/>
                                 @include('livewire.includes.table-sortable-th', [
                                     'name' => 'created_at',
                                     'displayName' => 'Date'
@@ -43,19 +52,22 @@
                         </th>
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             <div class="flex items-center">
-                                <flux:icon.cube class="size-4 mr-2"/>
+                                <flux:icon.cube variant="solid" class="size-4 mr-2"/>
                                 <span>Product</span>
                             </div>
                         </th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            <div class="flex items-center">
-                                <flux:icon.command-line class="size-4 mr-2"/>
-                                <span>Type</span>
-                            </div>
-                        </th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-300" wire:click="setSortBy('name')">
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" wire:click="setSortBy('type')">
                             <button class="flex items-center uppercase">
-                                <flux:icon.calendar class="size-4 mr-2"/>
+                                <flux:icon.command-line variant="solid" class="size-4 mr-2"/>
+                                @include('livewire.includes.table-sortable-th', [
+                                    'name' => 'type',
+                                    'displayName' => 'Type'
+                                ])
+                            </button>
+                        </th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-300" wire:click="setSortBy('quantity')">
+                            <button class="flex items-center uppercase">
+                                <flux:icon.calendar variant="solid" class="size-4 mr-2"/>
                                 @include('livewire.includes.table-sortable-th', [
                                     'name' => 'quantity',
                                     'displayName' => 'Quantity'
@@ -64,13 +76,13 @@
                         </th>
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             <div class="flex items-center">
-                                <flux:icon.user class="size-4 mr-2"/>
+                                <flux:icon.user variant="solid" class="size-4 mr-2"/>
                                 <span>Recorded By</span>
                             </div>
                         </th>
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             <div class="flex items-center">
-                                <flux:icon.pencil-square class="size-4 mr-2"/>
+                                <flux:icon.pencil-square variant="solid" class="size-4 mr-2"/>
                                 <span>Notes</span>
                             </div>
                         </th>

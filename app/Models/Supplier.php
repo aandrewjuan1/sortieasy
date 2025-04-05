@@ -32,10 +32,14 @@ class Supplier extends Model
 
         return $query->where(function($q) use ($search) {
             $q->where('name', 'like', "%{$search}%")
-              ->orWhere('contact_email', 'like', "%{$search}%")
-              ->orWhere('contact_phone', 'like', "%{$search}%");
+            ->orWhere('contact_email', 'like', "%{$search}%")
+            ->orWhere('contact_phone', 'like', "%{$search}%")
+            ->orWhereHas('products', function ($productQuery) use ($search) {
+                $productQuery->where('name', 'like', "%{$search}%");
+            });
         });
     }
+
 
     public function latestDelivery()
     {

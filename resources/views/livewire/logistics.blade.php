@@ -30,6 +30,15 @@
                 <option value="shipped">Shipped</option>
                 <option value="delivered">Delivered</option>
             </select>
+
+            {{-- Per Page --}}
+            <select wire:model.live="perPage"
+                class="w-full md:w-32 border rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                <option value="5">5 per page</option>
+                <option value="10">10 per page</option>
+                <option value="25">25 per page</option>
+                <option value="50">50 per page</option>
+            </select>
         </div>
     </div>
 
@@ -38,24 +47,27 @@
             <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                 <thead class="bg-gray-50 dark:bg-gray-700">
                     <tr>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-300">
-                            <div class="flex items-center">
-                                <flux:icon.cube class="size-4 mr-2"/>
-                                <span>Product</span>
-                            </div>
-                        </th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-300" wire:click="setSortBy('name')">
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-300" wire:click="setSortBy('product_id')">
                             <button class="flex items-center uppercase">
-                                <flux:icon.numbered-list class="size-4 mr-2"/>
+                                <flux:icon.cube variant="solid" class="size-4 mr-2"/>
+                                @include('livewire.includes.table-sortable-th', [
+                                    'name' => 'product_id',
+                                    'displayName' => 'Product'
+                                ])
+                            </button>
+                        </th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-300" wire:click="setSortBy('quantity')">
+                            <button class="flex items-center uppercase">
+                                <flux:icon.numbered-list variant="solid" class="size-4 mr-2"/>
                                 @include('livewire.includes.table-sortable-th', [
                                     'name' => 'quantity',
                                     'displayName' => 'Quantity'
                                 ])
                             </button>
                         </th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-300" wire:click="setSortBy('name')">
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-300" wire:click="setSortBy('delivery_date')">
                             <button class="flex items-center uppercase">
-                                <flux:icon.calendar class="size-4 mr-2"/>
+                                <flux:icon.calendar variant="solid" class="size-4 mr-2"/>
                                 @include('livewire.includes.table-sortable-th', [
                                     'name' => 'delivery_date',
                                     'displayName' => 'Delivery Date'
@@ -64,13 +76,13 @@
                         </th>
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-300">
                             <div class="flex items-center">
-                                <flux:icon.command-line class="size-4 mr-2"/>
+                                <flux:icon.command-line variant="solid" class="size-4 mr-2"/>
                                 <span>Status</span>
                             </div>
                         </th>
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-300">
                             <div class="flex items-center">
-                                <flux:icon.calendar-days class="size-4 mr-2"/>
+                                <flux:icon.calendar-days variant="solid" class="size-4 mr-2"/>
                                 <span>Days Remaining</span>
                             </div>
                         </th>

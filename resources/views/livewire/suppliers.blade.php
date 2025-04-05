@@ -3,6 +3,7 @@
         <h1 class="text-2xl font-bold dark:text-white">Suppliers</h1>
 
         <div class="flex flex-col md:flex-row gap-4 w-full md:w-auto">
+            {{-- Search --}}
             <div class="relative w-full md:w-64">
                 <input
                     type="text"
@@ -16,6 +17,15 @@
                     </svg>
                 </div>
             </div>
+
+            {{-- Per Page --}}
+            <select wire:model.live="perPage"
+                class="w-full md:w-32 border rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                <option value="5">5 per page</option>
+                <option value="10">10 per page</option>
+                <option value="25">25 per page</option>
+                <option value="50">50 per page</option>
+            </select>
         </div>
     </div>
 
@@ -23,80 +33,104 @@
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                 <thead class="bg-gray-50 dark:bg-gray-700">
-                    <tr><th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-300" wire:click="setSortBy('name')">
-                            <button class="flex items-center uppercase">
-                                <flux:icon.user class="size-4 mr-2"/>
-                                @include('livewire.includes.table-sortable-th', [
-                                    'name' => 'name',
-                                    'displayName' => 'Name'
-                                ])
+                    <tr>
+                        {{-- Name Column --}}
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-300">
+                            <button wire:click="setSortBy('name')" class="flex items-center space-x-1 uppercase">
+                                <flux:icon.user variant="solid" class="size-4" />
+                                <span>Name</span>
                             </button>
                         </th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs uppercase font-medium text-gray-500 tracking-wider dark:text-gray-300">
-                            <div class="flex items-center">
-                                <flux:icon.phone class="size-4 mr-2"/>
+
+                        {{-- Contact Column --}}
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-300">
+                            <div class="flex items-center space-x-1">
+                                <flux:icon.phone variant="solid" class="size-4" />
                                 <span>Contact</span>
                             </div>
                         </th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs uppercase font-medium text-gray-500 tracking-wider dark:text-gray-300">
-                            <div class="flex items-center">
-                                <flux:icon.cube class="size-4 mr-2"/>
-                                <span>product count</span>
+
+                        {{-- Products Column --}}
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-300">
+                            <div class="flex items-center space-x-1">
+                                <flux:icon.cube variant="solid" class="size-4" />
+                                <span>Products</span>
                             </div>
                         </th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs uppercase font-medium text-gray-500 tracking-wider dark:text-gray-300">
-                            <div class="flex items-center">
-                                <flux:icon.inbox-arrow-down class="size-4 mr-2"/>
+
+                        {{-- Last Delivery Column --}}
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-300">
+                            <div class="flex items-center space-x-1">
+                                <flux:icon.inbox-arrow-down variant="solid" class="size-4" />
                                 <span>Last Delivery</span>
                             </div>
                         </th>
                     </tr>
                 </thead>
+
                 <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
                     @forelse($this->suppliers as $supplier)
-                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm font-medium text-gray-900 dark:text-white">{{ $supplier->name }}</div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm text-gray-500 dark:text-gray-300">{{ $supplier->contact_email }}</div>
-                            <div class="text-sm text-gray-500 dark:text-gray-300">{{ $supplier->contact_phone }}</div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
-                                {{ $supplier->products_count }}
-                            </span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
-                            @if($supplier->latestDelivery && $supplier->latestDelivery->delivery_date)
-                                @php
-                                    $logisticDate = \Carbon\Carbon::parse($supplier->latestDelivery->delivery_date);
-                                    $diffInDays = (int)floor($logisticDate->diffInDays());
+                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
+                            {{-- Name --}}
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm font-medium text-gray-900 dark:text-white">
+                                    {{ $supplier->name }}
+                                </div>
+                            </td>
 
-                                    if ($logisticDate->isToday()) {
-                                        echo 'Today';
-                                    } elseif ($logisticDate->isYesterday()) {
-                                        echo 'Yesterday';
-                                    } else {
-                                        echo $diffInDays . ' days ago';
-                                    }
+                            {{-- Contact Info --}}
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
+                                <div>{{ $supplier->contact_email }}</div>
+                                <div>{{ $supplier->contact_phone }}</div>
+                            </td>
+
+                            {{-- Products --}}
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                @if ($supplier->products->isNotEmpty())
+                                    @foreach($supplier->products as $product)
+                                        <div class="text-sm font-medium text-gray-900 dark:text-white">
+                                            {{ $product->name }}
+                                        </div>
+                                    @endforeach
+                                @else
+                                    <div class="text-sm text-gray-500 dark:text-gray-300">
+                                        None
+                                    </div>
+                                @endif
+                            </td>
+
+
+                            {{-- Latest Delivery --}}
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
+                                @php
+                                    $deliveryDate = $supplier->latestDelivery?->delivery_date;
                                 @endphp
-                            @else
-                                Never
-                            @endif
-                   </td>
-                    </tr>
+
+                                @if ($deliveryDate)
+                                    @if (\Carbon\Carbon::parse($deliveryDate)->isToday())
+                                        Today
+                                    @elseif (\Carbon\Carbon::parse($deliveryDate)->isYesterday())
+                                        Yesterday
+                                    @else
+                                        {{ \Carbon\Carbon::parse($deliveryDate)->diffForHumans() }}
+                                    @endif
+                                @else
+                                    Never
+                                @endif
+                            </td>
+                        </tr>
                     @empty
-                    <tr>
-                        <td colspan="4" class="px-6 py-4 text-center text-sm text-gray-500 dark:text-gray-300">
-                            No suppliers found
-                        </td>
-                    </tr>
+                        <tr>
+                            <td colspan="4" class="px-6 py-4 text-center text-sm text-gray-500 dark:text-gray-300">
+                                No suppliers found
+                            </td>
+                        </tr>
                     @endforelse
                 </tbody>
             </table>
         </div>
 
+        {{-- Pagination --}}
         <div class="px-4 py-3 border-t border-gray-200 dark:border-gray-700 sm:px-6">
             {{ $this->suppliers->links() }}
         </div>

@@ -14,27 +14,28 @@ class Suppliers extends Component
 {
     use WithPagination;
 
-    #[Url(history:true)]
+    #[Url(history: true)]
     public $search = '';
 
-    #[Url(history:true)]
+    #[Url(history: true)]
     public $perPage = 10;
 
-    #[Url(history:true)]
+    #[Url(history: true)]
     public $sortBy = 'created_at';
 
-    #[Url(history:true)]
+    #[Url(history: true)]
     public $sortDir = 'DESC';
 
     public function setSortBy($sortByField)
     {
         if ($this->sortBy === $sortByField) {
-            $this->sortDir = ($this->sortDir == "ASC") ? 'DESC' : "ASC";
-            return;
+            $this->sortDir = $this->sortDir === 'ASC' ? 'DESC' : 'ASC';
+        } else {
+            $this->sortBy = $sortByField;
+            $this->sortDir = 'DESC';
         }
 
-        $this->sortBy = $sortByField;
-        $this->sortDir = 'DESC';
+        $this->resetPage();
     }
 
     public function updatedSearch()
@@ -45,11 +46,14 @@ class Suppliers extends Component
     #[Computed]
     public function suppliers()
     {
-        // Retrieve the suppliers, eager load products count, and latest delivery
-        return Supplier::withCount('products')
-            ->with(['latestDelivery']) // Eager load the latest delivery relationship
+        return Supplier::with(['products', 'latestDelivery'])
             ->search($this->search)
-            ->orderBy($this->sortBy, $this->sortDir) // Sort by other columns first
+            ->orderBy($this->sortBy, $this->sortDir)
             ->paginate($this->perPage);
+    }
+
+    public function render()
+    {
+        return view('livewire.suppliers');
     }
 }
