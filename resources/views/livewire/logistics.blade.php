@@ -38,17 +38,42 @@
             <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                 <thead class="bg-gray-50 dark:bg-gray-700">
                     <tr>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-300">Product</th>
-                        @include('livewire.includes.table-sortable-th', [
-                            'name' => 'quantity',
-                            'displayName' => 'Quantity'
-                        ])
-                        @include('livewire.includes.table-sortable-th', [
-                            'name' => 'delivery_date',
-                            'displayName' => 'Delivery Date'
-                        ])
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-300">Status</th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-300">Days Remaining</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-300">
+                            <div class="flex items-center">
+                                <flux:icon.cube class="size-4 mr-2"/>
+                                <span>Product</span>
+                            </div>
+                        </th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-300" wire:click="setSortBy('name')">
+                            <button class="flex items-center uppercase">
+                                <flux:icon.numbered-list class="size-4 mr-2"/>
+                                @include('livewire.includes.table-sortable-th', [
+                                    'name' => 'quantity',
+                                    'displayName' => 'Quantity'
+                                ])
+                            </button>
+                        </th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-300" wire:click="setSortBy('name')">
+                            <button class="flex items-center uppercase">
+                                <flux:icon.calendar class="size-4 mr-2"/>
+                                @include('livewire.includes.table-sortable-th', [
+                                    'name' => 'delivery_date',
+                                    'displayName' => 'Delivery Date'
+                                ])
+                            </button>
+                        </th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-300">
+                            <div class="flex items-center">
+                                <flux:icon.command-line class="size-4 mr-2"/>
+                                <span>Status</span>
+                            </div>
+                        </th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-300">
+                            <div class="flex items-center">
+                                <flux:icon.calendar-days class="size-4 mr-2"/>
+                                <span>Days Remaining</span>
+                            </div>
+                        </th>
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">

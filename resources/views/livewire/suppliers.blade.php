@@ -23,16 +23,32 @@
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                 <thead class="bg-gray-50 dark:bg-gray-700">
-                    <tr>
-                        @include('livewire.includes.table-sortable-th', [
-                            'name' => 'name',
-                            'displayName' => 'Name'
-                        ])
-                        <th scope="col" class="px-6 py-3 text-left text-xs uppercase font-medium text-gray-500 tracking-wider dark:text-gray-300"> Contact
+                    <tr><th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-300" wire:click="setSortBy('name')">
+                            <button class="flex items-center uppercase">
+                                <flux:icon.user class="size-4 mr-2"/>
+                                @include('livewire.includes.table-sortable-th', [
+                                    'name' => 'name',
+                                    'displayName' => 'Name'
+                                ])
+                            </button>
                         </th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs uppercase font-medium text-gray-500 tracking-wider dark:text-gray-300"> Products
+                        <th scope="col" class="px-6 py-3 text-left text-xs uppercase font-medium text-gray-500 tracking-wider dark:text-gray-300">
+                            <div class="flex items-center">
+                                <flux:icon.phone class="size-4 mr-2"/>
+                                <span>Contact</span>
+                            </div>
                         </th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs uppercase font-medium text-gray-500 tracking-wider dark:text-gray-300"> Last Delivery
+                        <th scope="col" class="px-6 py-3 text-left text-xs uppercase font-medium text-gray-500 tracking-wider dark:text-gray-300">
+                            <div class="flex items-center">
+                                <flux:icon.cube class="size-4 mr-2"/>
+                                <span>product count</span>
+                            </div>
+                        </th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs uppercase font-medium text-gray-500 tracking-wider dark:text-gray-300">
+                            <div class="flex items-center">
+                                <flux:icon.inbox-arrow-down class="size-4 mr-2"/>
+                                <span>Last Delivery</span>
+                            </div>
                         </th>
                     </tr>
                 </thead>
