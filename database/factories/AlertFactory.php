@@ -4,36 +4,44 @@ namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Models\Product;
-use App\Enums\AlertType;  // Import the AlertType enum
+use App\Models\User;
+use App\Enums\Severity; // Import the Severity enum
 
 class AlertFactory extends Factory
 {
     public function definition(): array
     {
-        // Randomly select an AlertType enum case
-        $type = $this->faker->randomElement(AlertType::cases());
+        // Randomly select a Severity enum case
+        $severity = $this->faker->randomElement(Severity::cases());
 
         return [
-            'product_id' => Product::factory(),
-            'type' => $type->value,  // Use the enum value for the type
-            'message' => $this->generateMessage($type),  // Use a method to generate appropriate messages
+            'product_id' => Product::factory(), // Create a related product
+            'type' => $this->faker->randomElement(['low_stock', 'over_stock', 'restock_suggestion']), // Use random alert type
+            'message' => $this->generateMessage($severity),  // Use the severity-based message
+            'severity' => $severity->value,  // Use the enum value for severity
             'resolved' => $this->faker->boolean(20), // 20% chance of being resolved
             'resolved_at' => function (array $attributes) {
                 return $attributes['resolved'] ? $this->faker->dateTimeThisMonth() : null;
             },
+            'user_id' => function (array $attributes) {
+                // If resolved, assign a user to the alert, else leave it null
+                return $attributes['resolved'] ? User::factory()->create()->id : null;
+            },
         ];
     }
 
-    // Generate specific messages for different types of alerts
-    private function generateMessage(AlertType $type): string
+    // Generate specific messages for different severity levels
+    private function generateMessage(Severity $severity): string
     {
-        return match ($type) {
-            AlertType::LowStock => 'Product stock is running low.',
-            AlertType::OverStock => 'Product stock is higher than expected.',
-            AlertType::RestockSuggestion => 'Consider restocking this product soon.',
+        return match ($severity) {
+            Severity::Critical => 'Immediate attention required: critical issue.',
+            Severity::High => 'High priority: please address this issue soon.',
+            Severity::Medium => 'Medium priority: monitor this issue.',
+            Severity::Low => 'Low priority: issue can be addressed later.',
         };
     }
 
+    // State for resolved alerts
     public function resolved(): static
     {
         return $this->state(function (array $attributes) {
@@ -44,6 +52,7 @@ class AlertFactory extends Factory
         });
     }
 
+    // State for unresolved alerts
     public function unresolved(): static
     {
         return $this->state(function (array $attributes) {
@@ -54,35 +63,50 @@ class AlertFactory extends Factory
         });
     }
 
-    public function lowStock(): static
+    // State for critical severity alerts
+    public function critical(): static
     {
         return $this->state(function (array $attributes) {
-            $type = AlertType::LowStock;
+            $severity = Severity::Critical;
             return [
-                'type' => $type->value,
-                'message' => $this->generateMessage($type),
+                'severity' => $severity->value,
+                'message' => $this->generateMessage($severity),
             ];
         });
     }
 
-    public function overStock(): static
+    // State for high severity alerts
+    public function high(): static
     {
         return $this->state(function (array $attributes) {
-            $type = AlertType::OverStock;
+            $severity = Severity::High;
             return [
-                'type' => $type->value,
-                'message' => $this->generateMessage($type),
+                'severity' => $severity->value,
+                'message' => $this->generateMessage($severity),
             ];
         });
     }
 
-    public function restockSuggestion(): static
+    // State for medium severity alerts
+    public function medium(): static
     {
         return $this->state(function (array $attributes) {
-            $type = AlertType::RestockSuggestion;
+            $severity = Severity::Medium;
             return [
-                'type' => $type->value,
-                'message' => $this->generateMessage($type),
+                'severity' => $severity->value,
+                'message' => $this->generateMessage($severity),
+            ];
+        });
+    }
+
+    // State for low severity alerts
+    public function low(): static
+    {
+        return $this->state(function (array $attributes) {
+            $severity = Severity::Low;
+            return [
+                'severity' => $severity->value,
+                'message' => $this->generateMessage($severity),
             ];
         });
     }

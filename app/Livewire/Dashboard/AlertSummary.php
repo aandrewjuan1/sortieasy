@@ -22,19 +22,31 @@ class AlertSummary extends Component
             ->with('product')
             ->latest()
             ->get()
-            ->groupBy('type');
+            ->groupBy('severity'); // Group by severity, not type anymore
     }
 
     #[Computed]
-    public function lowStockAlerts()
+    public function criticalAlerts()
     {
-        return $this->alerts()->get('low_stock', collect());
+        return $this->alerts()->get('critical', collect());
     }
 
     #[Computed]
-    public function restockSuggestions()
+    public function highAlerts()
     {
-        return $this->alerts()->get('restock_suggestion', collect());
+        return $this->alerts()->get('high', collect());
+    }
+
+    #[Computed]
+    public function mediumAlerts()
+    {
+        return $this->alerts()->get('medium', collect());
+    }
+
+    #[Computed]
+    public function lowAlerts()
+    {
+        return $this->alerts()->get('low', collect());
     }
 
     #[Computed]

@@ -5,7 +5,8 @@
         <!-- Header -->
         <div class="flex flex-wrap items-center justify-between gap-4">
             <h2 class="text-xl font-bold flex items-center gap-2">
-                <x-icon name="exclamation-triangle" class="w-5 h-5 text-red-500" />
+                <!-- Default to 'exclamation-triangle' if icon is invalid -->
+                <x-icon :name="'exclamation-triangle'" class="w-5 h-5 text-red-500" />
                 <span>Alerts Summary</span>
             </h2>
 
@@ -18,7 +19,7 @@
                     class="flex items-center gap-1 text-sm text-blue-600 hover:underline"
                     wire:loading.attr="disabled"
                 >
-                    <x-icon name="arrow-path" class="w-4 h-4" />
+                    <x-icon :name="'arrow-path'" class="w-4 h-4" />
                     {{ $showResolved ? 'Hide Resolved' : 'Show All' }}
                 </button>
             </div>
@@ -48,22 +49,37 @@
             />
         </div>
 
-        <!-- Low Stock Alerts -->
+        <!-- Critical Alerts Section -->
         <x-alert-section
-            title="Low Stock Alerts"
-            :alerts="$this->lowStockAlerts"
-            type="low_stock"
+            title="Critical Alerts"
+            :alerts="$this->criticalAlerts"
+            type="critical"
             icon="exclamation-triangle"
+            color="bg-red-100"
+        />
+
+        <!-- High Alerts Section -->
+        <x-alert-section
+            title="High Alerts"
+            :alerts="$this->highAlerts"
+            type="high"
             color="bg-yellow-100"
         />
 
-        <!-- Restock Suggestions -->
+        <!-- Medium Alerts Section -->
         <x-alert-section
-            title="Restock Suggestions"
-            :alerts="$this->restockSuggestions"
-            type="restock_suggestion"
-            icon="shopping-cart"
-            color="bg-blue-100"
+            title="Medium Alerts"
+            :alerts="$this->mediumAlerts"
+            type="medium"
+            color="bg-orange-100"
+        />
+
+        <!-- Low Alerts Section -->
+        <x-alert-section
+            title="Low Alerts"
+            :alerts="$this->lowAlerts"
+            type="low"
+            color="bg-green-100"
         />
     </div>
 </div>

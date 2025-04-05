@@ -1,15 +1,9 @@
 <div>
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4">
-        @if (session()->has('success'))
-            <x-alert type="success" :message="session('success')" />
-        @endif
-
-        @if (session()->has('error'))
-            <x-alert type="error" :message="session('error')" />
-        @endif
         <h1 class="text-2xl font-bold dark:text-white">Logistics</h1>
 
         <div class="flex flex-col md:flex-row gap-4 w-full md:w-auto">
+            {{-- Search --}}
             <div class="relative w-full md:w-64">
                 <input
                     type="text"
@@ -24,11 +18,12 @@
                 </div>
             </div>
 
-            <select wire:model.live="statusFilter" class="border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+            {{-- Status Filter --}}
+            <select wire:model.live="statusFilter" class="w-full md:w-40 border rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                 <option value="">All Statuses</option>
-                <option value="pending">Pending</option>
-                <option value="shipped">Shipped</option>
-                <option value="delivered">Delivered</option>
+                @foreach($this->statuses as $value => $label)
+                    <option value="{{ $value }}">{{ $label }}</option>
+                @endforeach
             </select>
 
             {{-- Per Page --}}
@@ -47,111 +42,126 @@
             <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                 <thead class="bg-gray-50 dark:bg-gray-700">
                     <tr>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-300" wire:click="setSortBy('product_id')">
+                        {{-- Product Column --}}
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-300" wire:click="setSortBy('product.name')">
                             <button class="flex items-center uppercase">
-                                <flux:icon.cube variant="solid" class="size-4 mr-2"/>
                                 @include('livewire.includes.table-sortable-th', [
-                                    'name' => 'product_id',
+                                    'name' => 'product.name',
                                     'displayName' => 'Product'
                                 ])
                             </button>
                         </th>
+
+                        {{-- Quantity Column --}}
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-300" wire:click="setSortBy('quantity')">
                             <button class="flex items-center uppercase">
-                                <flux:icon.numbered-list variant="solid" class="size-4 mr-2"/>
                                 @include('livewire.includes.table-sortable-th', [
                                     'name' => 'quantity',
                                     'displayName' => 'Quantity'
                                 ])
                             </button>
                         </th>
+
+                        {{-- Delivery Date Column --}}
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-300" wire:click="setSortBy('delivery_date')">
                             <button class="flex items-center uppercase">
-                                <flux:icon.calendar variant="solid" class="size-4 mr-2"/>
                                 @include('livewire.includes.table-sortable-th', [
                                     'name' => 'delivery_date',
                                     'displayName' => 'Delivery Date'
                                 ])
                             </button>
                         </th>
+
+                        {{-- Status Column --}}
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-300">
-                            <div class="flex items-center">
-                                <flux:icon.command-line variant="solid" class="size-4 mr-2"/>
-                                <span>Status</span>
-                            </div>
+                            <span>Status</span>
                         </th>
+
+                        {{-- Days Remaining Column --}}
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-300">
-                            <div class="flex items-center">
-                                <flux:icon.calendar-days variant="solid" class="size-4 mr-2"/>
-                                <span>Days Remaining</span>
-                            </div>
+                            <span>Time Status</span>
+                        </th>
+
+                        {{-- Actions Column --}}
+                        <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-300">
+                            <span>Actions</span>
                         </th>
                     </tr>
                 </thead>
+
                 <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
                     @forelse($this->logistics as $logistic)
-                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm font-medium text-gray-900 dark:text-white">{{ $logistic->product->name }}</div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
-                            {{ $logistic->quantity }}
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
-                            {{ $logistic->delivery_date->format('M d, Y') }}
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $logistic->status->color() }}">
-                                {{ $logistic->status->label() }}
-                            </span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
+                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
+                            {{-- Product --}}
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex items-center">
+                                    <div class="text-sm font-medium text-gray-900 dark:text-white">
+                                        {{ $logistic->product->name }}
+                                    </div>
+                                </div>
+                                <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                    SKU: {{ $logistic->product->sku }}
+                                </div>
+                            </td>
+
+                            {{-- Quantity --}}
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
+                                <span class="font-medium {{ $logistic->quantity > 100 ? 'text-green-600 dark:text-green-400' : 'text-blue-600 dark:text-blue-400' }}">
+                                    {{ $logistic->quantity }}
+                                </span>
+                            </td>
+
+                            {{-- Delivery Date --}}
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
+                                {{ $logistic->delivery_date->format('M d, Y') }}
+                                <div class="text-xs text-gray-400 mt-1">
+                                    {{ $logistic->delivery_date->diffForHumans() }}
+                                </div>
+                            </td>
+
+                            {{-- Status --}}
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full {{ $logistic->status->color() }}">
+                                    {{ $logistic->status->label() }}
+                                </span>
+                            </td>
+
+                            {{-- Time Status --}}
                             @php
-                                // Skip calculation if already delivered
-                                if ($logistic->status === \App\Enums\LogisticStatus::Delivered) {
-                                    $timeDisplay = 'Delivered';
-                                    $colorClass = 'text-gray-600 dark:text-gray-300';
-                                } else {
-                                    $diff = now()->diff($logistic->delivery_date);
-                                    $isPast = now() > $logistic->delivery_date;
-                                    $days = $diff->d;
-                                    $hours = $diff->h;
-
-                                    if ($days == 0 && $hours == 0) {
-                                        $timeDisplay = 'Due now';
-                                        $colorClass = 'text-yellow-600 dark:text-yellow-400';
-                                    } elseif (!$isPast) {
-                                        $timeDisplay =
-                                            ($days > 0 ? $days . ' day' . ($days > 1 ? 's' : '') . ' ' : '') .
-                                            ($hours > 0 ? $hours . ' hour' . ($hours > 1 ? 's' : '') : '') .
-                                            ' remaining';
-                                        $colorClass = 'text-green-600 dark:text-green-400';
-                                    } else {
-                                        $timeDisplay =
-                                            ($days > 0 ? $days . ' day' . ($days > 1 ? 's' : '') . ' ' : '') .
-                                            ($hours > 0 ? $hours . ' hour' . ($hours > 1 ? 's' : '') . ' ' : '') .
-                                            'overdue';
-                                        $colorClass = 'text-red-600 dark:text-red-400';
-                                    }
-                                }
+                                $timeStatus = $this->getTimeStatus($logistic);
                             @endphp
+                            <td class="px-6 py-4 whitespace-nowrap text-sm {{ $timeStatus['class'] }}">
+                                {{ $timeStatus['display'] }}
+                            </td>
 
-                            <span class="{{ $colorClass }}">
-                                {{ $timeDisplay }}
-                            </span>
-                        </td>
-                    </tr>
+                            {{-- Actions --}}
+                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                <div class="flex items-center justify-end space-x-2">
+                                    <button wire:click="$dispatch('openModal', { component: 'logistics.edit', arguments: { logistic: {{ $logistic->id }} }})" class="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                        </svg>
+                                    </button>
+                                    <button wire:click="$dispatch('openModal', { component: 'logistics.update-status', arguments: { logistic: {{ $logistic->id }} }})" class="text-green-600 hover:text-green-900 dark:text-green-400 dark:hover:text-green-300">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
                     @empty
-                    <tr>
-                        <td colspan="5" class="px-6 py-4 text-center text-sm text-gray-500 dark:text-gray-300">
-                            No logistics records found.
-                        </td>
-                    </tr>
+                        <tr>
+                            <td colspan="6" class="px-6 py-4 text-center text-sm text-gray-500 dark:text-gray-300">
+                                No logistics records found matching your criteria
+                            </td>
+                        </tr>
                     @endforelse
                 </tbody>
             </table>
         </div>
 
+        {{-- Pagination --}}
         <div class="px-4 py-3 border-t border-gray-200 dark:border-gray-700 sm:px-6">
             {{ $this->logistics->links() }}
         </div>

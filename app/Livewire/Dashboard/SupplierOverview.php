@@ -16,24 +16,25 @@ class SupplierOverview extends Component
     // Cache time in seconds (5 minutes)
     protected const CACHE_TIME = 300;
 
-    #[Computed(persist: true, cache: true)]
+    #[Computed]
     public function totalSuppliers(): int
     {
         return Cache::remember('total_suppliers', self::CACHE_TIME, fn() => Supplier::count());
     }
 
-    #[Computed(persist: true, cache: true)]
+    #[Computed]
     public function recentDeliveries()
     {
         return Cache::remember('recent_deliveries', self::CACHE_TIME,
             fn() => Logistic::with(['product.supplier'])
                 ->where('status', 'delivered')
                 ->where('delivery_date', '>=', now()->subMonth())
-                ->latest('delivery_date')
+                ->latest('delivery_date')  // This sorts by delivery_date in descending order
                 ->limit(10)
                 ->get()
         );
     }
+
 
     #[Computed]
     public function topSuppliers()

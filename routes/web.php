@@ -1,5 +1,6 @@
 <?php
 
+use App\Livewire\Products;
 use App\Livewire\Suppliers;
 use App\Livewire\Settings\Profile;
 use App\Livewire\Settings\Password;
@@ -27,7 +28,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('dashboard/recent-activity', RecentActivity::class)->name('dashboard.recent-activity');
 
     Route::get('suppliers', Suppliers::class)->name('suppliers');
-    Route::get('inventory', ProductStock::class)->name('inventory');
+    Route::get('inventory', Products::class)->name('inventory');
     Route::get('transactions', Transactions::class)->name('transactions');
     Route::get('logistics', Logistics::class)->name('logistics');
 

@@ -23,7 +23,7 @@ class Logistic extends Model
         'status' => LogisticStatus::class,
     ];
 
-    public function scopeSearch(Builder $query, string $search = null): Builder
+    public function scopeSearch(Builder $query, string $search): Builder
     {
         if (!$search) {
             return $query;
@@ -38,7 +38,7 @@ class Logistic extends Model
         });
     }
 
-    public function scopeOfStatus(Builder $query, string $status = null): Builder
+    public function scopeOfStatus(Builder $query, string $status): Builder
     {
         if (!$status) {
             return $query;

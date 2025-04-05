@@ -2,15 +2,16 @@
 
 namespace App\Livewire;
 
+use App\Models\Product;
 use Livewire\Component;
-use App\Models\Supplier;
 use Livewire\Attributes\Url;
 use Livewire\WithPagination;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Computed;
+use Illuminate\Support\Facades\DB;
 
-#[Title('Suppliers')]
-class Suppliers extends Component
+#[Title('Products')]
+class Products extends Component
 {
     use WithPagination;
 
@@ -24,18 +25,21 @@ class Suppliers extends Component
     public $sortBy = 'name';
 
     #[Url(history: true)]
-    public $sortDir = 'ASC';
+    public $sortDir = 'DESC';
 
     #[Url(history: true)]
-    public $productFilter = '';
+    public $categoryFilter = '';
+
+    #[Url(history: true)]
+    public $stockFilter = '';
 
     #[Computed]
-    public function productOptions()
+    public function categories()
     {
-        return \App\Models\Product::select('name')
+        return Product::select('category')
             ->distinct()
-            ->orderBy('name')
-            ->pluck('name');
+            ->orderBy('category')
+            ->pluck('category');
     }
 
     public function setSortBy($sortByField)
@@ -46,32 +50,31 @@ class Suppliers extends Component
         }
 
         $this->sortBy = $sortByField;
-        $this->sortDir = 'ASC';
+        $this->sortDir = 'DESC';
     }
 
     public function updated($property)
     {
-        if (in_array($property, ['search', 'productFilter', 'perPage'])) {
+        if (in_array($property, ['search', 'categoryFilter', 'stockFilter', 'perPage'])) {
             $this->resetPage();
         }
     }
 
     #[Computed]
-    public function suppliers()
+    public function products()
     {
-        return Supplier::with(['products', 'latestDelivery'])
+        return Product::withSupplier()
             ->search($this->search)
-            ->when($this->productFilter, function($query) {
-                $query->whereHas('products', function($q) {
-                    $q->where('name', $this->productFilter);
-                });
-            })
-            ->orderBy($this->sortBy, $this->sortDir)
+            ->categoryFilter($this->categoryFilter)
+            ->stockFilter($this->stockFilter)
+            ->orderByField($this->sortBy, $this->sortDir)
             ->paginate($this->perPage);
     }
 
+
+
     public function render()
     {
-        return view('livewire.suppliers');
+        return view('livewire.products');
     }
 }
