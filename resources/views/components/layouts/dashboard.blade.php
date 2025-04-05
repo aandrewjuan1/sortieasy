@@ -44,6 +44,10 @@
         </flux:navbar>
     </flux:header>
 
+    @if (session()->has('success'))
+        <x-alert type="success" :message="session('success')" />
+    @endif
+
     <div class="flex-1 px-6 pt-4 self-stretch">
         <flux:heading size="xl" level="1">Good day, {{ auth()->user()->name}}</flux:heading>
         <flux:separator variant="subtle" />

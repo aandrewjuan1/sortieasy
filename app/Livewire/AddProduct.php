@@ -74,7 +74,6 @@ class AddProduct extends Component
             DB::commit();
 
             session()->flash('success', 'Product successfully added!');
-            $this->dispatch('product-created', productId: $product->id);
             $this->reset();
 
             return $this->redirect(route('inventory'), navigate: true);
