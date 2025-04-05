@@ -1,5 +1,12 @@
 <div>
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4">
+        @if (session()->has('success'))
+            <x-alert type="success" :message="session('success')" />
+        @endif
+
+        @if (session()->has('error'))
+            <x-alert type="error" :message="session('error')" />
+        @endif
         <h1 class="text-2xl font-bold dark:text-white">Products</h1>
 
         <div class="flex flex-col md:flex-row gap-4 w-full md:w-auto">
@@ -18,6 +25,8 @@
                 </div>
             </div>
 
+
+
             {{-- Category Filter --}}
             <select wire:model.live="categoryFilter" class="w-full md:w-40 border rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                 <option value="">All Categories</option>
@@ -34,6 +43,10 @@
                 <option value="25">25 per page</option>
                 <option value="50">50 per page</option>
             </select>
+
+            <flux:modal.trigger name="add-product">
+                <flux:button variant="primary">Add Products</flux:button>
+            </flux:modal.trigger>
         </div>
     </div>
 
@@ -190,12 +203,14 @@
                             {{-- Actions --}}
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                 <div class="flex items-center justify-end space-x-2">
-                                    <button wire:click="$dispatch('openModal', { component: 'products.edit', arguments: { product: {{ $product->id }} }})" class="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300">
+                                    <button wire:click="$dispatch('openModal', { component: 'products.edit', arguments: { product: {{ $product->id }} }})" class="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300"
+                                    title="Edit Product">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                         </svg>
                                     </button>
-                                    <button wire:click="$dispatch('openModal', { component: 'products.restock', arguments: { product: {{ $product->id }} }})" class="text-green-600 hover:text-green-900 dark:text-green-400 dark:hover:text-green-300">
+                                    <button wire:click="$dispatch('openModal', { component: 'products.restock', arguments: { product: {{ $product->id }} }})" class="text-green-600 hover:text-green-900 dark:text-green-400 dark:hover:text-green-300"
+                                    title="Add Stocks">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                                         </svg>
@@ -213,6 +228,8 @@
                 </tbody>
             </table>
         </div>
+
+        <livewire:add-product />
 
         {{-- Pagination --}}
         <div class="px-4 py-3 border-t border-gray-200 dark:border-gray-700 sm:px-6">

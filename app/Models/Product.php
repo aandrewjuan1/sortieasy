@@ -72,12 +72,14 @@ class Product extends Model
         return $query->with('supplier');
     }
 
-    public function scopeOrderByField(Builder $query, string $field, string $direction = 'asc')
+    // In your Product model
+    public function scopeOrderByField($query, $field, $direction)
     {
-        if (in_array($field, ['name', 'price', 'quantity_in_stock', 'last_restocked'])) {
-            return $query->orderBy($field, $direction);
-        }
-        return $query->orderBy('name', $direction);
+        // Fallback to created_at if the requested field isn't valid
+        $validFields = ['name', 'price', 'quantity_in_stock', 'last_restocked', 'created_at'];
+        $field = in_array($field, $validFields) ? $field : 'created_at';
+
+        return $query->orderBy($field, $direction);
     }
 
 

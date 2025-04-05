@@ -22,10 +22,10 @@ class Products extends Component
     public $perPage = 10;
 
     #[Url(history: true)]
-    public $sortBy = 'name';
+    public $sortBy = 'created_at'; // Changed default sort to created_at
 
     #[Url(history: true)]
-    public $sortDir = 'DESC';
+    public $sortDir = 'DESC'; // Keep DESC for newest first
 
     #[Url(history: true)]
     public $categoryFilter = '';
@@ -70,8 +70,6 @@ class Products extends Component
             ->orderByField($this->sortBy, $this->sortDir)
             ->paginate($this->perPage);
     }
-
-
 
     public function render()
     {
