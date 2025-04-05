@@ -8,7 +8,9 @@ use App\Models\Transaction;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Url;
 use Illuminate\Support\Collection;
+use Livewire\Attributes\Title;
 
+#[Title('Dashboard')]
 class RecentActivity extends Component
 {
     #[Url(except: 'week')]

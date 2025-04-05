@@ -37,6 +37,11 @@
                     </div>
                 @endforelse
             </div>
+            <div class="px-6 py-3 text-right">
+                <a href="{{route('transactions')}}" class="text-sm font-medium text-blue-600 hover:text-blue-500">
+                    View all transactions &rarr;
+                </a>
+            </div>
         </div>
 
         <!-- Transaction Volume Card -->

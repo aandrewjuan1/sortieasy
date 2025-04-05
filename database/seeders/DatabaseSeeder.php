@@ -3,7 +3,9 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+use App\Models\Alert;
 use App\Models\Product;
+use App\Models\Logistic;
 use App\Models\Supplier;
 use App\Models\Transaction;
 use App\Enums\TransactionType;
@@ -46,20 +48,32 @@ class DatabaseSeeder extends Seeder
         Transaction::factory()->count(25)->create([
             'type' => TransactionType::Purchase->value,
         ]);
-
         // Generate 25 'sale' transactions
         Transaction::factory()->count(25)->create([
             'type' => TransactionType::Sale->value,
         ]);
-
         // Generate 25 'return' transactions
         Transaction::factory()->count(25)->create([
             'type' => TransactionType::Return->value,
         ]);
-
         // Generate 25 'adjustment' transactions
         Transaction::factory()->count(25)->create([
             'type' => TransactionType::Adjustment->value,
         ]);
+
+        // Create alerts for products
+        Alert::factory()->count(30)->create();
+
+        // Create some resolved alerts
+        Alert::factory()->count(10)->resolved()->create();
+
+        // Create logistics records
+        Logistic::factory()->count(40)->create();
+
+        // Create some shipped logistics
+        Logistic::factory()->count(10)->shipped()->create();
+
+        // Create some delivered logistics
+        Logistic::factory()->count(10)->delivered()->create();
     }
 }

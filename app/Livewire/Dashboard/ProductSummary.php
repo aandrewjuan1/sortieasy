@@ -5,10 +5,10 @@ namespace App\Livewire\Dashboard;
 use App\Models\Product;
 use Livewire\Component;
 use Livewire\Attributes\Computed;
-use Livewire\Attributes\Lazy;
 use Illuminate\Support\Collection;
+use Livewire\Attributes\Title;
 
-#[Lazy]
+#[Title('Dashboard')]
 class ProductSummary extends Component
 {
     #[Computed(persist: true, cache: true)]

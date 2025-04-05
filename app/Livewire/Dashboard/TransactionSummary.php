@@ -8,7 +8,9 @@ use Livewire\Component;
 use Livewire\Attributes\Computed;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
+use Livewire\Attributes\Title;
 
+#[Title('Dashboard')]
 class TransactionSummary extends Component
 {
     public int $daysToShow = 30;

@@ -4,9 +4,11 @@ namespace App\Livewire\Dashboard;
 
 use App\Models\Alert;
 use Livewire\Component;
-use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
+use Livewire\Attributes\Title;
+use Livewire\Attributes\Computed;
 
+#[Title('Dashboard')]
 class AlertSummary extends Component
 {
     public bool $showResolved = false;

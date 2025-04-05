@@ -17,16 +17,16 @@
                     <flux:navlist.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard*')"  wire:navigate>{{ __('Dashboard') }}</flux:navlist.item>
 
                     <!-- Inventory link visible to all roles -->
-                    <flux:navlist.item icon="archive-box" href="" :current="request()->routeIs('inventory')" wire:navigate>{{ __('Inventory') }}</flux:navlist.item>
+                    <flux:navlist.item icon="archive-box" :href="route('inventory')" :current="request()->routeIs('inventory')" wire:navigate>{{ __('Inventory') }}</flux:navlist.item>
 
                     <!-- Suppliers link visible to all roles -->
-                    <flux:navlist.item icon="truck" href="" :current="request()->routeIs('suppliers')" wire:navigate>{{ __('Suppliers') }}</flux:navlist.item>
+                    <flux:navlist.item icon="truck" :href="route('suppliers')" :current="request()->routeIs('suppliers')" wire:navigate>{{ __('Suppliers') }}</flux:navlist.item>
 
                     <!-- Transactions link visible to all roles -->
-                    <flux:navlist.item icon="clipboard-document-check" href="" :current="request()->routeIs('transactions')" wire:navigate>{{ __('Transactions') }}</flux:navlist.item>
+                    <flux:navlist.item icon="clipboard-document-check" :href="route('transactions')" :current="request()->routeIs('transactions')" wire:navigate>{{ __('Transactions') }}</flux:navlist.item>
 
                     <!-- Logistics link visible to all roles -->
-                    <flux:navlist.item icon="globe-alt" href="" :current="request()->routeIs('logistics')" wire:navigate>{{ __('Logistics') }}</flux:navlist.item>
+                    <flux:navlist.item icon="globe-alt" :href="route('logistics')" :current="request()->routeIs('logistics')" wire:navigate>{{ __('Logistics') }}</flux:navlist.item>
 
                     <!-- Admin-specific links -->
                     @can('viewAdminDashboard', Auth::user())
