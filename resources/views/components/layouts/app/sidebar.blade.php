@@ -30,7 +30,7 @@
                     <flux:navlist.item icon="globe-alt" :href="route('logistics')" :current="request()->routeIs('logistics')" wire:navigate>{{ __('Logistics') }}</flux:navlist.item>
 
                     <!-- Admin-specific links -->
-                    @can('viewAdminDashboard', Auth::user())
+                    @can('view', Auth::user())
                         <flux:navlist.item icon="users" href="" :current="request()->routeIs('admin.users')" wire:navigate>{{ __('Manage Users') }}</flux:navlist.item>
                     @endcan
                 </flux:navlist.group>

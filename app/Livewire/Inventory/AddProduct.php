@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire;
+namespace App\Livewire\Inventory;
 
 use App\Models\Product;
 use Livewire\Component;
@@ -73,10 +73,14 @@ class AddProduct extends Component
 
             DB::commit();
 
-            session()->flash('success', 'Product successfully added!');
             $this->reset();
 
-            return $this->redirect(route('inventory'), navigate: true);
+            $this->dispatch('modal-close', name: 'add-product');
+            $this->dispatch('product-added');
+            $this->dispatch('notify',
+                type: 'success',
+                message: 'Product added successfully!'
+            );
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -93,7 +97,7 @@ class AddProduct extends Component
 
     public function render()
     {
-        return view('livewire.add-product', [
+        return view('livewire.inventory.add-product', [
             'suppliers' => Supplier::orderBy('name')->get(),
             'categories' => Product::distinct()->orderBy('category')->pluck('category'),
         ]);

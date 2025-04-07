@@ -16,7 +16,7 @@ class UserPolicy
      * @param  \App\Models\User  $user
      * @return bool
      */
-    public function viewAdminDashboard(User $user): bool
+    public function view(User $user): bool
     {
         return $user->role === UserRole::Admin;
     }

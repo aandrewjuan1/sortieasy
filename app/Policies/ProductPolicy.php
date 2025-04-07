@@ -30,4 +30,8 @@ class ProductPolicy
     {
         return $user->role === UserRole::Admin;
     }
+    public function edit(User $user, Product $product)
+    {
+        return $user->role === UserRole::Admin;
+    }
 }

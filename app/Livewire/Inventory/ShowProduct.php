@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire;
+namespace App\Livewire\Inventory;
 
 use App\Models\Product;
 use Livewire\Component;
@@ -40,17 +40,19 @@ class ShowProduct extends Component
 
         $this->product->delete();
 
+        $this->dispatch('modal-close', name: 'delete-product');
+        $this->dispatch('modal-close', name: 'show-product');
+        $this->dispatch('product-deleted');
         $this->dispatch('notify',
             type: 'success',
             message: 'Product deleted successfully!'
         );
-        $this->dispatch('modal-close', name: 'show-product');
-        $this->dispatch('modal-close', name: 'delete-product');
-        $this->dispatch('product-deleted');
     }
 
+
+    #[On('product-updated')]
     public function render()
     {
-        return view('livewire.show-product');
+        return view('livewire.inventory.show-product');
     }
 }

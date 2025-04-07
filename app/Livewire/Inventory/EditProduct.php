@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire;
+namespace App\Livewire\Inventory;
 
 use App\Models\Product;
 use Livewire\Component;
@@ -74,7 +74,6 @@ class EditProduct extends Component
         $this->supplier_id = $product->supplier_id;
     }
 
-    #[Renderless]
     public function updateProduct()
     {
         // Manually validate SKU uniqueness, excluding the current product
@@ -97,15 +96,14 @@ class EditProduct extends Component
 
             DB::commit();
 
-            session()->flash('success', 'Product successfully upgated!');
             $this->reset();
 
+            $this->dispatch('modal-close', name: 'edit-product');
+            $this->dispatch('product-updated');
             $this->dispatch('notify',
                 type: 'success',
                 message: 'Product updated successfully!'
             );
-            $this->dispatch('modal-close', name: 'edit-product');
-            $this->dispatch('product-updated');
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Product update failed: ' . $e->getMessage());
@@ -119,6 +117,6 @@ class EditProduct extends Component
 
     public function render()
     {
-        return view('livewire.edit-product');
+        return view('livewire.inventory.edit-product');
     }
 }

@@ -44,9 +44,11 @@
                 <option value="50">50 per page</option>
             </select>
 
-            <flux:modal.trigger name="add-product">
-                <flux:button variant="primary">Add Products</flux:button>
-            </flux:modal.trigger>
+            @can('view', Auth::user())
+                <flux:modal.trigger name="add-product">
+                    <flux:button variant="primary">Add Products</flux:button>
+                </flux:modal.trigger>
+            @endcan
         </div>
     </div>
 
@@ -128,7 +130,7 @@
                     @forelse($this->products as $product)
                             <tr class="">
                                 <flux:modal.trigger name="show-product-modal">
-                                    <td class="px-6 py-4 whitespace-nowrap hover:bg-zinc-50 dark:hover:bg-zinc-700 cursor-pointer" wire:click="$dispatch('show-product', { productId: {{ $product->id }} });
+                                    <td class="px-6 py-4 whitespace-nowrap hover:bg-zinc-100 dark:hover:bg-zinc-900 cursor-pointer" wire:click="$dispatch('show-product', { productId: {{ $product->id }} });
                                         $dispatch('modal-show', { name: 'show-product' })" wire:key="product-{{ $product->id }}">
                                         <div class="flex items-center">
                                             <div class="text-sm font-medium text-zinc-900 dark:text-white">
@@ -208,16 +210,19 @@
                                 {{-- Actions --}}
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                     <div class="flex items-center justify-end space-x-2">
-                                        <flux:modal.trigger name="edit-product">
-                                            <flux:button size="sm" variant="ghost" wire:click="$dispatch('edit-product', { productId: {{ $product->id }} })" icon="pencil-square" />
-                                        </flux:modal.trigger>
+                                        @can('edit', $product)
+                                            <flux:modal.trigger name="edit-product">
+                                                <flux:tooltip content="Edit product">
+                                                    <flux:button size="sm" variant="ghost" wire:click="$dispatch('edit-product', { productId: {{ $product->id }} })" icon="pencil-square" />
+                                                </flux:tooltip>
+                                            </flux:modal.trigger>
+                                        @endcan
 
-                                        <button wire:click="$dispatch('openModal', { component: 'products.restock', arguments: { product: {{ $product->id }} }})" class="text-green-600 hover:text-green-900 dark:text-green-400 dark:hover:text-green-300"
-                                        title="Add Stocks">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                                            </svg>
-                                        </button>
+                                        <flux:modal.trigger name="add-stocks">
+                                            <flux:tooltip content="Add stocks">
+                                                <flux:button size="sm" variant="ghost" wire:click="$dispatch('add-stocks', { productId: {{ $product->id }} })" icon="plus" />
+                                            </flux:tooltip>
+                                        </flux:modal.trigger>
                                     </div>
                                 </td>
                             </tr>
@@ -231,14 +236,25 @@
                 </tbody>
             </table>
         </div>
-
-        <livewire:show-product on-load/>
-        <livewire:add-product on-load/>
-        <livewire:edit-product on-load/>
-
         {{-- Pagination --}}
         <div class="px-4 py-3 border-t border-zinc-200 dark:border-zinc-700 sm:px-6">
             {{ $this->products->links() }}
         </div>
     </div>
+
+    <flux:modal name="show-product" maxWidth="2xl">
+        <livewire:inventory.show-product on-load/>
+    </flux:modal>
+
+    <flux:modal name="add-product" maxWidth="2xl">
+        <livewire:inventory.add-product on-load/>
+    </flux:modal>
+
+    <flux:modal name="edit-product" maxWidth="2xl">
+        <livewire:inventory.edit-product on-load/>
+    </flux:modal>
+
+    <flux:modal name="add-stocks" maxWidth="2xl">
+        <livewire:inventory.add-stocks on-load/>
+    </flux:modal>
 </div>

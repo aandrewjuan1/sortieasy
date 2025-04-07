@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire;
+namespace App\Livewire\Inventory;
 
 use App\Models\Product;
 use Livewire\Component;
@@ -75,8 +75,9 @@ class Products extends Component
 
     #[On('product-deleted')]
     #[On('product-updated')]
+    #[On('product-added')]
     public function render()
     {
-        return view('livewire.products');
+        return view('livewire.inventory.products');
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-use App\Livewire\Products;
+use App\Livewire\Inventory\Products;
 use App\Livewire\Suppliers;
 use App\Livewire\Settings\Profile;
 use App\Livewire\Settings\Password;
