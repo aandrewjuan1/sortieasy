@@ -1,5 +1,5 @@
-<div class="flex h-full w-full flex-1 flex-col gap-4 rounded-xl mb-5">
-    <flux:header class="block! bg-white lg:bg-zinc-50 dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-700 shadow-md">
+<div class="flex h-full w-full flex-1 flex-col gap-4 mb-5">
+    <flux:header class="block! bg-white lg:bg-zinc-50 rounded-xl dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-700 shadow-md">
         <flux:navbar scrollable class="flex space-x-6 py-2">
             <flux:navbar.item
                 icon="cube"
@@ -33,25 +33,7 @@
                 :active="request()->routeIs('dashboard.alert-summary')">
                 Alerts Summary
             </flux:navbar.item>
-
-            <flux:navbar.item
-                icon="clock"
-                :href="route('dashboard.recent-activity')"
-                wire:navigate
-                :active="request()->routeIs('dashboard.recent-activity')">
-                Recent Activity
-            </flux:navbar.item>
         </flux:navbar>
     </flux:header>
-
-    @if (session()->has('success'))
-        <x-alert type="success" :message="session('success')" />
-    @endif
-
-    <div class="flex-1 px-6 pt-4 self-stretch">
-        <flux:heading size="xl" level="1">Good day, {{ auth()->user()->name}}</flux:heading>
-        <flux:separator variant="subtle" />
-    </div>
-
     {{ $slot }}
 </div>

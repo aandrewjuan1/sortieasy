@@ -46,9 +46,4 @@ class SupplierOverview extends Component
                 ->get()
         );
     }
-
-    public function render()
-    {
-        return view('livewire.dashboard.supplier-overview');
-    }
 }

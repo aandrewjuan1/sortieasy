@@ -1,19 +1,17 @@
 <?php
 
-use App\Livewire\Inventory\Products;
+use App\Livewire\Logistics;
 use App\Livewire\Suppliers;
+use App\Livewire\Transactions;
 use App\Livewire\Settings\Profile;
 use App\Livewire\Settings\Password;
+use App\Livewire\Inventory\Products;
 use App\Livewire\Settings\Appearance;
-use App\Livewire\Transactions;
 use Illuminate\Support\Facades\Route;
 use App\Livewire\Dashboard\AlertSummary;
 use App\Livewire\Dashboard\ProductSummary;
-use App\Livewire\Dashboard\RecentActivity;
 use App\Livewire\Dashboard\SupplierOverview;
 use App\Livewire\Dashboard\TransactionSummary;
-use App\Livewire\Logistics;
-use App\Livewire\ProductStock;
 
 Route::redirect('/', 'dashboard');
 
@@ -25,7 +23,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('dashboard/supplier-overview', SupplierOverview::class)->name('dashboard.supplier-overview');
     Route::get('dashboard/transaction-summary', TransactionSummary::class)->name('dashboard.transaction-summary');
     Route::get('dashboard/alert-summary', AlertSummary::class)->name('dashboard.alert-summary');
-    Route::get('dashboard/recent-activity', RecentActivity::class)->name('dashboard.recent-activity');
 
     Route::get('suppliers', Suppliers::class)->name('suppliers');
     Route::get('inventory', Products::class)->name('inventory');
