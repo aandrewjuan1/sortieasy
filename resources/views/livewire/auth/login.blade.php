@@ -38,7 +38,13 @@
         <flux:checkbox wire:model="remember" :label="__('Remember me')" />
 
         <div class="flex items-center justify-end">
-            <flux:button variant="primary" type="submit" class="w-full">{{ __('Log in') }}</flux:button>
+            <flux:button variant="primary" type="submit" wire:loading.attr="disabled" class="w-full">
+                <span wire:loading.remove>{{ __('Log in') }}</span>
+                <span wire:loading>
+                    {{__('Logging In...')}}
+                </span>
+            </flux:button>
+
         </div>
     </form>
 

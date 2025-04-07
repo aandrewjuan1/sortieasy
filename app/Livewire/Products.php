@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Models\Product;
 use Livewire\Component;
+use Livewire\Attributes\On;
 use Livewire\Attributes\Url;
 use Livewire\WithPagination;
 use Livewire\Attributes\Title;
@@ -53,6 +54,7 @@ class Products extends Component
         $this->sortDir = 'DESC';
     }
 
+
     public function updated($property)
     {
         if (in_array($property, ['search', 'categoryFilter', 'stockFilter', 'perPage'])) {
@@ -71,6 +73,8 @@ class Products extends Component
             ->paginate($this->perPage);
     }
 
+    #[On('product-deleted')]
+    #[On('product-updated')]
     public function render()
     {
         return view('livewire.products');

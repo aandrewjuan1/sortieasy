@@ -109,7 +109,7 @@
         </div>
 
         <div class="mt-6 flex justify-end gap-4">
-            <flux:modal.close>
+        <flux:modal.close>
                 <flux:button variant="ghost">Cancel</flux:button>
             </flux:modal.close>
             <flux:button

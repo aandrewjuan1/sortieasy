@@ -3,13 +3,14 @@
 namespace App\Livewire;
 
 use App\Models\Product;
-use App\Models\Supplier;
 use Livewire\Component;
+use App\Models\Supplier;
+use Livewire\Attributes\On;
+use Livewire\Attributes\Computed;
+use Livewire\Attributes\Validate;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Livewire\Attributes\On;
-use Livewire\Attributes\Validate;
-use Livewire\Attributes\Computed;
+use Livewire\Attributes\Renderless;
 
 class EditProduct extends Component
 {
@@ -73,6 +74,7 @@ class EditProduct extends Component
         $this->supplier_id = $product->supplier_id;
     }
 
+    #[Renderless]
     public function updateProduct()
     {
         // Manually validate SKU uniqueness, excluding the current product
@@ -91,7 +93,6 @@ class EditProduct extends Component
         try {
             DB::beginTransaction();
 
-            // Update the product with validated data
             $this->product->update($validated);
 
             DB::commit();
@@ -99,11 +100,19 @@ class EditProduct extends Component
             session()->flash('success', 'Product successfully upgated!');
             $this->reset();
 
-            return $this->redirect(route('inventory'), navigate: true);
+            $this->dispatch('notify',
+                type: 'success',
+                message: 'Product updated successfully!'
+            );
+            $this->dispatch('modal-close', name: 'edit-product');
+            $this->dispatch('product-updated');
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Product update failed: ' . $e->getMessage());
-            $this->dispatch('notify', type: 'error', message: 'Failed to update product.');
+            $this->dispatch('notify',
+                type: 'error',
+                message: 'Failed to update product.'
+            );
         }
     }
 

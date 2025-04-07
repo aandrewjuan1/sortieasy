@@ -9,15 +9,15 @@
                     type="text"
                     wire:model.live.debounce.300ms="search"
                     placeholder="Search suppliers, products, emails..."
-                    class="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                    class="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white"
                 >
-                <div class="absolute left-3 top-2.5 text-gray-400">
+                <div class="absolute left-3 top-2.5 text-zinc-400">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
                 </div>
                 @if($search)
-                    <div class="absolute right-3 top-2.5 text-gray-400 cursor-pointer" wire:click="$set('search', '')">
+                    <div class="absolute right-3 top-2.5 text-zinc-400 cursor-pointer" wire:click="$set('search', '')">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                         </svg>
@@ -26,7 +26,7 @@
             </div>
 
             {{-- Product Filter --}}
-            <select wire:model.live="productFilter" class="w-full md:w-40 border rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+            <select wire:model.live="productFilter" class="w-full md:w-40 border rounded-lg px-3 py-2 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white">
                 <option value="">All Products</option>
                 @foreach($this->productOptions as $product)
                     <option value="{{ $product }}">{{ $product }}</option>
@@ -35,7 +35,7 @@
 
             {{-- Per Page --}}
             <select wire:model.live="perPage"
-                class="w-full md:w-32 border rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                class="w-full md:w-32 border rounded-lg px-3 py-2 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white">
                 <option value="5">5 per page</option>
                 <option value="10">10 per page</option>
                 <option value="25">25 per page</option>
@@ -44,13 +44,13 @@
         </div>
     </div>
 
-    <div class="bg-white rounded-lg shadow overflow-hidden dark:bg-gray-800">
+    <div class="bg-white rounded-lg shadow overflow-hidden dark:bg-zinc-800">
         <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                <thead class="bg-gray-50 dark:bg-gray-700">
+            <table class="min-w-full divide-y divide-zinc-200 dark:divide-zinc-700">
+                <thead class="bg-zinc-50 dark:bg-zinc-700">
                     <tr>
                         {{-- Name Column --}}
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-300" wire:click="setSortBy('name')">
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider dark:text-zinc-300" wire:click="setSortBy('name')">
                             <button class="flex items-center uppercase">
                                 @include('livewire.includes.table-sortable-th', [
                                     'name' => 'name',
@@ -60,21 +60,21 @@
                         </th>
 
                         {{-- Contact Column --}}
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-300">
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider dark:text-zinc-300">
                             <div class="flex items-center space-x-1">
                                 <span>Contact</span>
                             </div>
                         </th>
 
                         {{-- Products Column --}}
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-300">
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider dark:text-zinc-300">
                             <div class="flex items-center space-x-1">
                                 <span>Products</span>
                             </div>
                         </th>
 
                         {{-- Last Delivery Column --}}
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-300" wire:click="setSortBy('created_at')">
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider dark:text-zinc-300" wire:click="setSortBy('created_at')">
                             <button class="flex items-center space-x-1 uppercase">
                                 @include('livewire.includes.table-sortable-th', [
                                     'name' => 'created_at',
@@ -84,33 +84,33 @@
                         </th>
 
                         {{-- Actions Column --}}
-                        <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-300">
+                        <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-zinc-500 uppercase tracking-wider dark:text-zinc-300">
                             <span>Actions</span>
                         </th>
                     </tr>
                 </thead>
 
-                <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
+                <tbody class="bg-white divide-y divide-zinc-200 dark:bg-zinc-800 dark:divide-zinc-700">
                     @forelse($this->suppliers as $supplier)
-                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
+                        <tr class="">
                             {{-- Name --}}
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="flex items-center">
-                                    <div class="text-sm font-medium text-gray-900 dark:text-white">
+                                    <div class="text-sm font-medium text-zinc-900 dark:text-white">
                                         {{ $supplier->name }}
                                     </div>
                                 </div>
-                                <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                <div class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
                                     {{ Str::limit($supplier->address, 50) }}
                                 </div>
                             </td>
 
                             {{-- Contact Info --}}
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm font-medium text-gray-900 dark:text-white">
+                                <div class="text-sm font-medium text-zinc-900 dark:text-white">
                                     {{ $supplier->contact_email }}
                                 </div>
-                                <div class="text-sm text-gray-500 dark:text-gray-400">
+                                <div class="text-sm text-zinc-500 dark:text-zinc-400">
                                     {{ $supplier->contact_phone }}
                                 </div>
                             </td>
@@ -125,13 +125,13 @@
                                             </span>
                                         @endforeach
                                         @if($supplier->products->count() > 3)
-                                            <span class="px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300">
+                                            <span class="px-2 py-1 text-xs rounded-full bg-zinc-100 text-zinc-800 dark:bg-zinc-700 dark:text-zinc-300">
                                                 +{{ $supplier->products->count() - 3 }} more
                                             </span>
                                         @endif
                                     </div>
                                 @else
-                                    <span class="px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300">
+                                    <span class="px-2 py-1 text-xs rounded-full bg-zinc-100 text-zinc-800 dark:bg-zinc-700 dark:text-zinc-300">
                                         No products
                                     </span>
                                 @endif
@@ -144,10 +144,10 @@
                                 @endphp
 
                                 @if ($deliveryDate)
-                                    <div class="text-sm font-medium text-gray-900 dark:text-white">
+                                    <div class="text-sm font-medium text-zinc-900 dark:text-white">
                                         {{ \Carbon\Carbon::parse($deliveryDate)->format('M d, Y') }}
                                     </div>
-                                    <div class="text-xs text-gray-500 dark:text-gray-400">
+                                    <div class="text-xs text-zinc-500 dark:text-zinc-400">
                                         @if (\Carbon\Carbon::parse($deliveryDate)->isToday())
                                             <span class="text-green-600 dark:text-green-400">Today</span>
                                         @elseif (\Carbon\Carbon::parse($deliveryDate)->isYesterday())
@@ -157,7 +157,7 @@
                                         @endif
                                     </div>
                                 @else
-                                    <span class="text-sm text-gray-500 dark:text-gray-300">Never</span>
+                                    <span class="text-sm text-zinc-500 dark:text-zinc-300">Never</span>
                                 @endif
                             </td>
 
@@ -183,7 +183,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="px-6 py-4 text-center text-sm text-gray-500 dark:text-gray-300">
+                            <td colspan="5" class="px-6 py-4 text-center text-sm text-zinc-500 dark:text-zinc-300">
                                 No suppliers found matching your criteria
                             </td>
                         </tr>
@@ -193,7 +193,7 @@
         </div>
 
         {{-- Pagination --}}
-        <div class="px-4 py-3 border-t border-gray-200 dark:border-gray-700 sm:px-6">
+        <div class="px-4 py-3 border-t border-zinc-200 dark:border-zinc-700 sm:px-6">
             {{ $this->suppliers->links() }}
         </div>
     </div>

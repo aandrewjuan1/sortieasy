@@ -17,7 +17,7 @@ class UserPolicy
      * @return bool
      */
     public function viewAdminDashboard(User $user): bool
-{
-    return $user->role === UserRole::Admin;
-}
+    {
+        return $user->role === UserRole::Admin;
+    }
 }
