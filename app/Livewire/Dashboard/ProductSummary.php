@@ -11,7 +11,7 @@ use Livewire\Attributes\Title;
 #[Title('Dashboard')]
 class ProductSummary extends Component
 {
-    #[Computed(persist: true, cache: true)]
+    #[Computed]
     public function products(): Collection
     {
         return Product::select([
