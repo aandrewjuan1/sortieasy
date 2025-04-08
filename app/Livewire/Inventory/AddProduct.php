@@ -8,6 +8,7 @@ use App\Models\Supplier;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Validate;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 
 class AddProduct extends Component
 {
@@ -81,7 +82,7 @@ class AddProduct extends Component
                 type: 'success',
                 message: 'Product added successfully!'
             );
-
+            Cache::forget('suppliers:page:1:per_page:10:sort:created_at:dir:DESC:search::product:');
         } catch (\Exception $e) {
             DB::rollBack();
 

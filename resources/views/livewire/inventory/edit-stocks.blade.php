@@ -1,7 +1,7 @@
 <div class="relative" wire:loading.class="opacity-50">
     <form wire:submit="updateStock">
         <div class="flex items-center justify-between pr-6">
-            <flux:heading size="xl" class="mb-6">Add Stocks</flux:heading>
+            <flux:heading size="xl" class="mb-6">Edit Stocks</flux:heading>
             <div wire:loading>
                 <flux:icon.loading />
             </div>

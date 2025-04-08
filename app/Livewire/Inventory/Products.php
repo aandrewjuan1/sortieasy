@@ -87,9 +87,9 @@ class Products extends Component
             $this->perPage,
             $this->sortBy,
             $this->sortDir,
-            md5($this->search),
-            md5($this->categoryFilter),
-            md5($this->stockFilter)
+            $this->search,
+            $this->categoryFilter,
+            $this->stockFilter
         );
     }
 

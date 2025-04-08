@@ -61,9 +61,9 @@
                 <option value="50">50 per page</option>
             </select>
 
-            @can('create', App\Models\Supplier::class)
+            @can('view', Auth::user())
                 <flux:modal.trigger name="add-supplier">
-                    <flux:button variant="primary">Add Supplier</flux:button>
+                    <flux:button variant="primary">Add Suppliers</flux:button>
                 </flux:modal.trigger>
             @endcan
         </div>
@@ -228,16 +228,16 @@
             {{ $this->suppliers->links() }}
         </div>
     </div>
-{{--
+
     <flux:modal name="add-supplier" maxWidth="2xl">
-      e:suppliers.add-supplier />
+        <livewire:suppliers.add-supplier />
     </flux:modal>
 
-    <flux:modal name="edit-supplier" maxWidth="2xl">
+    {{-- <flux:modal name="edit-supplier" maxWidth="2xl">
         <livewire:suppliers.edit-supplier />
     </flux:modal>
 
     <flux:modal name="delete-supplier" maxWidth="md">
         <livewire:suppliers.delete-supplier />
-    </flux:modal> --}}
+    </flux:modal>  --}}
 </div>

@@ -9,7 +9,7 @@ use Livewire\Attributes\Validate;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
-class AddStocks extends Component
+class EditStocks extends Component
 {
     public ?Product $product = null;
 
@@ -61,10 +61,5 @@ class AddStocks extends Component
                 message: 'Failed to update stock.'
             );
         }
-    }
-
-    public function render()
-    {
-        return view('livewire.inventory.add-stocks');
     }
 }

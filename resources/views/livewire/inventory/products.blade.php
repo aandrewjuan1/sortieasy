@@ -223,6 +223,7 @@
                                             @endphp
 
                                             <button
+                                                x-cloak
                                                 wire:click='$set("stockFilter", "{{ $level }}")'
                                                 class="ml-2 px-2 py-1 text-xs rounded-full {{ $buttonClasses }} cursor-pointer transition-colors duration-200"
                                             >
@@ -251,9 +252,9 @@
                                             </flux:modal.trigger>
                                         @endcan
 
-                                        <flux:modal.trigger name="add-stocks">
-                                            <flux:tooltip content="Add stocks">
-                                                <flux:button size="sm" variant="ghost" wire:click="$dispatch('add-stocks', { productId: {{ $product->id }} })" icon="plus" />
+                                        <flux:modal.trigger name="edit-stocks">
+                                            <flux:tooltip content="Edit stocks">
+                                                <flux:button size="sm" variant="ghost" wire:click="$dispatch('edit-stocks', { productId: {{ $product->id }} })" icon="plus" />
                                             </flux:tooltip>
                                         </flux:modal.trigger>
                                     </div>
@@ -287,7 +288,7 @@
         <livewire:inventory.edit-product on-load/>
     </flux:modal>
 
-    <flux:modal name="add-stocks" maxWidth="2xl">
-        <livewire:inventory.add-stocks on-load/>
+    <flux:modal name="edit-stocks" maxWidth="2xl">
+        <livewire:inventory.edit-stocks on-load/>
     </flux:modal>
 </div>

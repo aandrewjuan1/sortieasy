@@ -88,8 +88,8 @@ class Suppliers extends Component
             $this->perPage,
             $this->sortBy,
             $this->sortDir,
-            md5($this->search),
-            md5($this->productFilter)
+            $this->search,
+            $this->productFilter
         );
     }
 
@@ -101,9 +101,6 @@ class Suppliers extends Component
     #[On('supplier-deleted')]
     #[On('supplier-updated')]
     #[On('supplier-added')]
-    #[On('product-deleted')]
-    #[On('product-updated')]
-    #[On('product-added')]
     public function clearCache()
     {
         $this->clearCurrentPageCache();

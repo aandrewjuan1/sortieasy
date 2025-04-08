@@ -10,6 +10,7 @@ use Livewire\Attributes\Computed;
 use Livewire\Attributes\Validate;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Cache;
 
 class EditProduct extends Component
 {
@@ -106,6 +107,8 @@ class EditProduct extends Component
                 type: 'success',
                 message: 'Product updated successfully!'
             );
+
+            Cache::forget('suppliers:page:1:per_page:10:sort:created_at:dir:DESC:search::product:');
         } catch (\Exception $e) {
             DB::rollBack();
 
