@@ -21,32 +21,22 @@ class Suppliers extends Component
     public $perPage = 10;
 
     #[Url(history: true)]
-    public $sortBy = 'name';
+    public $sortBy = 'created_at';
 
     #[Url(history: true)]
-    public $sortDir = 'ASC';
+    public $sortDir = 'DESC';
 
     #[Url(history: true)]
     public $productFilter = '';
 
-    #[Computed]
-    public function productOptions()
-    {
-        return \App\Models\Product::select('name')
-            ->distinct()
-            ->orderBy('name')
-            ->pluck('name');
-    }
-
     public function setSortBy($sortByField)
     {
-        if ($this->sortBy === $sortByField) {
-            $this->sortDir = ($this->sortDir == "ASC") ? 'DESC' : "ASC";
-            return;
-        }
+        // Check if the sort column is the same as the one clicked
+        $isSameSortColumn = $this->sortBy === $sortByField;
 
+        // If it's the same column, toggle the direction; otherwise, set the new column with default direction
         $this->sortBy = $sortByField;
-        $this->sortDir = 'ASC';
+        $this->sortDir = $isSameSortColumn ? ($this->sortDir == "ASC" ? 'DESC' : 'ASC') : 'DESC';
     }
 
     public function updated($property)
@@ -56,22 +46,25 @@ class Suppliers extends Component
         }
     }
 
+    public function clearAllFilters()
+    {
+        $this->reset([
+            'search',
+            'productFilter',
+            'perPage',
+            'sortBy',
+            'sortDir',
+        ]);
+    }
+
     #[Computed]
     public function suppliers()
     {
-        return Supplier::with(['products', 'latestDelivery'])
-            ->search($this->search)
-            ->when($this->productFilter, function($query) {
-                $query->whereHas('products', function($q) {
-                    $q->where('name', $this->productFilter);
-                });
-            })
-            ->orderBy($this->sortBy, $this->sortDir)
-            ->paginate($this->perPage);
-    }
-
-    public function render()
-    {
-        return view('livewire.suppliers');
+        return Supplier::with(['products:id,name', 'latestDelivery' => function($query) {
+            $query->orderBy('delivery_date', 'desc')->limit(1);
+        }])
+        ->search($this->search)
+        ->orderByField($this->sortBy, $this->sortDir)
+        ->paginate($this->perPage);
     }
 }

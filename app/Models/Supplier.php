@@ -42,19 +42,23 @@ class Supplier extends Model
         });
     }
 
+    public function scopeOrderByField($query, $field, $direction)
+    {
+        // Fallback to created_at if the requested field isn't valid
+        $validFields = ['name', 'created_at', 'last_delivery'];
+        $field = in_array($field, $validFields) ? $field : 'created_at';
+
+        return $query->orderBy($field, $direction);
+    }
+
+
 
     public function latestDelivery()
     {
-        return $this->hasOneThrough(
-            Logistic::class,
-            Product::class,
-            'supplier_id', // Foreign key on products table
-            'product_id',  // Foreign key on logistics table
-            'id',         // Local key on suppliers table
-            'id'          // Local key on products table
-        )->where('status', 'delivered')
-        ->latest('delivery_date')
-        ->withDefault(); // This provides a default null object if no delivery exists
+        return $this->hasManyThrough(Logistic::class, Product::class)
+                ->where('status', 'delivered') // Only consider delivered logistics
+                ->orderByDesc('delivery_date')
+                ->limit(1);
     }
 
     public function products()

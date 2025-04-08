@@ -9,6 +9,7 @@ use Livewire\Attributes\Url;
 use Livewire\WithPagination;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\Locked;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
 
@@ -24,10 +25,10 @@ class Products extends Component
     public $perPage = 10;
 
     #[Url(history: true)]
-    public $sortBy = 'created_at'; // Changed default sort to created_at
+    public $sortBy = 'created_at';
 
     #[Url(history: true)]
-    public $sortDir = 'DESC'; // Keep DESC for newest first
+    public $sortDir = 'DESC';
 
     #[Url(history: true)]
     public $categoryFilter = '';
@@ -35,33 +36,32 @@ class Products extends Component
     #[Url(history: true)]
     public $stockFilter = '';
 
-    #[Computed(cache: true, key: 'product_categories')]
+    #[Computed]
     public function categories()
     {
-        return Product::select('category')
-            ->distinct()
-            ->orderBy('category')
-            ->pluck('category');
+        $cacheKey = $this->generateCategoriesCacheKey();
+
+        return Cache::remember($cacheKey, 60, function () {
+            return Product::select('category')
+                ->distinct()
+                ->orderBy('category')
+                ->pluck('category');
+        });
     }
 
     public function setSortBy($sortByField)
     {
-        // Check if the sort column is the same as the one clicked
         $isSameSortColumn = $this->sortBy === $sortByField;
-
-        // If it's the same column, toggle the direction; otherwise, set the new column with default direction
         $this->sortBy = $sortByField;
         $this->sortDir = $isSameSortColumn ? ($this->sortDir == "ASC" ? 'DESC' : 'ASC') : 'DESC';
 
-        // Clear the cache once, after sorting logic
-        Cache::forget('products');
+        $this->clearCurrentPageCache();
     }
-
 
     public function updated($property)
     {
         if (in_array($property, ['search', 'categoryFilter', 'stockFilter', 'perPage'])) {
-            Cache::forget('products');
+            $this->clearCurrentPageCache();
             $this->resetPage();
         }
     }
@@ -77,18 +77,22 @@ class Products extends Component
             'sortDir',
         ]);
 
-        Cache::forget('products');
+        $this->clearCurrentPageCache();
     }
 
-    #[Computed(cache: true, key: 'products')]
+    #[Computed()]
     public function products()
     {
-        return Product::withSupplier()
-            ->search($this->search)
-            ->categoryFilter($this->categoryFilter)
-            ->stockFilter($this->stockFilter)
-            ->orderByField($this->sortBy, $this->sortDir)
-            ->paginate($this->perPage);
+        $cacheKey = $this->generateProductsCacheKey();
+
+        return Cache::remember($cacheKey, 60, function() {
+            return Product::withSupplier()
+                    ->search($this->search)
+                    ->categoryFilter($this->categoryFilter)
+                    ->stockFilter($this->stockFilter)
+                    ->orderByField($this->sortBy, $this->sortDir)
+                    ->paginate($this->perPage);
+        });
     }
 
     #[On('product-deleted')]
@@ -96,7 +100,30 @@ class Products extends Component
     #[On('product-added')]
     public function reRender()
     {
-        Cache::forget('product_categories');
-        Cache::forget('products');
+        Cache::forget($this->generateCategoriesCacheKey());
+        $this->clearCurrentPageCache();
+    }
+
+    // Helper methods for cache key generation
+    protected function generateProductsCacheKey(): string
+    {
+        return sprintf(
+            'products_page_%s_%s_%s_%s_%s',
+            $this->getPage(),
+            $this->perPage,
+            md5($this->search),
+            $this->categoryFilter,
+            $this->stockFilter
+        );
+    }
+
+    protected function generateCategoriesCacheKey(): string
+    {
+        return 'product_categories';
+    }
+
+    protected function clearCurrentPageCache(): void
+    {
+        Cache::forget($this->generateProductsCacheKey());
     }
 }

@@ -13,7 +13,7 @@
                 >
                 <div class="absolute left-3 top-2.5 text-zinc-400">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
                 </div>
                 @if($search)
@@ -24,14 +24,6 @@
                     </div>
                 @endif
             </div>
-
-            {{-- Product Filter --}}
-            <select wire:model.live="productFilter" class="w-full md:w-40 border rounded-lg px-3 py-2 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white">
-                <option value="">All Products</option>
-                @foreach($this->productOptions as $product)
-                    <option value="{{ $product }}">{{ $product }}</option>
-                @endforeach
-            </select>
 
             {{-- Per Page --}}
             <select wire:model.live="perPage"
@@ -61,23 +53,19 @@
 
                         {{-- Contact Column --}}
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider dark:text-zinc-300">
-                            <div class="flex items-center space-x-1">
-                                <span>Contact</span>
-                            </div>
+                            <span>Contact</span>
                         </th>
 
                         {{-- Products Column --}}
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider dark:text-zinc-300">
-                            <div class="flex items-center space-x-1">
-                                <span>Products</span>
-                            </div>
+                            <span>Products</span>
                         </th>
 
                         {{-- Last Delivery Column --}}
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider dark:text-zinc-300" wire:click="setSortBy('created_at')">
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider dark:text-zinc-300" wire:click="setSortBy('last_delivery')">
                             <button class="flex items-center space-x-1 uppercase">
                                 @include('livewire.includes.table-sortable-th', [
-                                    'name' => 'created_at',
+                                    'name' => 'last_delivery',
                                     'displayName' => 'Last Delivery'
                                 ])
                             </button>
@@ -92,7 +80,7 @@
 
                 <tbody class="bg-white divide-y divide-zinc-200 dark:bg-zinc-800 dark:divide-zinc-700">
                     @forelse($this->suppliers as $supplier)
-                        <tr class="">
+                        <tr>
                             {{-- Name --}}
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="flex items-center">
@@ -137,10 +125,9 @@
                                 @endif
                             </td>
 
-                            {{-- Latest Delivery --}}
                             <td class="px-6 py-4 whitespace-nowrap">
                                 @php
-                                    $deliveryDate = $supplier->latestDelivery?->delivery_date;
+                                    $deliveryDate = $supplier->latestDelivery->first()?->delivery_date; // Ensure you're getting the first/latest delivery
                                 @endphp
 
                                 @if ($deliveryDate)

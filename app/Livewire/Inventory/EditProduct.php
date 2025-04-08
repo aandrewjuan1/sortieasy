@@ -80,6 +80,7 @@ class EditProduct extends Component
         // Manually validate SKU uniqueness, excluding the current product
         $validated = $this->validate();
 
+        // Check if a product with the same SKU already exists, excluding the current product
         $existingProduct = Product::where('sku', $this->sku)
             ->where('id', '!=', $this->product->id) // Exclude the current product
             ->first();
@@ -93,12 +94,21 @@ class EditProduct extends Component
         try {
             DB::beginTransaction();
 
+            // Check if the stock has been updated
+            if ($this->product->quantity_in_stock != $this->quantity_in_stock) { // Assuming `$this->stock` is the new stock value
+                // If stock is updated, add `last_restocked` field to validated data
+                $validated['last_restocked'] = now();
+            }
+
+            // Update the product with validated data
             $this->product->update($validated);
 
             DB::commit();
 
+            // Reset form or variables
             $this->reset();
 
+            // Dispatch events after successful update
             $this->dispatch('modal-close', name: 'edit-product');
             $this->dispatch('product-updated');
             $this->dispatch('notify',
@@ -107,6 +117,8 @@ class EditProduct extends Component
             );
         } catch (\Exception $e) {
             DB::rollBack();
+
+            // Log the error and dispatch failure notification
             Log::error('Product update failed: ' . $e->getMessage());
             $this->dispatch('notify',
                 type: 'error',
@@ -114,6 +126,7 @@ class EditProduct extends Component
             );
         }
     }
+
 
 
     public function render()
