@@ -9,8 +9,6 @@ use Livewire\Attributes\Url;
 use Livewire\WithPagination;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Computed;
-use Livewire\Attributes\Locked;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
 
 #[Title('Products')]
@@ -35,19 +33,6 @@ class Products extends Component
 
     #[Url(history: true)]
     public $stockFilter = '';
-
-    #[Computed]
-    public function categories()
-    {
-        $cacheKey = $this->generateCategoriesCacheKey();
-
-        return Cache::remember($cacheKey, 60, function () {
-            return Product::select('category')
-                ->distinct()
-                ->orderBy('category')
-                ->pluck('category');
-        });
-    }
 
     public function setSortBy($sortByField)
     {
@@ -85,7 +70,7 @@ class Products extends Component
     {
         $cacheKey = $this->generateProductsCacheKey();
 
-        return Cache::remember($cacheKey, 60, function() {
+        return Cache::remember($cacheKey, 300, function() {
             return Product::withSupplier()
                     ->search($this->search)
                     ->categoryFilter($this->categoryFilter)
@@ -100,7 +85,6 @@ class Products extends Component
     #[On('product-added')]
     public function reRender()
     {
-        Cache::forget($this->generateCategoriesCacheKey());
         $this->clearCurrentPageCache();
     }
 
@@ -115,11 +99,6 @@ class Products extends Component
             $this->categoryFilter,
             $this->stockFilter
         );
-    }
-
-    protected function generateCategoriesCacheKey(): string
-    {
-        return 'product_categories';
     }
 
     protected function clearCurrentPageCache(): void

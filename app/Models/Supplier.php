@@ -51,16 +51,6 @@ class Supplier extends Model
         return $query->orderBy($field, $direction);
     }
 
-
-
-    public function latestDelivery()
-    {
-        return $this->hasManyThrough(Logistic::class, Product::class)
-                ->where('status', 'delivered') // Only consider delivered logistics
-                ->orderByDesc('delivery_date')
-                ->limit(1);
-    }
-
     public function products()
     {
         return $this->hasMany(Product::class);

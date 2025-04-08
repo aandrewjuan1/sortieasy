@@ -134,7 +134,7 @@
                 <thead class="text-xs uppercase bg-gray-100 dark:bg-zinc-700 text-gray-600 dark:text-gray-300">
                     <tr>
                         <th class="px-4 py-2 text-left">Product</th>
-                        <th class="px-4 py-2 text-left">User</th>
+                        <th class="px-4 py-2 text-left">Recorded By</th>
                         <th class="px-4 py-2 text-left">Quantity</th>
                         <th class="px-4 py-2 text-left">Unit Price</th>
                         <th class="px-4 py-2 text-left">Total Price</th>

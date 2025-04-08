@@ -69,13 +69,10 @@
                                 <span>Product</span>
                             </div>
                         </th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider dark:text-zinc-300" wire:click="setSortBy('type')">
-                            <button class="flex items-center uppercase">
-                                @include('livewire.includes.table-sortable-th', [
-                                    'name' => 'type',
-                                    'displayName' => 'Type'
-                                ])
-                            </button>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider dark:text-zinc-300">
+                            <div class="flex items-center">
+                                <span>Type</span>
+                            </div>
                         </th>
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider dark:text-zinc-300" wire:click="setSortBy('quantity')">
                             <button class="flex items-center uppercase">

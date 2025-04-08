@@ -107,7 +107,7 @@
                 <thead class="sticky top-0 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-zinc-700 dark:text-gray-400">
                     <tr>
                         <th class="px-4 py-3 text-left">Product</th>
-                        <th class="px-4 py-3 text-left">User</th>
+                        <th class="px-4 py-3 text-left">Recorded By</th>
                         <th class="px-4 py-3 text-left">Type</th>
                         <th class="px-4 py-3 text-right">Qty</th>
                         <th class="px-4 py-3 text-right">Date</th>

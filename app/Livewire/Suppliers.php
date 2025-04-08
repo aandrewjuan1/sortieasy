@@ -2,12 +2,14 @@
 
 namespace App\Livewire;
 
-use Livewire\Component;
 use App\Models\Supplier;
+use Livewire\Component;
+use Livewire\Attributes\On;
 use Livewire\Attributes\Url;
 use Livewire\WithPagination;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Computed;
+use Illuminate\Support\Facades\Cache;
 
 #[Title('Suppliers')]
 class Suppliers extends Component
@@ -31,17 +33,17 @@ class Suppliers extends Component
 
     public function setSortBy($sortByField)
     {
-        // Check if the sort column is the same as the one clicked
         $isSameSortColumn = $this->sortBy === $sortByField;
-
-        // If it's the same column, toggle the direction; otherwise, set the new column with default direction
         $this->sortBy = $sortByField;
         $this->sortDir = $isSameSortColumn ? ($this->sortDir == "ASC" ? 'DESC' : 'ASC') : 'DESC';
+
+        $this->clearCurrentPageCache();
     }
 
     public function updated($property)
     {
-        if (in_array($property, ['search', 'productFilter', 'perPage'])) {
+        if (in_array($property, ['search', 'perPage', 'productFilter'])) {
+            $this->clearCurrentPageCache();
             $this->resetPage();
         }
     }
@@ -50,21 +52,59 @@ class Suppliers extends Component
     {
         $this->reset([
             'search',
-            'productFilter',
             'perPage',
             'sortBy',
             'sortDir',
+            'productFilter',
         ]);
+
+        $this->clearCurrentPageCache();
     }
 
-    #[Computed]
+    #[Computed()]
     public function suppliers()
     {
-        return Supplier::with(['products:id,name', 'latestDelivery' => function($query) {
-            $query->orderBy('delivery_date', 'desc')->limit(1);
-        }])
-        ->search($this->search)
-        ->orderByField($this->sortBy, $this->sortDir)
-        ->paginate($this->perPage);
+        $cacheKey = $this->generateSuppliersCacheKey();
+
+        return Cache::remember($cacheKey, 300, function() {
+            return Supplier::with(['products' => function($query) {
+                        $query->select('id', 'name', 'supplier_id');
+                    }])
+                    ->search($this->search)
+                    ->when($this->productFilter, function($query) {
+                        $query->whereHas('products', function($q) {
+                            $q->where('name', 'like', "%{$this->productFilter}%");
+                        });
+                    })
+                    ->orderBy($this->sortBy, $this->sortDir)
+                    ->paginate($this->perPage);
+        });
+    }
+
+    #[On('supplier-deleted')]
+    #[On('supplier-updated')]
+    #[On('supplier-added')]
+    #[On('product-deleted')]
+    #[On('product-updated')]
+    #[On('product-added')]
+    public function reRender()
+    {
+        $this->clearCurrentPageCache();
+    }
+
+    protected function generateSuppliersCacheKey(): string
+    {
+        return sprintf(
+            'suppliers_page_%s_%s_%s_%s',
+            $this->getPage(),
+            $this->perPage,
+            md5($this->search),
+            md5($this->productFilter)
+        );
+    }
+
+    protected function clearCurrentPageCache(): void
+    {
+        Cache::forget($this->generateSuppliersCacheKey());
     }
 }

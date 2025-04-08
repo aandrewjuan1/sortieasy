@@ -1,14 +1,14 @@
 <?php
 
-use App\Livewire\Dashboard\SaleSummary;
 use App\Livewire\Logistics;
-use App\Livewire\Suppliers;
 use App\Livewire\Transactions;
 use App\Livewire\Settings\Profile;
 use App\Livewire\Settings\Password;
 use App\Livewire\Inventory\Products;
 use App\Livewire\Settings\Appearance;
+use App\Livewire\Suppliers;
 use Illuminate\Support\Facades\Route;
+use App\Livewire\Dashboard\SaleSummary;
 use App\Livewire\Dashboard\AlertSummary;
 use App\Livewire\Dashboard\ProductSummary;
 use App\Livewire\Dashboard\SupplierOverview;

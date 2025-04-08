@@ -29,15 +29,15 @@
                             <li class="inline">Stock: <strong>{{ $stockFilter }}</strong></li>
                         @endif
                     </ul>
-                    <button
+                @else
+                    <span class="ml-2 text-zinc-500 dark:text-zinc-400">None</span>
+                @endif
+                <button
                         wire:click="clearAllFilters"
                         class="ml-4 text-blue-600 hover:underline"
                     >
                         Clear All Filters
                     </button>
-                @else
-                    <span class="ml-2 text-zinc-500 dark:text-zinc-400">None</span>
-                @endif
             </div>
 
             {{-- Search --}}
@@ -172,9 +172,9 @@
                                 {{-- Category --}}
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-zinc-500 dark:text-zinc-300">
                                     <button
-
+                                        x-cloak
                                         wire:click="$set('categoryFilter', '{{ $product->category }}')"
-                                        class="cursor-pointer px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs dark:bg-blue-900 dark:text-blue-200 hover:underline"
+                                        class="cursor-pointer px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors"
                                     >
                                         {{ $product->category }}
                                     </button>

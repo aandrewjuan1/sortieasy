@@ -1,14 +1,48 @@
 <div>
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4">
+        @if (session()->has('success'))
+            <x-alert type="success" :message="session('success')" />
+        @endif
+
+        @if (session()->has('error'))
+            <x-alert type="error" :message="session('error')" />
+        @endif
         <h1 class="text-2xl font-bold dark:text-white">Suppliers</h1>
 
-        <div class="flex flex-col md:flex-row gap-4 w-full md:w-auto">
+        <div class="flex flex-col items-center md:flex-row gap-4 w-full md:w-auto">
+            <div class="text-sm text-zinc-600 dark:text-zinc-300">
+                <span>Filtering by:</span>
+
+                @php
+                    $hasFilters = $search || $productFilter;
+                @endphp
+
+                @if($hasFilters)
+                    <ul class="inline-block ml-2 space-x-3">
+                        @if($search)
+                            <li class="inline">Search: <strong>"{{ $search }}"</strong></li>
+                        @endif
+                        @if($productFilter)
+                            <li class="inline">Product: <strong>{{ $productFilter }}</strong></li>
+                        @endif
+                    </ul>
+                @else
+                    <span class="ml-2 text-zinc-500 dark:text-zinc-400">None</span>
+                @endif
+                <button
+                        wire:click="clearAllFilters"
+                        class="ml-4 text-blue-600 hover:underline"
+                    >
+                        Clear All Filters
+                    </button>
+            </div>
+
             {{-- Search --}}
-            <div class="relative w-full md:w-72">
+            <div class="relative w-full md:w-64">
                 <input
                     type="text"
                     wire:model.live.debounce.300ms="search"
-                    placeholder="Search suppliers, products, emails..."
+                    placeholder="Search suppliers..."
                     class="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white"
                 >
                 <div class="absolute left-3 top-2.5 text-zinc-400">
@@ -16,13 +50,6 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
                 </div>
-                @if($search)
-                    <div class="absolute right-3 top-2.5 text-zinc-400 cursor-pointer" wire:click="$set('search', '')">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                    </div>
-                @endif
             </div>
 
             {{-- Per Page --}}
@@ -33,6 +60,12 @@
                 <option value="25">25 per page</option>
                 <option value="50">50 per page</option>
             </select>
+
+            @can('create', App\Models\Supplier::class)
+                <flux:modal.trigger name="add-supplier">
+                    <flux:button variant="primary">Add Supplier</flux:button>
+                </flux:modal.trigger>
+            @endcan
         </div>
     </div>
 
@@ -51,22 +84,45 @@
                             </button>
                         </th>
 
-                        {{-- Contact Column --}}
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider dark:text-zinc-300">
-                            <span>Contact</span>
+                            <div class="flex items-center">
+                                <span>Products Supplied</span>
+                                @if($productFilter)
+                                    <button wire:click="$set('productFilter', '')" class="ml-2 text-red-500 hover:text-red-700">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                                        </svg>
+                                    </button>
+                                @endif
+                            </div>
                         </th>
 
-                        {{-- Products Column --}}
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider dark:text-zinc-300">
-                            <span>Products</span>
-                        </th>
-
-                        {{-- Last Delivery Column --}}
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider dark:text-zinc-300" wire:click="setSortBy('last_delivery')">
-                            <button class="flex items-center space-x-1 uppercase">
+                        {{-- Contact Email Column --}}
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider dark:text-zinc-300" wire:click="setSortBy('contact_email')">
+                            <button class="flex items-center uppercase">
                                 @include('livewire.includes.table-sortable-th', [
-                                    'name' => 'last_delivery',
-                                    'displayName' => 'Last Delivery'
+                                    'name' => 'contact_email',
+                                    'displayName' => 'Email'
+                                ])
+                            </button>
+                        </th>
+
+                        {{-- Contact Phone Column --}}
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider dark:text-zinc-300">
+                            <span>Phone</span>
+                        </th>
+
+                        {{-- Address Column --}}
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider dark:text-zinc-300">
+                            <span>Address</span>
+                        </th>
+
+                        {{-- Created At Column --}}
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider dark:text-zinc-300" wire:click="setSortBy('created_at')">
+                            <button class="flex items-center uppercase">
+                                @include('livewire.includes.table-sortable-th', [
+                                    'name' => 'created_at',
+                                    'displayName' => 'Added On'
                                 ])
                             </button>
                         </th>
@@ -80,97 +136,91 @@
 
                 <tbody class="bg-white divide-y divide-zinc-200 dark:bg-zinc-800 dark:divide-zinc-700">
                     @forelse($this->suppliers as $supplier)
-                        <tr>
+                        <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-900">
                             {{-- Name --}}
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="flex items-center">
-                                    <div class="text-sm font-medium text-zinc-900 dark:text-white">
-                                        {{ $supplier->name }}
+                                <flux:modal.trigger name="show-supplier">
+                                    <div class="flex items-center cursor-pointer" wire:click="$dispatch('show-supplier', { supplierId: {{ $supplier->id }} })">
+                                        <div class="text-sm font-medium text-zinc-900 dark:text-white">
+                                            {{ $supplier->name }}
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
-                                    {{ Str::limit($supplier->address, 50) }}
-                                </div>
+                                </flux:modal.trigger>
                             </td>
 
-                            {{-- Contact Info --}}
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm font-medium text-zinc-900 dark:text-white">
-                                    {{ $supplier->contact_email }}
-                                </div>
-                                <div class="text-sm text-zinc-500 dark:text-zinc-400">
-                                    {{ $supplier->contact_phone }}
-                                </div>
-                            </td>
-
-                            {{-- Products --}}
-                            <td class="px-6 py-4">
-                                @if ($supplier->products->isNotEmpty())
+                            <!-- Products Cell -->
+                            <td class="px-6 py-4 text-sm text-zinc-500 dark:text-zinc-300">
+                                @if($supplier->products->count() > 0)
                                     <div class="flex flex-wrap gap-1">
-                                        @foreach($supplier->products->take(3) as $product)
-                                            <span class="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                                        @foreach($supplier->products as $product)
+                                            <button x-cloak
+                                                wire:click="$set('productFilter', '{{ $product->name }}')"
+                                                class="cursor-pointer px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors"
+                                            >
                                                 {{ $product->name }}
-                                            </span>
+                                            </button>
                                         @endforeach
-                                        @if($supplier->products->count() > 3)
-                                            <span class="px-2 py-1 text-xs rounded-full bg-zinc-100 text-zinc-800 dark:bg-zinc-700 dark:text-zinc-300">
-                                                +{{ $supplier->products->count() - 3 }} more
-                                            </span>
-                                        @endif
                                     </div>
                                 @else
-                                    <span class="px-2 py-1 text-xs rounded-full bg-zinc-100 text-zinc-800 dark:bg-zinc-700 dark:text-zinc-300">
-                                        No products
-                                    </span>
+                                    <span class="text-zinc-400">No products</span>
                                 @endif
+                                <div class="mt-1 text-xs text-zinc-400">
+                                    Total: {{ $supplier->products->count() }}
+                                </div>
                             </td>
 
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                @php
-                                    $deliveryDate = $supplier->latestDelivery->first()?->delivery_date; // Ensure you're getting the first/latest delivery
-                                @endphp
+                            {{-- Email --}}
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-zinc-500 dark:text-zinc-300">
+                                <a href="mailto:{{ $supplier->contact_email }}" class="text-blue-600 hover:underline">
+                                    {{ $supplier->contact_email }}
+                                </a>
+                            </td>
 
-                                @if ($deliveryDate)
-                                    <div class="text-sm font-medium text-zinc-900 dark:text-white">
-                                        {{ \Carbon\Carbon::parse($deliveryDate)->format('M d, Y') }}
-                                    </div>
-                                    <div class="text-xs text-zinc-500 dark:text-zinc-400">
-                                        @if (\Carbon\Carbon::parse($deliveryDate)->isToday())
-                                            <span class="text-green-600 dark:text-green-400">Today</span>
-                                        @elseif (\Carbon\Carbon::parse($deliveryDate)->isYesterday())
-                                            <span class="text-green-600 dark:text-green-400">Yesterday</span>
-                                        @else
-                                            {{ \Carbon\Carbon::parse($deliveryDate)->diffForHumans() }}
-                                        @endif
-                                    </div>
-                                @else
-                                    <span class="text-sm text-zinc-500 dark:text-zinc-300">Never</span>
-                                @endif
+                            {{-- Phone --}}
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-zinc-500 dark:text-zinc-300">
+                                <a href="tel:{{ $supplier->contact_phone }}" class="hover:underline">
+                                    {{ $supplier->contact_phone }}
+                                </a>
+                            </td>
+
+                            {{-- Address --}}
+                            <td class="px-6 py-4 text-sm text-zinc-500 dark:text-zinc-300">
+                                {{ Str::limit($supplier->address, 30) }}
+                            </td>
+
+                            {{-- Created At --}}
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-zinc-500 dark:text-zinc-300">
+                                {{ $supplier->created_at->format('M d, Y') }}
                             </td>
 
                             {{-- Actions --}}
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                 <div class="flex items-center justify-end space-x-2">
-                                    <button wire:click="$dispatch('openModal', { component: 'suppliers.edit', arguments: { supplier: {{ $supplier->id }} }})"
-                                        class="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300"
-                                        title="Edit Supplier">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                        </svg>
-                                    </button>
-                                    <button wire:click="$dispatch('openModal', { component: 'suppliers.orders', arguments: { supplier: {{ $supplier->id }} }})"
-                                        class="text-green-600 hover:text-green-900 dark:text-green-400 dark:hover:text-green-300"
-                                        title="View Orders">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                                        </svg>
-                                    </button>
+                                    @can('update', $supplier)
+                                        <flux:modal.trigger name="edit-supplier">
+                                            <flux:tooltip content="Edit supplier">
+                                                <flux:button size="sm" variant="ghost"
+                                                    wire:click="$dispatch('edit-supplier', { supplierId: {{ $supplier->id }} })"
+                                                    icon="pencil-square" />
+                                            </flux:tooltip>
+                                        </flux:modal.trigger>
+                                    @endcan
+
+                                    @can('delete', $supplier)
+                                        <flux:modal.trigger name="delete-supplier">
+                                            <flux:tooltip content="Delete supplier">
+                                                <flux:button size="sm" variant="ghost-danger"
+                                                    wire:click="$dispatch('delete-supplier', { supplierId: {{ $supplier->id }} })"
+                                                    icon="trash" />
+                                            </flux:tooltip>
+                                        </flux:modal.trigger>
+                                    @endcan
                                 </div>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="px-6 py-4 text-center text-sm text-zinc-500 dark:text-zinc-300">
+                            <td colspan="7" class="px-6 py-4 text-center text-sm text-zinc-500 dark:text-zinc-300">
                                 No suppliers found matching your criteria
                             </td>
                         </tr>
@@ -178,10 +228,25 @@
                 </tbody>
             </table>
         </div>
-
         {{-- Pagination --}}
         <div class="px-4 py-3 border-t border-zinc-200 dark:border-zinc-700 sm:px-6">
             {{ $this->suppliers->links() }}
         </div>
     </div>
+
+    {{-- <flux:modal name="show-supplier" maxWidth="2xl">
+        <livewire:suppliers.show-supplier />
+    </flux:modal>
+
+    <flux:modal name="add-supplier" maxWidth="2xl">
+        <livewire:suppliers.add-supplier />
+    </flux:modal>
+
+    <flux:modal name="edit-supplier" maxWidth="2xl">
+        <livewire:suppliers.edit-supplier />
+    </flux:modal>
+
+    <flux:modal name="delete-supplier" maxWidth="md">
+        <livewire:suppliers.delete-supplier />
+    </flux:modal> --}}
 </div>

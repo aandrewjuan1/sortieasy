@@ -10,8 +10,6 @@ use Livewire\Attributes\Computed;
 use Livewire\Attributes\Validate;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Livewire\Attributes\Renderless;
-use Illuminate\Support\Facades\Cache;
 
 class EditProduct extends Component
 {
@@ -25,7 +23,6 @@ class EditProduct extends Component
 
     #[Validate('required|max:255')]
     public string $sku = '';
-
 
     #[Validate('nullable|max:1000')]
     public ?string $description = null;
@@ -77,7 +74,6 @@ class EditProduct extends Component
 
     public function updateProduct()
     {
-        // Manually validate SKU uniqueness, excluding the current product
         $validated = $this->validate();
 
         // Check if a product with the same SKU already exists, excluding the current product
@@ -86,7 +82,6 @@ class EditProduct extends Component
             ->first();
 
         if ($existingProduct) {
-            // If a product with the same SKU exists, add a custom error
             $this->addError('sku', 'The SKU must be unique.');
             return;
         }
@@ -95,17 +90,13 @@ class EditProduct extends Component
             DB::beginTransaction();
 
             // Check if the stock has been updated
-            if ($this->product->quantity_in_stock != $this->quantity_in_stock) { // Assuming `$this->stock` is the new stock value
-                // If stock is updated, add `last_restocked` field to validated data
+            if ($this->product->quantity_in_stock != $this->quantity_in_stock) {
                 $validated['last_restocked'] = now();
             }
 
-            // Update the product with validated data
             $this->product->update($validated);
-
             DB::commit();
 
-            // Reset form or variables
             $this->reset();
 
             // Dispatch events after successful update
@@ -125,12 +116,5 @@ class EditProduct extends Component
                 message: 'Failed to update product.'
             );
         }
-    }
-
-
-
-    public function render()
-    {
-        return view('livewire.inventory.edit-product');
     }
 }
