@@ -120,7 +120,7 @@
                                     'displayName' => 'Quantity'
                                 ])
                             </button>
-                            <select wire:model.live="stockFilter" class="ml-2 text-sm border rounded bg-transparent">
+                            <select wire:model.live="stockFilter" class="ml-2 text-sm border rounded dark:bg-zinc-700 bg-transparent">
                                 <option value="">All</option>
                                 <option value="low">Low</option>
                                 <option value="critical">Critical</option>
@@ -214,9 +214,20 @@
                                             {{ $product->quantity_in_stock }}
                                         </span>
                                         @if($product->quantity_in_stock <= $product->reorder_threshold)
-                                            <span class="ml-2 px-2 py-1 text-xs rounded-full {{ $product->quantity_in_stock <= $product->safety_stock ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200' : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' }}">
-                                                {{ $product->quantity_in_stock <= $product->safety_stock ? 'Critical' : 'Low' }}
-                                            </span>
+                                            @php
+                                                $level = $product->quantity_in_stock <= $product->safety_stock ? 'critical' : 'low';
+                                                $isCritical = $level === 'critical';
+                                                $buttonClasses = $isCritical
+                                                    ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200 hover:bg-red-200 dark:hover:bg-red-800'
+                                                    : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200 hover:bg-yellow-200 dark:hover:bg-yellow-800';
+                                            @endphp
+
+                                            <button
+                                                wire:click='$set("stockFilter", "{{ $level }}")'
+                                                class="ml-2 px-2 py-1 text-xs rounded-full {{ $buttonClasses }} cursor-pointer transition-colors duration-200"
+                                            >
+                                                {{ ucfirst($level) }}
+                                            </button>
                                         @endif
                                     </div>
                                     <div class="text-xs text-zinc-400 mt-1">

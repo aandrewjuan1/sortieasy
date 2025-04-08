@@ -39,7 +39,6 @@ class Products extends Component
         $isSameSortColumn = $this->sortBy === $sortByField;
         $this->sortBy = $sortByField;
         $this->sortDir = $isSameSortColumn ? ($this->sortDir == "ASC" ? 'DESC' : 'ASC') : 'DESC';
-
         $this->clearCurrentPageCache();
     }
 
@@ -61,16 +60,16 @@ class Products extends Component
             'sortBy',
             'sortDir',
         ]);
-
+        $this->resetPage();
         $this->clearCurrentPageCache();
     }
 
     #[Computed()]
     public function products()
     {
-        $cacheKey = $this->generateProductsCacheKey();
+        $cacheKey = $this->getProductsCacheKey();
 
-        return Cache::remember($cacheKey, 300, function() {
+        return Cache::remember($cacheKey, now()->addMinutes(30), function() {
             return Product::withSupplier()
                     ->search($this->search)
                     ->categoryFilter($this->categoryFilter)
@@ -80,29 +79,30 @@ class Products extends Component
         });
     }
 
-    #[On('product-deleted')]
-    #[On('product-updated')]
-    #[On('product-added')]
-    public function reRender()
-    {
-        $this->clearCurrentPageCache();
-    }
-
-    // Helper methods for cache key generation
-    protected function generateProductsCacheKey(): string
+    protected function getProductsCacheKey(): string
     {
         return sprintf(
-            'products_page_%s_%s_%s_%s_%s',
+            'products:page:%d:per_page:%d:sort:%s:dir:%s:search:%s:category:%s:stock:%s',
             $this->getPage(),
             $this->perPage,
+            $this->sortBy,
+            $this->sortDir,
             md5($this->search),
-            $this->categoryFilter,
-            $this->stockFilter
+            md5($this->categoryFilter),
+            md5($this->stockFilter)
         );
     }
 
     protected function clearCurrentPageCache(): void
     {
-        Cache::forget($this->generateProductsCacheKey());
+        Cache::forget($this->getProductsCacheKey());
+    }
+
+    #[On('product-deleted')]
+    #[On('product-updated')]
+    #[On('product-added')]
+    public function clearCache()
+    {
+        $this->clearCurrentPageCache();
     }
 }

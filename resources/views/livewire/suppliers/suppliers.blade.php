@@ -84,18 +84,7 @@
                             </button>
                         </th>
 
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider dark:text-zinc-300">
-                            <div class="flex items-center">
-                                <span>Products Supplied</span>
-                                @if($productFilter)
-                                    <button wire:click="$set('productFilter', '')" class="ml-2 text-red-500 hover:text-red-700">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
-                                        </svg>
-                                    </button>
-                                @endif
-                            </div>
-                        </th>
+
 
                         {{-- Contact Email Column --}}
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider dark:text-zinc-300" wire:click="setSortBy('contact_email')">
@@ -115,6 +104,12 @@
                         {{-- Address Column --}}
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider dark:text-zinc-300">
                             <span>Address</span>
+                        </th>
+
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider dark:text-zinc-300">
+                            <div class="flex items-center">
+                                <span>Products Supplied</span>
+                            </div>
                         </th>
 
                         {{-- Created At Column --}}
@@ -148,6 +143,25 @@
                                 </flux:modal.trigger>
                             </td>
 
+                            {{-- Email --}}
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-zinc-500 dark:text-zinc-300">
+                                <a href="mailto:{{ $supplier->contact_email }}" class="text-blue-600 hover:underline">
+                                    {{ $supplier->contact_email }}
+                                </a>
+                            </td>
+
+                            {{-- Phone --}}
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-zinc-500 dark:text-zinc-300">
+                                <a href="tel:{{ $supplier->contact_phone }}" class="hover:underline">
+                                    {{ $supplier->contact_phone }}
+                                </a>
+                            </td>
+
+                            {{-- Address --}}
+                            <td class="px-6 py-4 text-sm text-zinc-500 dark:text-zinc-300">
+                                {{ Str::limit($supplier->address, 30) }}
+                            </td>
+
                             <!-- Products Cell -->
                             <td class="px-6 py-4 text-sm text-zinc-500 dark:text-zinc-300">
                                 @if($supplier->products->count() > 0)
@@ -167,25 +181,6 @@
                                 <div class="mt-1 text-xs text-zinc-400">
                                     Total: {{ $supplier->products->count() }}
                                 </div>
-                            </td>
-
-                            {{-- Email --}}
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-zinc-500 dark:text-zinc-300">
-                                <a href="mailto:{{ $supplier->contact_email }}" class="text-blue-600 hover:underline">
-                                    {{ $supplier->contact_email }}
-                                </a>
-                            </td>
-
-                            {{-- Phone --}}
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-zinc-500 dark:text-zinc-300">
-                                <a href="tel:{{ $supplier->contact_phone }}" class="hover:underline">
-                                    {{ $supplier->contact_phone }}
-                                </a>
-                            </td>
-
-                            {{-- Address --}}
-                            <td class="px-6 py-4 text-sm text-zinc-500 dark:text-zinc-300">
-                                {{ Str::limit($supplier->address, 30) }}
                             </td>
 
                             {{-- Created At --}}
@@ -233,13 +228,9 @@
             {{ $this->suppliers->links() }}
         </div>
     </div>
-
-    {{-- <flux:modal name="show-supplier" maxWidth="2xl">
-        <livewire:suppliers.show-supplier />
-    </flux:modal>
-
+{{--
     <flux:modal name="add-supplier" maxWidth="2xl">
-        <livewire:suppliers.add-supplier />
+      e:suppliers.add-supplier />
     </flux:modal>
 
     <flux:modal name="edit-supplier" maxWidth="2xl">

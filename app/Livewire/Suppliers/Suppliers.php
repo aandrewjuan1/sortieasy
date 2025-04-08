@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire;
+namespace App\Livewire\Suppliers;
 
 use App\Models\Supplier;
 use Livewire\Component;
@@ -36,7 +36,6 @@ class Suppliers extends Component
         $isSameSortColumn = $this->sortBy === $sortByField;
         $this->sortBy = $sortByField;
         $this->sortDir = $isSameSortColumn ? ($this->sortDir == "ASC" ? 'DESC' : 'ASC') : 'DESC';
-
         $this->clearCurrentPageCache();
     }
 
@@ -57,16 +56,16 @@ class Suppliers extends Component
             'sortDir',
             'productFilter',
         ]);
-
+        $this->resetPage();
         $this->clearCurrentPageCache();
     }
 
     #[Computed()]
     public function suppliers()
     {
-        $cacheKey = $this->generateSuppliersCacheKey();
+        $cacheKey = $this->getSuppliersCacheKey();
 
-        return Cache::remember($cacheKey, 300, function() {
+        return Cache::remember($cacheKey, now()->addMinutes(30), function() {
             return Supplier::with(['products' => function($query) {
                         $query->select('id', 'name', 'supplier_id');
                     }])
@@ -81,23 +80,14 @@ class Suppliers extends Component
         });
     }
 
-    #[On('supplier-deleted')]
-    #[On('supplier-updated')]
-    #[On('supplier-added')]
-    #[On('product-deleted')]
-    #[On('product-updated')]
-    #[On('product-added')]
-    public function reRender()
-    {
-        $this->clearCurrentPageCache();
-    }
-
-    protected function generateSuppliersCacheKey(): string
+    protected function getSuppliersCacheKey(): string
     {
         return sprintf(
-            'suppliers_page_%s_%s_%s_%s',
+            'suppliers:page:%d:per_page:%d:sort:%s:dir:%s:search:%s:product:%s',
             $this->getPage(),
             $this->perPage,
+            $this->sortBy,
+            $this->sortDir,
             md5($this->search),
             md5($this->productFilter)
         );
@@ -105,6 +95,17 @@ class Suppliers extends Component
 
     protected function clearCurrentPageCache(): void
     {
-        Cache::forget($this->generateSuppliersCacheKey());
+        Cache::forget($this->getSuppliersCacheKey());
+    }
+
+    #[On('supplier-deleted')]
+    #[On('supplier-updated')]
+    #[On('supplier-added')]
+    #[On('product-deleted')]
+    #[On('product-updated')]
+    #[On('product-added')]
+    public function clearCache()
+    {
+        $this->clearCurrentPageCache();
     }
 }

@@ -6,7 +6,7 @@ use App\Livewire\Settings\Profile;
 use App\Livewire\Settings\Password;
 use App\Livewire\Inventory\Products;
 use App\Livewire\Settings\Appearance;
-use App\Livewire\Suppliers;
+use App\Livewire\Suppliers\Suppliers;
 use Illuminate\Support\Facades\Route;
 use App\Livewire\Dashboard\SaleSummary;
 use App\Livewire\Dashboard\AlertSummary;
