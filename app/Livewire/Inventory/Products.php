@@ -35,7 +35,7 @@ class Products extends Component
     #[Url(history: true)]
     public $stockFilter = '';
 
-    #[Computed]
+    #[Computed(cache: true, key: 'product_categories')]
     public function categories()
     {
         return Product::select('category')
@@ -46,16 +46,17 @@ class Products extends Component
 
     public function setSortBy($sortByField)
     {
-        if ($this->sortBy === $sortByField) {
-            $this->sortDir = ($this->sortDir == "ASC") ? 'DESC' : "ASC";
-            Cache::forget('products');
-            return;
-        }
+        // Check if the sort column is the same as the one clicked
+        $isSameSortColumn = $this->sortBy === $sortByField;
 
+        // If it's the same column, toggle the direction; otherwise, set the new column with default direction
         $this->sortBy = $sortByField;
-        $this->sortDir = 'DESC';
+        $this->sortDir = $isSameSortColumn ? ($this->sortDir == "ASC" ? 'DESC' : 'ASC') : 'DESC';
+
+        // Clear the cache once, after sorting logic
         Cache::forget('products');
     }
+
 
     public function updated($property)
     {
@@ -76,10 +77,6 @@ class Products extends Component
             'sortDir',
         ]);
 
-        // Optionally reset to defaults
-        $this->perPage = 10;
-        $this->sortBy = 'created_at';
-        $this->sortDir = 'DESC';
         Cache::forget('products');
     }
 
@@ -99,6 +96,7 @@ class Products extends Component
     #[On('product-added')]
     public function reRender()
     {
+        Cache::forget('product_categories');
         Cache::forget('products');
     }
 }
