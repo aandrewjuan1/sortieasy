@@ -10,6 +10,7 @@ use Livewire\WithPagination;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Computed;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 
 #[Title('Products')]
 class Products extends Component
@@ -47,22 +48,42 @@ class Products extends Component
     {
         if ($this->sortBy === $sortByField) {
             $this->sortDir = ($this->sortDir == "ASC") ? 'DESC' : "ASC";
+            Cache::forget('products');
             return;
         }
 
         $this->sortBy = $sortByField;
         $this->sortDir = 'DESC';
+        Cache::forget('products');
     }
-
 
     public function updated($property)
     {
         if (in_array($property, ['search', 'categoryFilter', 'stockFilter', 'perPage'])) {
+            Cache::forget('products');
             $this->resetPage();
         }
     }
 
-    #[Computed]
+    public function clearAllFilters()
+    {
+        $this->reset([
+            'search',
+            'categoryFilter',
+            'stockFilter',
+            'perPage',
+            'sortBy',
+            'sortDir',
+        ]);
+
+        // Optionally reset to defaults
+        $this->perPage = 10;
+        $this->sortBy = 'created_at';
+        $this->sortDir = 'DESC';
+        Cache::forget('products');
+    }
+
+    #[Computed(cache: true, key: 'products')]
     public function products()
     {
         return Product::withSupplier()
@@ -76,8 +97,8 @@ class Products extends Component
     #[On('product-deleted')]
     #[On('product-updated')]
     #[On('product-added')]
-    public function render()
+    public function reRender()
     {
-        return view('livewire.inventory.products');
+        Cache::forget('products');
     }
 }

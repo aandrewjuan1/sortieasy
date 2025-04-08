@@ -9,13 +9,43 @@
         @endif
         <h1 class="text-2xl font-bold dark:text-white">Products</h1>
 
-        <div class="flex flex-col md:flex-row gap-4 w-full md:w-auto">
+        <div class="flex flex-col items-center md:flex-row gap-4 w-full md:w-auto">
+            <div class="text-sm text-zinc-600 dark:text-zinc-300">
+                <span>Filtering by:</span>
+
+                @php
+                    $hasFilters = $search || $categoryFilter || $stockFilter;
+                @endphp
+
+                @if($hasFilters)
+                    <ul class="inline-block ml-2 space-x-3">
+                        @if($search)
+                            <li class="inline">Search: <strong>"{{ $search }}"</strong></li>
+                        @endif
+                        @if($categoryFilter)
+                            <li class="inline">Category: <strong>{{ $categoryFilter }}</strong></li>
+                        @endif
+                        @if($stockFilter)
+                            <li class="inline">Stock: <strong>{{ $stockFilter }}</strong></li>
+                        @endif
+                    </ul>
+                    <button
+                        wire:click="clearAllFilters"
+                        class="ml-4 text-blue-600 hover:underline"
+                    >
+                        Clear All Filters
+                    </button>
+                @else
+                    <span class="ml-2 text-zinc-500 dark:text-zinc-400">None</span>
+                @endif
+            </div>
+
             {{-- Search --}}
             <div class="relative w-full md:w-64">
                 <input
                     type="text"
                     wire:model.live.debounce.300ms="search"
-                    placeholder="Search products..."
+                    placeholder="Search products, categories, etc..."
                     class="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white"
                 >
                 <div class="absolute left-3 top-2.5 text-zinc-400">
@@ -24,16 +54,6 @@
                     </svg>
                 </div>
             </div>
-
-
-
-            {{-- Category Filter --}}
-            <select wire:model.live="categoryFilter" class="w-full md:w-40 border rounded-lg px-3 py-2 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white">
-                <option value="">All Categories</option>
-                @foreach($this->categories as $category)
-                    <option value="{{ $category }}">{{ $category }}</option>
-                @endforeach
-            </select>
 
             {{-- Per Page --}}
             <select wire:model.live="perPage"
@@ -93,20 +113,18 @@
                         </th>
 
                         {{-- Quantity Column --}}
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider dark:text-zinc-300">
-                            <div class="flex items-center">
-                                <button wire:click="setSortBy('quantity_in_stock')" class="uppercase">
-                                    @include('livewire.includes.table-sortable-th', [
-                                        'name' => 'quantity_in_stock',
-                                        'displayName' => 'Quantity'
-                                    ])
-                                </button>
-                                <select wire:model.live="stockFilter" class="ml-2 text-xs border rounded bg-transparent">
-                                    <option value="">All</option>
-                                    <option value="low">Low</option>
-                                    <option value="critical">Critical</option>
-                                </select>
-                            </div>
+                        <th scopetems-centerpx- class="flex row items-center px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider dark:text-zinc-300">
+                            <button class="flex items-center uppercase"  wire:click="setSortBy('quantity_in_stock')">
+                                @include('livewire.includes.table-sortable-th', [
+                                    'name' => 'quantity_in_stock',
+                                    'displayName' => 'Quantity'
+                                ])
+                            </button>
+                            <select wire:model.live="stockFilter" class="ml-2 text-sm border rounded bg-transparent">
+                                <option value="">All</option>
+                                <option value="low">Low</option>
+                                <option value="critical">Critical</option>
+                            </select>
                         </th>
 
                         {{-- Last Restocked Column --}}
@@ -153,9 +171,13 @@
 
                                 {{-- Category --}}
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-zinc-500 dark:text-zinc-300">
-                                    <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs dark:bg-blue-900 dark:text-blue-200">
+                                    <button
+
+                                        wire:click="$set('categoryFilter', '{{ $product->category }}')"
+                                        class="cursor-pointer px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs dark:bg-blue-900 dark:text-blue-200 hover:underline"
+                                    >
                                         {{ $product->category }}
-                                    </span>
+                                    </button>
                                 </td>
 
                                 {{-- SKU --}}

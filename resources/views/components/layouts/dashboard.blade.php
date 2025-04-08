@@ -39,7 +39,7 @@
                 :href="route('dashboard.alert-summary')"
                 wire:navigate
                 :active="request()->routeIs('dashboard.alert-summary')">
-                Alerts Summary
+                Alert Summary
             </flux:navbar.item>
         </flux:navbar>
     </flux:header>

@@ -5,7 +5,7 @@
             <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-green-600 dark:text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
             </svg>
-            <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-200">Sales Summary</h2>
+            <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-200">Sale Summary</h2>
         </div>
         <div class="flex items-center gap-3 bg-gray-100 dark:bg-zinc-700 px-3 py-2 rounded-lg">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500 dark:text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -59,57 +59,6 @@
             </p>
         </div>
     </div>
-
-    <!-- Recent Sales Table -->
-    <div class="bg-white dark:bg-zinc-800 mb-6 border border-gray-200 dark:border-zinc-700 rounded-lg shadow p-6">
-        <div class="flex items-center gap-3 mb-4">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-indigo-600 dark:text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 12H5" />
-            </svg>
-            <h3 class="font-semibold text-gray-800 dark:text-gray-200">Recent Sales</h3>
-        </div>
-
-        <div class="overflow-x-auto">
-            <table class="min-w-full table-auto text-sm text-gray-700 dark:text-gray-300">
-                <thead class="text-xs uppercase bg-gray-100 dark:bg-zinc-700 text-gray-600 dark:text-gray-300">
-                    <tr>
-                        <th class="px-4 py-2 text-left">Product</th>
-                        <th class="px-4 py-2 text-left">User</th>
-                        <th class="px-4 py-2 text-left">Quantity</th>
-                        <th class="px-4 py-2 text-left">Unit Price</th>
-                        <th class="px-4 py-2 text-left">Total Price</th>
-                        <th class="px-4 py-2 text-left">Channel</th>
-                        <th class="px-4 py-2 text-left">Sale Date</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($this->recentSales as $sale)
-                        <tr class="border-b border-gray-200 dark:border-zinc-600">
-                            <td class="px-4 py-2">{{ $sale->product->name }}</td>
-                            <td class="px-4 py-2">{{ $sale->user ? $sale->user->name : 'N/A' }}</td>
-                            <td class="px-4 py-2">{{ $sale->quantity }}</td>
-                            <td class="px-4 py-2">${{ number_format($sale->unit_price, 2) }}</td>
-                            <td class="px-4 py-2">${{ number_format($sale->total_price, 2) }}</td>
-
-                            <!-- Channel with dynamic styles based on SaleChannel Enum -->
-                            <td class="px-4 py-2">
-                                <span class="inline-flex items-center px-2 py-1 rounded-full {{ App\Enums\SaleChannel::getBgColor($sale->channel->value) }} {{ App\Enums\SaleChannel::getDarkModeColor($sale->channel->value) }}">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 {{ App\Enums\SaleChannel::getTextColor($sale->channel->value) }}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                    </svg>
-                                    <span class="ml-2">{{ App\Enums\SaleChannel::getLabel($sale->channel->value) }}</span>
-                                </span>
-                            </td>
-
-                            <td class="px-4 py-2">{{ $sale->sale_date->format('M d, Y') }}</td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-
 
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         <!-- Revenue by Channel -->
@@ -168,6 +117,55 @@
                 </div>
                 @endforeach
             </div>
+        </div>
+    </div>
+
+     <!-- Recent Sales Table -->
+     <div class="bg-white dark:bg-zinc-800 mb-6 border border-gray-200 dark:border-zinc-700 rounded-lg shadow p-6">
+        <div class="flex items-center gap-3 mb-4">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-indigo-600 dark:text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 12H5" />
+            </svg>
+            <h3 class="font-semibold text-gray-800 dark:text-gray-200">Recent Sales</h3>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="min-w-full table-auto text-sm text-gray-700 dark:text-gray-300">
+                <thead class="text-xs uppercase bg-gray-100 dark:bg-zinc-700 text-gray-600 dark:text-gray-300">
+                    <tr>
+                        <th class="px-4 py-2 text-left">Product</th>
+                        <th class="px-4 py-2 text-left">User</th>
+                        <th class="px-4 py-2 text-left">Quantity</th>
+                        <th class="px-4 py-2 text-left">Unit Price</th>
+                        <th class="px-4 py-2 text-left">Total Price</th>
+                        <th class="px-4 py-2 text-left">Channel</th>
+                        <th class="px-4 py-2 text-left">Sale Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($this->recentSales as $sale)
+                        <tr class="border-b border-gray-200 dark:border-zinc-600">
+                            <td class="px-4 py-2">{{ $sale->product->name }}</td>
+                            <td class="px-4 py-2">{{ $sale->user ? $sale->user->name : 'N/A' }}</td>
+                            <td class="px-4 py-2">{{ $sale->quantity }}</td>
+                            <td class="px-4 py-2">${{ number_format($sale->unit_price, 2) }}</td>
+                            <td class="px-4 py-2">${{ number_format($sale->total_price, 2) }}</td>
+
+                            <!-- Channel with dynamic styles based on SaleChannel Enum -->
+                            <td class="px-4 py-2">
+                                <span class="inline-flex items-center px-2 py-1 rounded-full {{ App\Enums\SaleChannel::getBgColor($sale->channel->value) }} {{ App\Enums\SaleChannel::getDarkModeColor($sale->channel->value) }}">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 {{ App\Enums\SaleChannel::getTextColor($sale->channel->value) }}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    <span class="ml-2">{{ App\Enums\SaleChannel::getLabel($sale->channel->value) }}</span>
+                                </span>
+                            </td>
+
+                            <td class="px-4 py-2">{{ $sale->sale_date->format('M d, Y') }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
         </div>
     </div>
 </div>

@@ -69,7 +69,7 @@ class ProductFactory extends Factory
             'reorder_threshold' => $reorderThreshold,
             'safety_stock' => $safetyStock,
             'last_restocked' => $this->faker->date(),
-            'supplier_id' => Supplier::factory(),  // Assuming you have a Supplier model
+            'supplier_id' => Supplier::inRandomOrder()->first()->id,  // Assuming you have a Supplier model
             'created_at' => now(),
             'updated_at' => now(),
         ];

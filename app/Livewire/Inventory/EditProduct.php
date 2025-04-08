@@ -11,6 +11,7 @@ use Livewire\Attributes\Validate;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\Renderless;
+use Illuminate\Support\Facades\Cache;
 
 class EditProduct extends Component
 {
