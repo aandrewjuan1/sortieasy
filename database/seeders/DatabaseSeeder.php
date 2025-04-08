@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Sale;
 use App\Models\User;
 use App\Models\Alert;
 use App\Models\Product;
@@ -75,5 +76,7 @@ class DatabaseSeeder extends Seeder
 
         // Create some delivered logistics
         Logistic::factory()->count(10)->delivered()->create();
+
+        Sale::factory()->count(50)->create();
     }
 }

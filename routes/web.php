@@ -1,5 +1,6 @@
 <?php
 
+use App\Livewire\Dashboard\SaleSummary;
 use App\Livewire\Logistics;
 use App\Livewire\Suppliers;
 use App\Livewire\Transactions;
@@ -22,6 +23,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('dashboard/product-summary', ProductSummary::class)->name('dashboard.product-summary');
     Route::get('dashboard/supplier-overview', SupplierOverview::class)->name('dashboard.supplier-overview');
     Route::get('dashboard/transaction-summary', TransactionSummary::class)->name('dashboard.transaction-summary');
+    Route::get('dashboard/sale-summary', SaleSummary::class)->name('dashboard.sale-summary');
     Route::get('dashboard/alert-summary', AlertSummary::class)->name('dashboard.alert-summary');
 
     Route::get('suppliers', Suppliers::class)->name('suppliers');

@@ -16,7 +16,7 @@ class TransactionSummary extends Component
     public int $daysToShow = 30;
     public int $recentTransactionsLimit = 10;
 
-    #[Computed(persist: true, seconds: 3600)]
+    #[Computed]
     public function recentTransactions(): Collection
     {
         return Transaction::with(['product', 'user'])
@@ -119,10 +119,5 @@ class TransactionSummary extends Component
     public function transactionTypes(): array
     {
         return array_map(fn($case) => $case->value, TransactionType::cases());
-    }
-
-    public function render()
-    {
-        return view('livewire.dashboard.transaction-summary');
     }
 }

@@ -88,6 +88,11 @@ class Product extends Model
         return $this->belongsTo(Supplier::class);
     }
 
+    public function sales()
+    {
+        return $this->hasMany(Sale::class);
+    }
+
     public function transactions()
     {
         return $this->hasMany(Transaction::class);

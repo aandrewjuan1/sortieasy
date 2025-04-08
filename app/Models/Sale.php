@@ -16,5 +16,16 @@ class Sale extends Model
 
     protected $casts = [
         'channel' => SaleChannel::class, // Casting 'channel' to SaleChannel enum
+        'sale_date' => 'datetime',
     ];
+
+    public function product()
+    {
+        return $this->belongsTo(Product::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

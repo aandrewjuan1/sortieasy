@@ -60,6 +60,11 @@ class User extends Authenticatable
             ->implode('');
     }
 
+    public function sales()
+    {
+        return $this->hasMany(Sale::class);
+    }
+
     public function transactions()
     {
         return $this->hasMany(Transaction::class, 'created_by');
