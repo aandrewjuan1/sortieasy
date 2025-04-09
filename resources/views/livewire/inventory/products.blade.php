@@ -273,7 +273,7 @@
 
                                         <flux:modal.trigger name="edit-stocks">
                                             <flux:tooltip content="Edit stocks">
-                                                <flux:button size="sm" variant="ghost" wire:click="$dispatch('edit-stocks', { productId: {{ $product->id }} })" icon="plus" />
+                                                <flux:button size="sm" variant="ghost" wire:click="$dispatch('edit-stocks', { productId: {{ $product->id }} })" icon="archive-box-arrow-down" />
                                             </flux:tooltip>
                                         </flux:modal.trigger>
                                     </div>

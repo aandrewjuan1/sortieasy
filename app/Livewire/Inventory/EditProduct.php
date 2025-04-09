@@ -5,11 +5,13 @@ namespace App\Livewire\Inventory;
 use App\Models\Product;
 use Livewire\Component;
 use App\Models\Supplier;
+use App\Models\Transaction;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Validate;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 
 class EditProduct extends Component
@@ -83,8 +85,6 @@ class EditProduct extends Component
             ->where('id', '!=', $this->product->id) // Exclude the current product
             ->first();
 
-
-
         if ($existingProduct) {
             $this->addError('sku', 'The SKU must be unique.');
             return;
@@ -95,6 +95,19 @@ class EditProduct extends Component
 
             // Check if the stock has been updated
             if ($this->product->quantity_in_stock != $this->quantity_in_stock) {
+                // If the new stock quantity is greater than the old stock quantity, add a purchase transaction
+                if ($this->quantity_in_stock > $this->product->quantity_in_stock) {
+                    // Record the purchase transaction (restocking)
+                    Transaction::create([
+                        'product_id' => $this->product->id,
+                        'type' => 'purchase', // Type is 'purchase' for restocking
+                        'quantity' => $this->quantity_in_stock - $this->product->quantity_in_stock, // Calculate quantity change
+                        'created_by' => Auth::id(), // Use the currently authenticated user
+                        'notes' => 'Restocking from supplier', // You can add more details if needed
+                    ]);
+                }
+
+                // Update last restocked timestamp if quantity has changed
                 $validated['last_restocked'] = now();
             }
 
@@ -112,6 +125,7 @@ class EditProduct extends Component
                 message: 'Product updated successfully!'
             );
 
+            Cache::forget('transactions:page:1:per_page:10:sort:created_at:dir:DESC:search::type::date:');
             Cache::forget('suppliers:page:1:per_page:10:sort:created_at:dir:DESC:search::product:');
         } catch (\Exception $e) {
             DB::rollBack();
