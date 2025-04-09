@@ -98,11 +98,11 @@ class Suppliers extends Component
         Cache::forget($this->getSuppliersCacheKey());
     }
 
-    #[On('supplier-deleted')]
     #[On('supplier-updated')]
     #[On('supplier-added')]
+    #[On('supplier-deleted')]
     public function clearCache()
     {
-        $this->clearCurrentPageCache();
+        Cache::forget($this->getSuppliersCacheKey());
     }
 }

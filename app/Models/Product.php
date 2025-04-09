@@ -67,11 +67,6 @@ class Product extends Model
         };
     }
 
-    public function scopeWithSupplier(Builder $query)
-    {
-        return $query->with('supplier');
-    }
-
     // In your Product model
     public function scopeOrderByField($query, $field, $direction)
     {
@@ -80,6 +75,30 @@ class Product extends Model
         $field = in_array($field, $validFields) ? $field : 'created_at';
 
         return $query->orderBy($field, $direction);
+    }
+
+    public function scopeSupplierFilter($query, $supplierName)
+    {
+        if ($supplierName) {
+            if ($supplierName === 'None') {
+                // Filter for products with no supplier (null supplier_id)
+                return $query->whereNull('supplier_id');
+            }
+
+            // Otherwise, filter products by supplier name
+            return $query->whereHas('supplier', function($query) use ($supplierName) {
+                $query->where('name', 'like', '%' . $supplierName . '%');
+            });
+        }
+
+        return $query;
+    }
+
+    public function scopeWithSupplier($query)
+    {
+        return $query->with(['supplier' => function($query) {
+            $query->select('id', 'name');  // Select only the columns you need from the supplier
+        }]);
     }
 
 

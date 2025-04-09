@@ -30,6 +30,8 @@ class Products extends Component
 
     #[Url(history: true)]
     public $categoryFilter = '';
+    #[Url(history: true)]
+    public $supplierFilter = '';
 
     #[Url(history: true)]
     public $stockFilter = '';
@@ -44,7 +46,7 @@ class Products extends Component
 
     public function updated($property)
     {
-        if (in_array($property, ['search', 'categoryFilter', 'stockFilter', 'perPage'])) {
+        if (in_array($property, ['search', 'categoryFilter', 'supplierFilter', 'stockFilter', 'perPage'])) {
             $this->clearCurrentPageCache();
             $this->resetPage();
         }
@@ -55,6 +57,7 @@ class Products extends Component
         $this->reset([
             'search',
             'categoryFilter',
+            'supplierFilter',
             'stockFilter',
             'perPage',
             'sortBy',
@@ -70,12 +73,13 @@ class Products extends Component
         $cacheKey = $this->getProductsCacheKey();
 
         return Cache::remember($cacheKey, now()->addMinutes(30), function() {
-            return Product::withSupplier()
-                    ->search($this->search)
-                    ->categoryFilter($this->categoryFilter)
-                    ->stockFilter($this->stockFilter)
-                    ->orderByField($this->sortBy, $this->sortDir)
-                    ->paginate($this->perPage);
+            return Product::withSupplier()  // Eager load supplier and select name
+                ->search($this->search)
+                ->categoryFilter($this->categoryFilter)
+                ->stockFilter($this->stockFilter)
+                ->supplierFilter($this->supplierFilter)  // Apply supplier filter
+                ->orderByField($this->sortBy, $this->sortDir)
+                ->paginate($this->perPage);
         });
     }
 
@@ -89,6 +93,7 @@ class Products extends Component
             $this->sortDir,
             $this->search,
             $this->categoryFilter,
+            $this->supplierFilter,
             $this->stockFilter
         );
     }

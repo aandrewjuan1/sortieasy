@@ -69,6 +69,8 @@
         </div>
     </div>
 
+
+
     <div class="bg-white rounded-lg shadow overflow-hidden dark:bg-zinc-800">
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-zinc-200 dark:divide-zinc-700">
@@ -83,8 +85,6 @@
                                 ])
                             </button>
                         </th>
-
-
 
                         {{-- Contact Email Column --}}
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider dark:text-zinc-300" wire:click="setSortBy('contact_email')">
@@ -198,6 +198,7 @@
                                             </flux:tooltip>
                                         </flux:modal.trigger>
                                     @endcan
+
                                 </div>
                             </td>
                         </tr>
@@ -224,8 +225,4 @@
     <flux:modal name="edit-supplier" maxWidth="2xl">
         <livewire:suppliers.edit-supplier />
     </flux:modal>
-
-    {{-- <flux:modal name="delete-supplier" maxWidth="md">
-        <livewire:suppliers.delete-supplier />
-    </flux:modal>  --}}
 </div>

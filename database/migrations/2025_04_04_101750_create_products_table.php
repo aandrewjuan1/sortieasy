@@ -23,7 +23,7 @@ return new class extends Migration
             $table->integer('reorder_threshold')->default(10);
             $table->integer('safety_stock')->default(5); // Added recommendation
             $table->date('last_restocked')->nullable(); // Added recommendation
-            $table->foreignId('supplier_id')->constrained()->onDelete('set null');
+            $table->foreignId('supplier_id')->nullable()->constrained()->onDelete('set null');
             $table->timestamps();
 
             $table->index('sku'); // For faster lookups

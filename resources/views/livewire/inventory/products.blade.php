@@ -25,6 +25,9 @@
                         @if($categoryFilter)
                             <li class="inline">Category: <strong>{{ $categoryFilter }}</strong></li>
                         @endif
+                        @if($supplierFilter)
+                            <li class="inline">Supplier: <strong>{{ $supplierFilter }}</strong></li>
+                        @endif
                         @if($stockFilter)
                             <li class="inline">Stock: <strong>{{ $stockFilter }}</strong></li>
                         @endif
@@ -90,6 +93,11 @@
                         {{-- Category Column --}}
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider dark:text-zinc-300">
                             <span>Category</span>
+                        </th>
+
+                        {{-- Supplier Column --}}
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider dark:text-zinc-300">
+                            <span>Supplier</span>
                         </th>
 
                         {{-- SKU Column --}}
@@ -177,6 +185,17 @@
                                         class="cursor-pointer px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors"
                                     >
                                         {{ $product->category }}
+                                    </button>
+                                </td>
+
+                                {{-- Supplier --}}
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-zinc-500 dark:text-zinc-300">
+                                    <button
+                                        x-cloak
+                                        wire:click="$set('supplierFilter', '{{ $product->supplier ? $product->supplier->name : 'None' }}')"
+                                        class="cursor-pointer px-2 py-1 text-xs rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 hover:bg-green-200 dark:hover:bg-green-800 transition-colors"
+                                    >
+                                        {{ $product->supplier ? $product->supplier->name : 'None' }}
                                     </button>
                                 </td>
 

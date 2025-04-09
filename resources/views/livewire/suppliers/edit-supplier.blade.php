@@ -59,17 +59,29 @@
             </flux:field>
         </div>
 
-        <div class="mt-6 flex justify-end gap-4">
-            <flux:modal.close>
-                <flux:button variant="ghost">Cancel</flux:button>
-            </flux:modal.close>
-            <flux:button
-                type="submit"
-                variant="primary"
-                wire:loading.attr="disabled"
-            >
-                Update Supplier
-            </flux:button>
+        <div class="mt-6 flex items-center justify-between">
+            @can('delete', $supplier)
+                <flux:modal.trigger name="delete-supplier">
+                    <flux:tooltip content="Delete supplier">
+                        <flux:button size="sm" icon="trash" variant="ghost"/>
+                    </flux:tooltip>
+                </flux:modal.trigger>
+            @endcan
+            <flux:modal name="delete-supplier" class="min-w-[22rem]">
+                <x-delete-confirm-modal subject="supplier"/>
+            </flux:modal>
+            <div class="flex justify-end gap-4">
+                <flux:modal.close>
+                    <flux:button variant="ghost">Cancel</flux:button>
+                </flux:modal.close>
+                <flux:button
+                    type="submit"
+                    variant="primary"
+                    wire:loading.attr="disabled"
+                >
+                    Update Supplier
+                </flux:button>
+            </div>
         </div>
     </form>
 </div>

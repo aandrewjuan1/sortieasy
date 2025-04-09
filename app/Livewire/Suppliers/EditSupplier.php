@@ -8,6 +8,7 @@ use Livewire\Attributes\On;
 use Livewire\Attributes\Validate;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Livewire\Attributes\Renderless;
 use Illuminate\Support\Facades\Cache;
 
 class EditSupplier extends Component
@@ -32,6 +33,22 @@ class EditSupplier extends Component
         $this->supplier = Supplier::where('id', $supplierId)->first();
         $this->fillInputs($this->supplier);
         $this->resetValidation();
+    }
+
+    #[Renderless]
+    public function delete()
+    {
+        $this->authorize('delete', $this->supplier);
+
+        $this->supplier->delete();
+
+        $this->dispatch('modal-close', name: 'delete-supplier');
+        $this->dispatch('modal-close', name: 'edit-supplier');
+        $this->dispatch('supplier-deleted');
+        $this->dispatch('notify',
+            type: 'success',
+            message: 'Supplier deleted successfully!'
+        );
     }
 
     public function update()

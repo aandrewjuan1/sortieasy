@@ -118,22 +118,7 @@
             </div>
 
             <flux:modal name="delete-product" class="min-w-[22rem]">
-                <div class="space-y-6">
-                    <div>
-                        <flux:heading size="lg" class="text-gray-900 dark:text-zinc-100">Delete product?</flux:heading>
-                        <flux:text class="mt-2 text-gray-700 dark:text-zinc-300">
-                            <p>You're about to delete this product.</p>
-                            <p>This action cannot be reversed.</p>
-                        </flux:text>
-                    </div>
-                    <div class="flex gap-2">
-                        <flux:spacer />
-                        <flux:modal.close>
-                            <flux:button variant="ghost">Cancel</flux:button>
-                        </flux:modal.close>
-                        <flux:button type="submit" wire:click="delete()" variant="danger">Delete</flux:button>
-                    </div>
-                </div>
+                <x-delete-confirm-modal subject="product"/>
             </flux:modal>
         @else
             <div class="bg-white dark:bg-zinc-800 p-6 rounded-lg shadow-md text-center">

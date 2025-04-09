@@ -31,11 +31,6 @@ class ShowProduct extends Component
     #[Renderless]
     public function delete()
     {
-        if (!$this->product) {
-            session()->flash('error', 'Product not found.');
-            return;
-        }
-
         $this->authorize('delete', $this->product);
 
         $this->product->delete();
