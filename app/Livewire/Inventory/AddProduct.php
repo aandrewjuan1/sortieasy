@@ -7,6 +7,7 @@ use Livewire\Component;
 use App\Models\Supplier;
 use App\Models\Transaction;
 use Illuminate\Support\Str;
+use Livewire\Attributes\On;
 use Livewire\Attributes\Validate;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -114,7 +115,6 @@ class AddProduct extends Component
             }
         }
     }
-
 
     public function render()
     {

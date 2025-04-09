@@ -52,6 +52,7 @@ class EditStocks extends Component
                     'created_by' => Auth::id(), // Use the currently authenticated user
                     'notes' => 'Restocking from supplier', // You can add more details if needed
                 ]);
+                Cache::forget('transactions:page:1:per_page:10:sort:created_at:dir:DESC:search::type::date:');
             }
 
             $this->product->update([
@@ -69,7 +70,6 @@ class EditStocks extends Component
                 type: 'success',
                 message: 'Stock updated successfully!'
             );
-            Cache::forget('transactions:page:1:per_page:10:sort:created_at:dir:DESC:search::type::date:');
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Stock update failed: ' . $e->getMessage());

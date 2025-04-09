@@ -1,5 +1,5 @@
 <div class="relative" wire:loading.class="opacity-50">
-    <form wire:submit="updateProduct">
+    <form wire:submit="updateProduct" class="p-6">
         <div class="mb-6 flex items-center justify-between pr-8">
             <flux:heading size="xl">Edit Product</flux:heading>
             <div wire:loading>
@@ -7,114 +7,168 @@
             </div>
         </div>
 
-        <div class="space-y-4">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <!-- Left Column -->
-                <div class="space-y-4">
-                    <flux:input
-                        label="Product Name"
-                        wire:model="name"
-                        wire:loading.attr="disabled"
-                        placeholder="Enter product name"
-                    />
+        <div class="space-y-6">
+            <!-- Name -->
+            <flux:field>
+                <flux:label badge="Required">Product Name</flux:label>
+                <flux:input
+                    wire:model="name"
+                    placeholder="Enter product name"
+                    wire:loading.attr="disabled"
+                    required
+                />
+                <flux:error name="name" />
+            </flux:field>
 
+            <!-- Category -->
+            <flux:field>
+                <flux:label badge="Required">Category</flux:label>
+                <div>
                     <flux:input
-                        label="Category"
                         wire:model="category"
+                        placeholder="Select category"
+                        list="categories"
                         wire:loading.attr="disabled"
-                        placeholder="Enter category"
+                        required
                     />
+                    <datalist id="categories">
+                        @foreach($categories as $category)
+                            <option value="{{ $category }}">{{ $category }}</option>
+                        @endforeach
+                    </datalist>
+                </div>
+                <flux:error name="category" />
+            </flux:field>
 
+            <!-- SKU -->
+            <flux:field>
+                <flux:label badge="Required">SKU</flux:label>
+                <div class="flex gap-2 items-end">
                     <flux:input
-                        label="SKU"
                         wire:model="sku"
-                        wire:loading.attr="disabled"
                         placeholder="Enter SKU"
+                        wire:loading.attr="disabled"
+                        class="flex-1"
+                        required
                     />
-
-                    <flux:select
-                        label="Supplier"
-                        wire:model="supplier_id"
+                    <flux:button
+                        type="button"
+                        wire:click="generateSKU"
+                        size="sm"
                         wire:loading.attr="disabled"
                     >
-                        <option value="">Select Supplier</option>
-                        @foreach($this->suppliers as $supplier)
-                            <option value="{{ $supplier->id }}">{{ $supplier->name }}</option>
-                        @endforeach
-                    </flux:select>
+                        Generate
+                    </flux:button>
                 </div>
+                <flux:error name="sku" />
+            </flux:field>
 
-                <!-- Right Column -->
-                <div class="space-y-4">
-                    <flux:input
-                        type="number"
-                        label="Price"
-                        wire:model="price"
-                        wire:loading.attr="disabled"
-                        placeholder="0.00"
-                        min="0.01"
-                        step="0.01"
-                    />
-
-                    <flux:input
-                        type="number"
-                        label="Cost"
-                        wire:model="cost"
-                        wire:loading.attr="disabled"
-                        placeholder="0.00"
-                        min="0"
-                        step="0.01"
-                    />
-
-                    <flux:input
-                        type="number"
-                        label="Quantity in Stock"
-                        wire:model="quantity_in_stock"
-                        wire:loading.attr="disabled"
-                        min="0"
-                    />
-                </div>
-            </div>
-
-            <flux:textarea
-                label="Description"
-                wire:model="description"
-                wire:loading.attr="disabled"
-                placeholder="Enter product description"
-                rows="3"
-            />
-
+            <!-- Price & Cost -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <flux:input
-                    type="number"
-                    label="Reorder Threshold"
-                    wire:model="reorder_threshold"
-                    wire:loading.attr="disabled"
-                    min="0"
-                />
-
-                <flux:input
-                    type="number"
-                    label="Safety Stock"
-                    wire:model="safety_stock"
-                    wire:loading.attr="disabled"
-                    min="0"
-                />
+                <flux:field>
+                    <flux:label badge="Required">Price</flux:label>
+                    <flux:input
+                        wire:model="price"
+                        type="number"
+                        step="0.01"
+                        min="0.01"
+                        placeholder="0.00"
+                        wire:loading.attr="disabled"
+                        required
+                    />
+                    <flux:error name="price" />
+                </flux:field>
+                <flux:field>
+                    <flux:label badge="Optional">Cost</flux:label>
+                    <flux:input
+                        wire:model="cost"
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        placeholder="0.00"
+                        wire:loading.attr="disabled"
+                    />
+                    <flux:error name="cost" />
+                </flux:field>
             </div>
 
-            <div class="flex justify-end space-x-3 pt-4">
-                <flux:modal.close>
-                    <flux:button variant="ghost">Cancel</flux:button>
-                </flux:modal.close>
-
-                <flux:button
-                    variant="primary"
-                    type="submit"
-                    wire:loading.attr="disabled"
-                >
-                    Update Product
-                </flux:button>
+            <!-- Stock Levels -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <flux:field>
+                    <flux:label badge="Required">Quantity in Stock</flux:label>
+                    <flux:input
+                        wire:model="quantity_in_stock"
+                        type="number"
+                        min="0"
+                        wire:loading.attr="disabled"
+                        required
+                    />
+                    <flux:error name="quantity_in_stock" />
+                </flux:field>
+                <flux:field>
+                    <flux:label badge="Required">Reorder Threshold</flux:label>
+                    <flux:input
+                        wire:model="reorder_threshold"
+                        type="number"
+                        min="0"
+                        wire:loading.attr="disabled"
+                        required
+                    />
+                    <flux:error name="reorder_threshold" />
+                </flux:field>
+                <flux:field>
+                    <flux:label badge="Required">Safety Stock</flux:label>
+                    <flux:input
+                        wire:model="safety_stock"
+                        type="number"
+                        min="0"
+                        wire:loading.attr="disabled"
+                        required
+                    />
+                    <flux:error name="safety_stock" />
+                </flux:field>
             </div>
+
+            <!-- Supplier -->
+            <flux:field>
+                <flux:label badge="Required">Supplier</flux:label>
+                <flux:select wire:model="supplier_id" wire:loading.attr="disabled" required>
+                    <flux:select.option value="">
+                        Select Supplier
+                    </flux:select.option>
+                    @foreach($suppliers as $supplier)
+                        <flux:select.option value="{{ $supplier->id }}">
+                            {{ $supplier->name }}
+                        </flux:select.option>
+                    @endforeach
+                </flux:select>
+                <flux:error name="supplier_id" />
+            </flux:field>
+
+            <!-- Description -->
+            <flux:field>
+                <flux:label badge="Optional">Description</flux:label>
+                <flux:textarea
+                    wire:model="description"
+                    placeholder="Enter product description"
+                    rows="4"
+                    wire:loading.attr="disabled"
+                />
+                <flux:error name="description" />
+            </flux:field>
+        </div>
+
+        <div class="mt-6 flex justify-end gap-4">
+            <flux:modal.close>
+                <flux:button variant="ghost">Cancel</flux:button>
+            </flux:modal.close>
+            <flux:button
+                type="submit"
+                variant="primary"
+                wire:loading.attr="disabled"
+            >
+                Update Product
+            </flux:button>
         </div>
     </form>
 </div>

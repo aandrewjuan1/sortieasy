@@ -69,7 +69,7 @@
 
             @can('view', Auth::user())
                 <flux:modal.trigger name="add-product">
-                    <flux:button variant="primary">Add Products</flux:button>
+                    <flux:button variant="primary" wire:click="$dispatch('add-product')">Add Products</flux:button>
                 </flux:modal.trigger>
             @endcan
         </div>

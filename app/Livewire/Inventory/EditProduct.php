@@ -105,6 +105,9 @@ class EditProduct extends Component
                         'created_by' => Auth::id(), // Use the currently authenticated user
                         'notes' => 'Restocking from supplier', // You can add more details if needed
                     ]);
+
+                    // Clear transaction cache if quantity increased
+                    Cache::forget('transactions:page:1:per_page:10:sort:created_at:dir:DESC:search::type::date:');
                 }
 
                 // Update last restocked timestamp if quantity has changed
@@ -114,6 +117,11 @@ class EditProduct extends Component
             $this->authorize('edit', $this->product);
             $this->product->update($validated);
             DB::commit();
+
+            // Check if supplier has changed and clear supplier cache if necessary
+            if ($this->product->supplier_id !== $validated['supplier_id']) {
+                Cache::forget('suppliers:page:1:per_page:10:sort:created_at:dir:DESC:search::product:');
+            }
 
             $this->reset();
 
@@ -125,8 +133,6 @@ class EditProduct extends Component
                 message: 'Product updated successfully!'
             );
 
-            Cache::forget('transactions:page:1:per_page:10:sort:created_at:dir:DESC:search::type::date:');
-            Cache::forget('suppliers:page:1:per_page:10:sort:created_at:dir:DESC:search::product:');
         } catch (\Exception $e) {
             DB::rollBack();
 
@@ -137,5 +143,14 @@ class EditProduct extends Component
                 message: 'Failed to update product.'
             );
         }
+    }
+
+
+    public function render()
+    {
+        return view('livewire.inventory.edit-product', [
+            'suppliers' => Supplier::orderBy('name')->get(),
+            'categories' => Product::distinct()->orderBy('category')->pluck('category'),
+        ]);
     }
 }

@@ -1,5 +1,10 @@
 <form wire:submit="save" class="p-6">
-    <flux:heading size="xl" class="mb-6">Add New Product</flux:heading>
+    <div class="mb-6 flex items-center justify-between pr-8">
+        <flux:heading size="xl">Edit Product</flux:heading>
+        <div wire:loading>
+            <flux:icon.loading />
+        </div>
+    </div>
 
     <div class="space-y-6">
         <!-- Name -->
