@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use App\Enums\TransactionType;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
@@ -55,6 +56,47 @@ class Transaction extends Model
         }
 
         return $query->where('type', $type);
+    }
+
+    public function scopeWithProductAndUser($query)
+    {
+        return $query->with([
+            'product:id,name',  // Eager load the 'product' relation and only select the 'id' and 'name' columns
+            'user:id,name'      // Eager load the 'user' relation and only select the 'id' and 'name' columns
+        ]);
+    }
+
+    public function scopeDateFilter($query, $dateFilter)
+    {
+        if (!$dateFilter) {
+            return $query;
+        }
+
+        $now = Carbon::now();
+
+        switch ($dateFilter) {
+            case 'today':
+                return $query->whereDate('created_at', $now->toDateString());
+            case 'yesterday':
+                return $query->whereDate('created_at', $now->subDay()->toDateString());
+            case 'week':
+                return $query->whereBetween('created_at', [
+                    $now->startOfWeek()->toDateTimeString(),
+                    $now->endOfWeek()->toDateTimeString()
+                ]);
+            case 'month':
+                return $query->whereBetween('created_at', [
+                    $now->startOfMonth()->toDateTimeString(),
+                    $now->endOfMonth()->toDateTimeString()
+                ]);
+            case 'year':
+                return $query->whereBetween('created_at', [
+                    $now->startOfYear()->toDateTimeString(),
+                    $now->endOfYear()->toDateTimeString()
+                ]);
+            default:
+                return $query;
+        }
     }
 
     public function product()

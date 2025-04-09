@@ -131,16 +131,10 @@
 
                 <tbody class="bg-white divide-y divide-zinc-200 dark:bg-zinc-800 dark:divide-zinc-700">
                     @forelse($this->suppliers as $supplier)
-                        <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-900">
+                        <tr>
                             {{-- Name --}}
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <flux:modal.trigger name="show-supplier">
-                                    <div class="flex items-center cursor-pointer" wire:click="$dispatch('show-supplier', { supplierId: {{ $supplier->id }} })">
-                                        <div class="text-sm font-medium text-zinc-900 dark:text-white">
-                                            {{ $supplier->name }}
-                                        </div>
-                                    </div>
-                                </flux:modal.trigger>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-zinc-900 dark:text-white">
+                                {{ $supplier->name }}
                             </td>
 
                             {{-- Email --}}

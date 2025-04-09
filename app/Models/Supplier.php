@@ -54,11 +54,7 @@ class Supplier extends Model
 
     public function scopeWithProduct($query)
     {
-        $query->with(['products' => function($query) {
-            $query->select('id', 'name', 'supplier_id'); // Only select the 'id', 'name', and 'supplier_id' columns
-        }]);
-
-        return $query;
+        return $query->with('products:id,name,supplier_id');
     }
 
     public function scopeOrderByField($query, $field, $direction)

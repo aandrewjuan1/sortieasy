@@ -96,9 +96,7 @@ class Product extends Model
 
     public function scopeWithSupplier($query)
     {
-        return $query->with(['supplier' => function($query) {
-            $query->select('id', 'name');  // Select only the columns you need from the supplier
-        }]);
+        return $query->with('supplier:id,name');
     }
 
 

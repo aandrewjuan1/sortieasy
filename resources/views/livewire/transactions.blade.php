@@ -2,7 +2,36 @@
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4">
         <h1 class="text-2xl font-bold dark:text-white">Transactions</h1>
 
-        <div class="flex flex-col md:flex-row gap-4 w-full md:w-auto">
+        <div class="flex flex-col items-center md:flex-row gap-4 w-full md:w-auto">
+            <div class="text-sm text-zinc-600 dark:text-zinc-300">
+                <span>Filtering by:</span>
+
+                @php
+                    $hasFilters = $search || $typeFilter || $dateFilter;
+                @endphp
+
+                @if($hasFilters)
+                    <ul class="inline-block ml-2 space-x-3">
+                        @if($search)
+                            <li class="inline">Search: <strong>"{{ $search }}"</strong></li>
+                        @endif
+                        @if($typeFilter)
+                            <li class="inline">Type: <strong>{{ $typeFilter }}</strong></li>
+                        @endif
+                        @if($dateFilter)
+                            <li class="inline">Date: <strong>{{ $dateFilter }}</strong></li>
+                        @endif
+                    </ul>
+                @else
+                    <span class="ml-2 text-zinc-500 dark:text-zinc-400">None</span>
+                @endif
+                <button
+                        wire:click="clearAllFilters"
+                        class="ml-4 text-blue-600 hover:underline"
+                    >
+                        Clear All Filters
+                    </button>
+            </div>
             {{-- Search --}}
             <div class="relative w-full md:w-72">
                 <input
@@ -24,15 +53,6 @@
                     </div>
                 @endif
             </div>
-
-            {{-- Type Filter --}}
-            <select wire:model.live="typeFilter" class="w-full md:w-40 border rounded-lg px-3 py-2 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white">
-                <option value="">All Types</option>
-                <option value="purchase">Purchase</option>
-                <option value="sale">Sale</option>
-                <option value="return">Return</option>
-                <option value="adjustment">Adjustment</option>
-            </select>
 
             {{-- Date Filter --}}
             <select wire:model.live="dateFilter" class="w-full md:w-40 border rounded-lg px-3 py-2 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white">
@@ -116,9 +136,12 @@
                             </div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $transaction->type->color() }}">
+                            <button x-cloak
+                                wire:click="$set('typeFilter', '{{ $transaction->type }}')"
+                                class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full cursor-pointer {{ $transaction->type->color() }} hover:{{ $transaction->type->colorHover() }}"
+                            >
                                 {{ $transaction->type->label() }}
-                            </span>
+                            </button>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="text-sm font-medium {{ $transaction->quantity < 0 ? 'text-red-600 dark:text-red-400' : 'text-zinc-900 dark:text-white' }}">

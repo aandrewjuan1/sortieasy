@@ -85,7 +85,7 @@ class Products extends Component
     protected function getProductsCacheKey(): string
     {
         return sprintf(
-            'products:page:%d:per_page:%d:sort:%s:dir:%s:search:%s:category:%s:stock:%s',
+            'products:page:%d:per_page:%d:sort:%s:dir:%s:search:%s:category:%s:supplier:%s:stock:%s',
             $this->getPage(),
             $this->perPage,
             $this->sortBy,
