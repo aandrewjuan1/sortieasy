@@ -19,6 +19,10 @@ class ProductPolicy
     {
         return $user->role === UserRole::Admin;
     }
+    public function create(User $user)
+    {
+        return $user->role === UserRole::Admin;
+    }
     public function edit(User $user)
     {
         return $user->role === UserRole::Admin;

@@ -22,7 +22,7 @@ class EditStocks extends Component
     #[Validate('required|integer|min:0')]
     public int $safety_stock = 5;
 
-    #[On('add-stocks')]
+    #[On('edit-stocks')]
     public function loadProduct($productId)
     {
         $this->product = Product::find($productId);
@@ -47,7 +47,7 @@ class EditStocks extends Component
 
             $this->reset();
 
-            $this->dispatch('modal-close', name: 'add-stocks');
+            $this->dispatch('modal-close', name: 'edit-stocks');
             $this->dispatch('product-updated');
             $this->dispatch('notify',
                 type: 'success',

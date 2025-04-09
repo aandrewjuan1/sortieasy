@@ -28,6 +28,7 @@ class AddSupplier extends Component
         DB::beginTransaction();
 
         try {
+            $this->authorize('create', Supplier::class);
             Supplier::create([
                 'name' => $this->name,
                 'contact_email' => $this->contact_email,

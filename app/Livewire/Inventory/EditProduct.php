@@ -55,6 +55,7 @@ class EditProduct extends Component
     #[On('edit-product')]
     public function editProduct($productId)
     {
+        $this->resetValidation();
         $this->product = Product::where('id', $productId)->first();
         $this->fillInputs($this->product);
     }
@@ -82,6 +83,8 @@ class EditProduct extends Component
             ->where('id', '!=', $this->product->id) // Exclude the current product
             ->first();
 
+
+
         if ($existingProduct) {
             $this->addError('sku', 'The SKU must be unique.');
             return;
@@ -95,6 +98,7 @@ class EditProduct extends Component
                 $validated['last_restocked'] = now();
             }
 
+            $this->authorize('edit', $this->product);
             $this->product->update($validated);
             DB::commit();
 

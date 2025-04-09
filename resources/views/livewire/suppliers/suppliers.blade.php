@@ -191,22 +191,10 @@
                             {{-- Actions --}}
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                 <div class="flex items-center justify-end space-x-2">
-                                    @can('update', $supplier)
+                                    @can('edit', $supplier)
                                         <flux:modal.trigger name="edit-supplier">
                                             <flux:tooltip content="Edit supplier">
-                                                <flux:button size="sm" variant="ghost"
-                                                    wire:click="$dispatch('edit-supplier', { supplierId: {{ $supplier->id }} })"
-                                                    icon="pencil-square" />
-                                            </flux:tooltip>
-                                        </flux:modal.trigger>
-                                    @endcan
-
-                                    @can('delete', $supplier)
-                                        <flux:modal.trigger name="delete-supplier">
-                                            <flux:tooltip content="Delete supplier">
-                                                <flux:button size="sm" variant="ghost-danger"
-                                                    wire:click="$dispatch('delete-supplier', { supplierId: {{ $supplier->id }} })"
-                                                    icon="trash" />
+                                                <flux:button size="sm" variant="ghost" wire:click="$dispatch('edit-supplier', { supplierId: {{ $supplier->id }} })" icon="pencil-square" />
                                             </flux:tooltip>
                                         </flux:modal.trigger>
                                     @endcan
@@ -233,11 +221,11 @@
         <livewire:suppliers.add-supplier />
     </flux:modal>
 
-    {{-- <flux:modal name="edit-supplier" maxWidth="2xl">
+    <flux:modal name="edit-supplier" maxWidth="2xl">
         <livewire:suppliers.edit-supplier />
     </flux:modal>
 
-    <flux:modal name="delete-supplier" maxWidth="md">
+    {{-- <flux:modal name="delete-supplier" maxWidth="md">
         <livewire:suppliers.delete-supplier />
     </flux:modal>  --}}
 </div>

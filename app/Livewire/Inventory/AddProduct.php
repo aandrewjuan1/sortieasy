@@ -58,7 +58,8 @@ class AddProduct extends Component
         DB::beginTransaction();
 
         try {
-            $product = Product::create([
+            $this->authorize('create', Product::class);
+            Product::create([
                 'name' => $this->name,
                 'category' => $this->category,
                 'sku' => $this->sku,
