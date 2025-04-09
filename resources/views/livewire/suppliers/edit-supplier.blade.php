@@ -63,7 +63,7 @@
             @can('delete', $supplier)
                 <flux:modal.trigger name="delete-supplier">
                     <flux:tooltip content="Delete supplier">
-                        <flux:button size="sm" icon="trash" variant="ghost"/>
+                        <flux:button icon="trash" variant="danger"/>
                     </flux:tooltip>
                 </flux:modal.trigger>
             @endcan
