@@ -65,9 +65,6 @@
                     <flux:button variant="danger">Delete Product</flux:button>
                 </flux:modal.trigger>
             @endcan
-            <flux:modal name="delete-supplier" class="min-w-[22rem]">
-                <x-delete-confirm-modal subject="supplier"/>
-            </flux:modal>
             <div class="flex justify-end gap-4">
                 <flux:button
                     type="submit"
@@ -79,4 +76,7 @@
             </div>
         </div>
     </form>
+    <flux:modal name="delete-supplier" class="min-w-[22rem]">
+        <x-delete-confirm-modal subject="supplier"/>
+    </flux:modal>
 </div>
