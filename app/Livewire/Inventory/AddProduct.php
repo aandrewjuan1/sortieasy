@@ -5,9 +5,11 @@ namespace App\Livewire\Inventory;
 use App\Models\Product;
 use Livewire\Component;
 use App\Models\Supplier;
+use App\Models\Transaction;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Validate;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 
 class AddProduct extends Component
@@ -59,7 +61,9 @@ class AddProduct extends Component
 
         try {
             $this->authorize('create', Product::class);
-            Product::create([
+
+            // Create the new product
+            $product = Product::create([
                 'name' => $this->name,
                 'category' => $this->category,
                 'sku' => $this->sku,
@@ -73,16 +77,30 @@ class AddProduct extends Component
                 'last_restocked' => $this->quantity_in_stock > 0 ? now() : null,
             ]);
 
+            // Add a purchase transaction if the product has stock
+            if ($product->quantity_in_stock > 0) {
+                Transaction::create([
+                    'product_id' => $product->id,
+                    'type' => 'purchase', // Type is 'purchase' for adding stock
+                    'quantity' => $product->quantity_in_stock, // The stock quantity added
+                    'created_by' => Auth::id(), // The user creating the product
+                    'notes' => 'Product added to inventory', // You can add more details
+                ]);
+            }
+
             DB::commit();
 
             $this->reset();
 
+            // Dispatch events after successful addition
             $this->dispatch('modal-close', name: 'add-product');
             $this->dispatch('product-added');
             $this->dispatch('notify',
                 type: 'success',
                 message: 'Product added successfully!'
             );
+
+            Cache::forget('transactions:page:1:per_page:10:sort:created_at:dir:DESC:search::type::date:');
             Cache::forget('suppliers:page:1:per_page:10:sort:created_at:dir:DESC:search::product:');
         } catch (\Exception $e) {
             DB::rollBack();
@@ -96,6 +114,7 @@ class AddProduct extends Component
             }
         }
     }
+
 
     public function render()
     {
