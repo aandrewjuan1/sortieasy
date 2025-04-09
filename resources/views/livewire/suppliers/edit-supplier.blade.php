@@ -1,7 +1,7 @@
 <div class="relative" wire:loading.class="opacity-50">
     <form wire:submit="update">
-        <div class="flex items-center justify-between pr-6">
-            <flux:heading size="xl" class="mb-6">Edit Supplier</flux:heading>
+        <div class="mb-6 flex items-center justify-between pr-8">
+            <flux:heading size="xl">Edit Supplier</flux:heading>
             <div wire:loading>
                 <flux:icon.loading />
             </div>
@@ -62,18 +62,13 @@
         <div class="mt-6 flex items-center justify-between">
             @can('delete', $supplier)
                 <flux:modal.trigger name="delete-supplier">
-                    <flux:tooltip content="Delete supplier">
-                        <flux:button icon="trash" variant="danger"/>
-                    </flux:tooltip>
+                    <flux:button variant="danger">Delete Product</flux:button>
                 </flux:modal.trigger>
             @endcan
             <flux:modal name="delete-supplier" class="min-w-[22rem]">
                 <x-delete-confirm-modal subject="supplier"/>
             </flux:modal>
             <div class="flex justify-end gap-4">
-                <flux:modal.close>
-                    <flux:button variant="ghost">Cancel</flux:button>
-                </flux:modal.close>
                 <flux:button
                     type="submit"
                     variant="primary"

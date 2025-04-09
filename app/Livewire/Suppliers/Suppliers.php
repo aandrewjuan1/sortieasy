@@ -65,19 +65,11 @@ class Suppliers extends Component
     {
         $cacheKey = $this->getSuppliersCacheKey();
 
-        return Cache::remember($cacheKey, now()->addMinutes(30), function() {
-            return Supplier::with(['products' => function($query) {
-                        $query->select('id', 'name', 'supplier_id');
-                    }])
-                    ->search($this->search)
-                    ->when($this->productFilter, function($query) {
-                        $query->whereHas('products', function($q) {
-                            $q->where('name', 'like', "%{$this->productFilter}%");
-                        });
-                    })
-                    ->orderBy($this->sortBy, $this->sortDir)
-                    ->paginate($this->perPage);
-        });
+        return Cache::remember($cacheKey, now()->addMinutes(30), fn() => Supplier::withProduct()
+            ->search($this->search)
+            ->productFilter($this->productFilter)
+            ->orderBy($this->sortBy, $this->sortDir)
+            ->paginate($this->perPage));
     }
 
     protected function getSuppliersCacheKey(): string

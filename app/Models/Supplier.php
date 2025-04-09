@@ -42,6 +42,25 @@ class Supplier extends Model
         });
     }
 
+    public function scopeProductFilter($query, $productFilter)
+    {
+        if ($productFilter) {
+            $query->whereHas('products', function($q) use ($productFilter) {
+                $q->where('name', 'like', "%{$productFilter}%");
+            });
+        }
+        return $query;
+    }
+
+    public function scopeWithProduct($query)
+    {
+        $query->with(['products' => function($query) {
+            $query->select('id', 'name', 'supplier_id'); // Only select the 'id', 'name', and 'supplier_id' columns
+        }]);
+
+        return $query;
+    }
+
     public function scopeOrderByField($query, $field, $direction)
     {
         // Fallback to created_at if the requested field isn't valid

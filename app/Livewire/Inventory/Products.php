@@ -72,16 +72,15 @@ class Products extends Component
     {
         $cacheKey = $this->getProductsCacheKey();
 
-        return Cache::remember($cacheKey, now()->addMinutes(30), function() {
-            return Product::withSupplier()  // Eager load supplier and select name
-                ->search($this->search)
-                ->categoryFilter($this->categoryFilter)
-                ->stockFilter($this->stockFilter)
-                ->supplierFilter($this->supplierFilter)  // Apply supplier filter
-                ->orderByField($this->sortBy, $this->sortDir)
-                ->paginate($this->perPage);
-        });
+        return Cache::remember($cacheKey, now()->addMinutes(30), fn() => Product::withSupplier()
+            ->search($this->search)
+            ->categoryFilter($this->categoryFilter)
+            ->stockFilter($this->stockFilter)
+            ->supplierFilter($this->supplierFilter)
+            ->orderByField($this->sortBy, $this->sortDir)
+            ->paginate($this->perPage));
     }
+
 
     protected function getProductsCacheKey(): string
     {
