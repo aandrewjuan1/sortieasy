@@ -1,5 +1,19 @@
-<form wire:submit="save" class="p-6" x-data="{ showAdjustmentReason: false }"
-      x-on:transaction-type-updated.window="showAdjustmentReason = ($event.detail === 'adjustment')">
+<form wire:submit="save" class="p-6" x-data="{
+    type: @entangle('type'),
+    get showAdjustmentReason() {
+        return this.type === 'adjustment';
+    },
+    init() {
+        // Watch for type changes
+        this.$watch('type', (value) => {
+            if (value !== 'adjustment') {
+                @this.set('adjustment_reason', null);
+                @this.resetVal('adjustment_reason');
+            }
+            @this.resetVal();
+        });
+    }
+}">
     <flux:heading size="xl" class="mb-6">Add New Transaction</flux:heading>
 
     <div class="space-y-6">
@@ -24,7 +38,6 @@
                 <flux:label badge="Required">Transaction Type</flux:label>
                 <flux:select
                     wire:model="type"
-                    x-on:change="$dispatch('transaction-type-updated', $event.target.value)"
                     required
                 >
                     <option value="">Select type</option>
@@ -54,7 +67,7 @@
                 <flux:label badge="Required">Adjustment Reason</flux:label>
                 <flux:select
                     wire:model="adjustment_reason"
-                    required
+                    x-bind:required="showAdjustmentReason"
                 >
                     <option value="">Select reason</option>
                     <option value="damaged">Damaged Goods</option>
@@ -92,15 +105,3 @@
         </flux:button>
     </div>
 </form>
-
-@push('scripts')
-<script>
-    document.addEventListener('livewire:init', () => {
-        Livewire.on('transactionTypeUpdated', (type) => {
-            window.dispatchEvent(new CustomEvent('transaction-type-updated', {
-                detail: type
-            }));
-        });
-    });
-</script>
-@endpush

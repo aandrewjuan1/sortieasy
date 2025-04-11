@@ -1,6 +1,10 @@
 <div class="relative" wire:loading.class="opacity-50"
-     x-data="{ showAdjustmentReason: @entangle('type').defer === 'adjustment' }"
-     x-on:transaction-type-updated.window="showAdjustmentReason = ($event.detail === 'adjustment')">
+     x-data="{
+         type: @entangle('type'),
+         get showAdjustmentReason() {
+             return this.type === 'adjustment';
+         }
+     }">
     <form wire:submit="update" class="p-6">
         <flux:heading size="xl" class="mb-6">Edit Transaction</flux:heading>
 
@@ -26,7 +30,6 @@
                     <flux:label badge="Required">Transaction Type</flux:label>
                     <flux:select
                         wire:model="type"
-                        x-on:change="$dispatch('transaction-type-updated', $event.target.value)"
                         required
                     >
                         <option value="">Select type</option>
@@ -56,7 +59,6 @@
                     <flux:label badge="Required">Adjustment Reason</flux:label>
                     <flux:select
                         wire:model="adjustment_reason"
-                        required
                     >
                         <option value="">Select reason</option>
                         <option value="damaged">Damaged Goods</option>
@@ -94,19 +96,8 @@
             </flux:button>
         </div>
     </form>
+
     <flux:modal name="delete-transaction" class="min-w-[22rem]">
         <x-delete-confirm-modal subject="transaction"/>
     </flux:modal>
 </div>
-
-@push('scripts')
-<script>
-    document.addEventListener('livewire:init', () => {
-        Livewire.on('transactionTypeUpdated', (type) => {
-            window.dispatchEvent(new CustomEvent('transaction-type-updated', {
-                detail: type
-            }));
-        });
-    });
-</script>
-@endpush

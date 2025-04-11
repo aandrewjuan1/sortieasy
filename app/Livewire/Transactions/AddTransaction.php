@@ -24,10 +24,9 @@ class AddTransaction extends Component
     #[Validate('required|integer|min:1')]
     public $quantity;
 
-    #[Validate('required_if:type,adjustment|string|max:500')]
+    #[Validate('nullable|string|max:500')]
     public $notes = '';
 
-    #[Validate('required_if:type,adjustment|in:damaged,lost,donation,stock_take,other')]
     public $adjustment_reason = null;
 
     public $adjustmentReasons = [
@@ -42,6 +41,36 @@ class AddTransaction extends Component
     public function products()
     {
         return Product::orderBy('name')->get();
+    }
+
+    public function resetVal()
+    {
+        $this->resetValidation();
+    }
+
+    protected function rules()
+    {
+        $rules = [
+            'product_id' => 'required|exists:products,id',
+            'type' => 'required|in:purchase,sale,return,adjustment',
+            'quantity' => 'required|integer|min:1',
+            'notes' => 'nullable|string|max:500',
+        ];
+
+        if ($this->type === 'adjustment') {
+            $rules['adjustment_reason'] = 'required|in:damaged,lost,donation,stock_take,other';
+            $rules['notes'] = 'required|string|max:500';
+        }
+
+        return $rules;
+    }
+
+    public function updated($property)
+    {
+        if ($property === 'type') {
+            $this->reset('adjustment_reason');
+            $this->resetValidation();
+        }
     }
 
     public function save()
@@ -90,8 +119,8 @@ class AddTransaction extends Component
 
                 case TransactionType::Adjustment:
                     // Validate final stock won't go negative
-                    if (($product->quantity_in_stock + $this->quantity) < 0) {
-                        throw new \Exception('Adjustment would result in negative stock.');
+                    if ($this->quantity < 0) {
+                        throw new \Exception('Adjusted stock cannot be negative.');
                     }
 
                     $product->quantity_in_stock = $this->quantity;
@@ -127,5 +156,4 @@ class AddTransaction extends Component
             );
         }
     }
-
 }
