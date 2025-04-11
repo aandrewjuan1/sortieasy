@@ -68,6 +68,10 @@
                 <option value="25">25 per page</option>
                 <option value="50">50 per page</option>
             </select>
+
+            <flux:modal.trigger name="add-transaction">
+                <flux:button variant="primary">Add Transaction</flux:button>
+            </flux:modal.trigger>
         </div>
     </div>
 
@@ -176,4 +180,8 @@
             {{ $this->transactions->links() }}
         </div>
     </div>
+
+    <flux:modal name="add-transaction" maxWidth="2xl">
+        <livewire:transactions.add-transaction />
+    </flux:modal>
 </div>

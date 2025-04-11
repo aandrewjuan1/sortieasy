@@ -1,10 +1,5 @@
 <form wire:submit="save" class="p-6">
-    <div class="mb-6 flex items-center justify-between pr-8">
-        <flux:heading size="xl">Edit Product</flux:heading>
-        <div wire:loading>
-            <flux:icon.loading />
-        </div>
-    </div>
+    <flux:heading size="xl">Add New Product</flux:heading>
 
     <div class="space-y-6">
         <!-- Name -->
@@ -73,7 +68,7 @@
                 <flux:error name="price" />
             </flux:field>
             <flux:field>
-                <flux:label badge="Optional">Cost</flux:label>
+                <flux:label>Cost</flux:label>
                 <flux:input
                     wire:model="cost"
                     type="number"
@@ -137,7 +132,7 @@
 
         <!-- Description -->
         <flux:field>
-            <flux:label badge="Optional">Description</flux:label>
+            <flux:label>Description</flux:label>
             <flux:textarea
                 wire:model="description"
                 placeholder="Enter product description"
@@ -156,7 +151,7 @@
             variant="primary"
             wire:loading.attr="disabled"
         >
-            Save Product
+            Add Product
         </flux:button>
     </div>
 </form>

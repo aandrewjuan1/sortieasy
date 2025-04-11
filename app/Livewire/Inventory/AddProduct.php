@@ -108,11 +108,6 @@ class AddProduct extends Component
 
             $this->dispatch('error', message: 'Failed to create product: ' . $e->getMessage());
 
-            // You could also add more specific error handling here
-            // For example, for unique constraint violations:
-            if (str_contains($e->getMessage(), 'Duplicate entry')) {
-                $this->addError('sku', 'This SKU already exists');
-            }
         }
     }
 

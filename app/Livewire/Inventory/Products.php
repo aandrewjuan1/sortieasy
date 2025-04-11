@@ -95,6 +95,8 @@ class Products extends Component
             $this->supplierFilter,
             $this->stockFilter
         );
+
+        // products:page:1:per_page:10:sort:created_at:dir:DESC:search::category::supplier::stock:
     }
 
     protected function clearCurrentPageCache(): void

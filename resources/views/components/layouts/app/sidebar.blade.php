@@ -29,25 +29,22 @@
                     <!-- Logistics link visible to all roles -->
                     <flux:navlist.item icon="globe-alt" :href="route('logistics')" :current="request()->routeIs('logistics')" wire:navigate>{{ __('Logistics') }}</flux:navlist.item>
 
-                    <!-- Admin-specific links -->
-                    @can('view', Auth::user())
-                        <flux:navlist.item icon="users" href="" :current="request()->routeIs('admin.users')" wire:navigate>{{ __('Manage Users') }}</flux:navlist.item>
-                    @endcan
+
                 </flux:navlist.group>
             </flux:navlist>
 
 
             <flux:spacer />
 
-            <flux:navlist variant="outline">
-                <flux:navlist.item icon="folder-git-2" href="https://github.com/laravel/livewire-starter-kit" target="_blank">
-                {{ __('Repository') }}
-                </flux:navlist.item>
+            @can('view', Auth::user())
+                <flux:navlist variant="outline">
+                    <!-- Admin-specific links -->
+                        <flux:navlist.item icon="users" href="" :current="request()->routeIs('admin.users')" wire:navigate>{{ __('Manage Users') }}</flux:navlist.item>
 
-                <flux:navlist.item icon="book-open-text" href="https://laravel.com/docs/starter-kits" target="_blank">
-                {{ __('Documentation') }}
-                </flux:navlist.item>
-            </flux:navlist>
+                        <flux:navlist.item icon="newspaper" href="" :current="request()->routeIs('admin.users')" wire:navigate>{{ __('Audit Logs') }}</flux:navlist.item>
+                </flux:navlist>
+            @endcan
+
 
             <!-- Desktop User Menu -->
             <flux:dropdown position="bottom" align="start">

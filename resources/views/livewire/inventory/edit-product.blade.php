@@ -79,7 +79,7 @@
                     <flux:error name="price" />
                 </flux:field>
                 <flux:field>
-                    <flux:label badge="Optional">Cost</flux:label>
+                    <flux:label>Cost</flux:label>
                     <flux:input
                         wire:model="cost"
                         type="number"
@@ -147,7 +147,7 @@
 
             <!-- Description -->
             <flux:field>
-                <flux:label badge="Optional">Description</flux:label>
+                <flux:label>Description</flux:label>
                 <flux:textarea
                     wire:model="description"
                     placeholder="Enter product description"

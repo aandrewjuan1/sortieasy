@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire;
+namespace App\Livewire\Transactions;
 
 use Livewire\Component;
 use App\Models\Transaction;
@@ -104,7 +104,7 @@ class Transactions extends Component
             $this->dateFilter
         );
 
-        // first page key: transactions:page:1:per_page:10:sort:created_at:dir:DESC:search::type::date:
+        // transactions:page:1:per_page:10:sort:created_at:dir:DESC:search::type::date:
     }
 
     protected function clearCurrentPageCache(): void

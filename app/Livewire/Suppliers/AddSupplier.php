@@ -54,17 +54,6 @@ class AddSupplier extends Component
                 type: 'error',
                 message: 'Failed to create supplier: ' . $e->getMessage()
             );
-
-            // Handle specific error cases
-            if (str_contains($e->getMessage(), 'Duplicate entry')) {
-                if (str_contains($e->getMessage(), 'suppliers_name_unique')) {
-                    $this->addError('name', 'This supplier name already exists');
-                } elseif (str_contains($e->getMessage(), 'suppliers_contact_email_unique')) {
-                    $this->addError('contact_email', 'This email is already registered');
-                } elseif (str_contains($e->getMessage(), 'suppliers_contact_phone_unique')) {
-                    $this->addError('contact_phone', 'This phone number is already registered');
-                }
-            }
         }
     }
 }
