@@ -24,7 +24,7 @@
                     required
                 />
                 <datalist id="categories">
-                    @foreach($categories as $category)
+                    @foreach($this->categories as $category)
                         <option value="{{ $category }}">{{ $category }}</option>
                     @endforeach
                 </datalist>
@@ -121,7 +121,7 @@
                 <flux:select.option value="">
                     Select Supplier
                 </flux:select.option>
-                @foreach($suppliers as $supplier)
+                @foreach($this->suppliers as $supplier)
                     <flux:select.option value="{{ $supplier->id }}">
                         {{ $supplier->name }}
                     </flux:select.option>

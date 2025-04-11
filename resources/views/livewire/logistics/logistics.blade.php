@@ -2,7 +2,33 @@
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4">
         <h1 class="text-2xl font-bold dark:text-white">Logistics</h1>
 
-        <div class="flex flex-col md:flex-row gap-4 w-full md:w-auto">
+        <div class="flex flex-col items-center md:flex-row gap-4 w-full md:w-auto">
+            <div class="text-sm text-zinc-600 dark:text-zinc-300">
+                <span>Filtering by:</span>
+
+                @php
+                    $hasFilters = $search || $statusFilter;
+                @endphp
+
+                @if($hasFilters)
+                    <ul class="inline-block ml-2 space-x-3">
+                        @if($search)
+                            <li class="inline">Search: <strong>"{{ $search }}"</strong></li>
+                        @endif
+                        @if($statusFilter)
+                            <li class="inline">Status: <strong>{{ $statusFilter }}</strong></li>
+                        @endif
+                    </ul>
+                @else
+                    <span class="ml-2 text-zinc-500 dark:text-zinc-400">None</span>
+                @endif
+                <button
+                    wire:click="clearAllFilters"
+                    class="ml-4 text-blue-600 hover:underline"
+                >
+                    Clear All Filters
+                </button>
+            </div>
             {{-- Search --}}
             <div class="relative w-full md:w-64">
                 <input
@@ -34,6 +60,10 @@
                 <option value="25">25 per page</option>
                 <option value="50">50 per page</option>
             </select>
+
+            <flux:modal.trigger name="add-logistic">
+                <flux:button variant="primary">Add Logistic</flux:button>
+            </flux:modal.trigger>
         </div>
     </div>
 
@@ -112,7 +142,7 @@
                             </td>
 
                             {{-- Delivery Date --}}
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-zinc-500 dark:text-zinc-300">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-zinc-500 dark:text-zinc-300">
                                 {{ $logistic->delivery_date->format('M d, Y') }}
                                 <div class="text-xs text-zinc-400 mt-1">
                                     {{ $logistic->delivery_date->diffForHumans() }}
@@ -121,9 +151,12 @@
 
                             {{-- Status --}}
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full {{ $logistic->status->color() }}">
+                                <button x-cloak
+                                    wire:click="$set('statusFilter', '{{ $logistic->status }}')"
+                                    class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full cursor-pointer {{ $logistic->status->color() }} hover:{{ $logistic->status->colorHover() }}"
+                                >
                                     {{ $logistic->status->label() }}
-                                </span>
+                                </button>
                             </td>
 
                             {{-- Time Status --}}
@@ -137,17 +170,11 @@
                             {{-- Actions --}}
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                 <div class="flex items-center justify-end space-x-2">
-                                    <button wire:click="$dispatch('openModal', { component: 'logistics.edit', arguments: { logistic: {{ $logistic->id }} }})" class="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300"
-                                        title="Edit Logistic">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                        </svg>
-                                    </button>
-                                    <button wire:click="$dispatch('openModal', { component: 'logistics.update-status', arguments: { logistic: {{ $logistic->id }} }})" class="text-green-600 hover:text-green-900 dark:text-green-400 dark:hover:text-green-300">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                                        </svg>
-                                    </button>
+                                    <flux:modal.trigger name="edit-logistic">
+                                        <flux:tooltip content="Edit logistic">
+                                            <flux:button size="sm" variant="ghost" wire:click="$dispatch('edit-logistic', { logisticId: {{ $logistic->id }} })" icon="pencil-square" />
+                                        </flux:tooltip>
+                                    </flux:modal.trigger>
                                 </div>
                             </td>
                         </tr>
@@ -167,4 +194,12 @@
             {{ $this->logistics->links() }}
         </div>
     </div>
+
+    <flux:modal name="edit-logistic" maxWidth="2xl">
+        <livewire:logistics.edit-logistic on-load/>
+    </flux:modal>
+
+    <flux:modal name="add-logistic" maxWidth="2xl">
+        <livewire:logistics.add-logistic />
+    </flux:modal>
 </div>

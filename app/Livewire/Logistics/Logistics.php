@@ -1,13 +1,15 @@
 <?php
 
-namespace App\Livewire;
+namespace App\Livewire\Logistics;
 
 use Livewire\Component;
 use App\Models\Logistic;
+use Livewire\Attributes\On;
 use Livewire\Attributes\Url;
 use Livewire\WithPagination;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Computed;
+use Illuminate\Support\Facades\Cache;
 
 #[Title('Logistics')]
 class Logistics extends Component
@@ -41,20 +43,31 @@ class Logistics extends Component
 
     public function setSortBy($sortByField)
     {
-        if ($this->sortBy === $sortByField) {
-            $this->sortDir = ($this->sortDir == "ASC") ? 'DESC' : "ASC";
-            return;
-        }
-
+        $isSameSortColumn = $this->sortBy === $sortByField;
         $this->sortBy = $sortByField;
-        $this->sortDir = 'DESC';
+        $this->sortDir = $isSameSortColumn ? ($this->sortDir == "ASC" ? 'DESC' : 'ASC') : 'DESC';
+        $this->clearCurrentPageCache();
     }
 
     public function updated($property)
     {
         if (in_array($property, ['search', 'statusFilter', 'perPage'])) {
+            $this->clearCurrentPageCache();
             $this->resetPage();
         }
+    }
+
+    public function clearAllFilters()
+    {
+        $this->reset([
+            'search',
+            'statusFilter',
+            'perPage',
+            'sortBy',
+            'sortDir',
+        ]);
+        $this->resetPage();
+        $this->clearCurrentPageCache();
     }
 
     #[Computed]
@@ -111,8 +124,31 @@ class Logistics extends Component
         }
     }
 
-    public function render()
+    protected function getLogisticCacheKey(): string
     {
-        return view('livewire.logistics');
+        return sprintf(
+            'logistics:page:%d:per_page:%d:sort:%s:dir:%s:search:%s:status:%s',
+            $this->getPage(),
+            $this->perPage,
+            $this->sortBy,
+            $this->sortDir,
+            $this->search,
+            $this->statusFilter,
+        );
+
+        // logistics:page:1:per_page:10:sort:created_at:dir:DESC:search::status:
+    }
+
+    protected function clearCurrentPageCache(): void
+    {
+        Cache::forget($this->getLogisticCacheKey());
+    }
+
+    #[On('logistic-deleted')]
+    #[On('logistic-updated')]
+    #[On('logistic-added')]
+    public function clearCache()
+    {
+        $this->clearCurrentPageCache();
     }
 }

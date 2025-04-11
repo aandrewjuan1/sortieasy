@@ -8,6 +8,7 @@ use App\Models\Supplier;
 use App\Models\Transaction;
 use Illuminate\Support\Str;
 use Livewire\Attributes\On;
+use Livewire\Attributes\Computed;
 use Livewire\Attributes\Validate;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -111,11 +112,15 @@ class AddProduct extends Component
         }
     }
 
-    public function render()
+    #[Computed]
+    public function suppliers()
     {
-        return view('livewire.inventory.add-product', [
-            'suppliers' => Supplier::orderBy('name')->get(),
-            'categories' => Product::distinct()->orderBy('category')->pluck('category'),
-        ]);
+        return Supplier::orderBy('name')->get();
+    }
+
+    #[Computed]
+    public function categories()
+    {
+        return Product::distinct()->orderBy('category')->pluck('category');
     }
 }

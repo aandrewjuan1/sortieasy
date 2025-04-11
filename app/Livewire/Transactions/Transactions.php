@@ -47,6 +47,17 @@ class Transactions extends Component
         ];
     }
 
+    #[Computed]
+    public function types()
+    {
+        return [
+            'purchase' => 'Purchase',
+            'sale' => 'Sale',
+            'return' => 'Return',
+            'adjustment' => 'Adjustment',
+        ];
+    }
+
     public function setSortBy($sortByField)
     {
         $isSameSortColumn = $this->sortBy === $sortByField;

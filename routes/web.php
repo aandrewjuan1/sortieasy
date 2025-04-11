@@ -1,6 +1,6 @@
 <?php
 
-use App\Livewire\Logistics;
+use App\Livewire\Logistics\Logistics;
 use App\Livewire\Transactions\Transactions;
 use App\Livewire\Settings\Profile;
 use App\Livewire\Settings\Password;

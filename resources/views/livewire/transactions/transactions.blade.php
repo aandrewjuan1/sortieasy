@@ -54,6 +54,13 @@
                 @endif
             </div>
 
+            <select wire:model.live="typeFilter" class="w-full md:w-40 border rounded-lg px-3 py-2 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white">
+                <option value="">All Types</option>
+                @foreach($this->types as $value => $label)
+                    <option value="{{ $value }}">{{ $label }}</option>
+                @endforeach
+            </select>
+
             {{-- Date Filter --}}
             <select wire:model.live="dateFilter" class="w-full md:w-40 border rounded-lg px-3 py-2 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white">
                 @foreach($this->dateFilterOptions as $value => $label)
