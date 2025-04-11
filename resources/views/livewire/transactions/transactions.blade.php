@@ -160,10 +160,25 @@
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-zinc-500 dark:text-zinc-300">
                             {{ $transaction->user->name ?? 'System' }}
                         </td>
+
                         <td class="px-6 py-4">
                             @if($transaction->notes)
-                                <div class="text-sm text-zinc-900 dark:text-white max-w-xs truncate" title="{{ $transaction->notes }}">
-                                    {{ $transaction->notes }}
+                                <div x-data="{ expanded: false }" class="text-sm text-zinc-900 dark:text-white max-w-xs">
+                                    <template x-if="!expanded">
+                                        <div class="truncate" :title="`{{ $transaction->notes }}`">
+                                            {{ \Illuminate\Support\Str::limit($transaction->notes, 100) }}
+                                        </div>
+                                    </template>
+                                    <template x-if="expanded">
+                                        <div>{{ $transaction->notes }}</div>
+                                    </template>
+                                    <button
+                                        type="button"
+                                        class="text-blue-600 hover:underline text-xs mt-1"
+                                        x-on:click="expanded = !expanded"
+                                    >
+                                        <span x-text="expanded ? 'Show less' : 'Show more'"></span>
+                                    </button>
                                 </div>
                             @else
                                 <span class="text-xs text-zinc-400 dark:text-zinc-500">No notes</span>

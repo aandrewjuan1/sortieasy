@@ -48,6 +48,25 @@
                 </flux:field>
             </div>
 
+            <!-- Adjustment Reason (Conditional) -->
+            @if($type === 'adjustment')
+                <flux:field>
+                    <flux:label badge="Required">Adjustment Reason</flux:label>
+                    <flux:select
+                        wire:model="adjustment_reason"
+                        required
+                    >
+                        <option value="">Select reason</option>
+                        <option value="damaged">Damaged Goods</option>
+                        <option value="lost">Lost/Missing</option>
+                        <option value="donation">Donation/Gift</option>
+                        <option value="stock_take">Stock Take Correction</option>
+                        <option value="other">Other Reason</option>
+                    </flux:select>
+                    <flux:error name="adjustment_reason" />
+                </flux:field>
+            @endif
+
             <!-- Notes -->
             <flux:field>
                 <flux:label>Notes</flux:label>

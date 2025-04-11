@@ -28,16 +28,37 @@ class EditTransaction extends Component
 
     public ?Transaction $transaction = null;
 
+    #[Validate('required_if:type,adjustment|in:damaged,lost,donation,stock_take,other')]
+    public $adjustment_reason = null;
+
+    public $adjustmentReasons = [
+        'damaged' => 'Damaged Goods',
+        'lost' => 'Lost/Missing',
+        'donation' => 'Donation/Gift',
+        'stock_take' => 'Stock Take Correction',
+        'other' => 'Other Reason'
+    ];
+
     public function fillInputs($transaction)
     {
         $this->product_id = $transaction->product->id;
         $this->type = $transaction->type->value;
         $this->quantity = $transaction->quantity;
         $this->notes = $transaction->notes;
+
+        // Extract adjustment reason from notes if exists
+        if ($transaction->type === TransactionType::Adjustment) {
+            foreach ($this->adjustmentReasons as $key => $label) {
+                if (str_contains($transaction->notes, "Reason: {$label}")) {
+                    $this->adjustment_reason = $key;
+                    break;
+                }
+            }
+        }
     }
 
     #[On('edit-transaction')]
-    public function editSupplier($transactionId)
+    public function editTransaction($transactionId)
     {
         $this->transaction = Transaction::find($transactionId);
         $this->fillInputs($this->transaction);
@@ -52,7 +73,7 @@ class EditTransaction extends Component
 
     public function update()
     {
-        $validated = $this->validate();
+       $this->validate();
 
         DB::beginTransaction();
 
@@ -62,21 +83,19 @@ class EditTransaction extends Component
             $oldType = $this->transaction->type;
             $oldQty = $this->transaction->quantity;
             $newType = TransactionType::from($this->type);
-
-            $stock = $product->quantity_in_stock;
+            $currentStock = $product->quantity_in_stock;
 
             // Revert old transaction
             switch ($oldType) {
                 case TransactionType::Purchase:
                 case TransactionType::Return:
-                    $stock -= $oldQty;
+                    $currentStock -= $oldQty;
                     break;
                 case TransactionType::Sale:
-                    $stock += $oldQty;
+                    $currentStock += $oldQty;
                     break;
                 case TransactionType::Adjustment:
-                    // In a real adjustment, store the previous stock in notes or another field
-                    // You can skip this if you don't support rollback for adjustments
+                    // No revert needed as we'll set absolute value
                     break;
             }
 
@@ -84,38 +103,53 @@ class EditTransaction extends Component
             switch ($newType) {
                 case TransactionType::Purchase:
                 case TransactionType::Return:
-                    $stock += $this->quantity;
+                    $currentStock += $this->quantity;
                     break;
                 case TransactionType::Sale:
-                    $stock -= $this->quantity;
-
-                    // ✅ Sale stock check
-                    if ($stock < 0) {
+                    $currentStock -= $this->quantity;
+                    if ($currentStock < 0) {
                         throw new \Exception('Not enough stock available for this sale.');
                     }
                     break;
                 case TransactionType::Adjustment:
-                    // ✅ Adjust stock directly to new quantity
-                    $stock = $this->quantity;
+                    // Validate final stock won't go negative
+                    if ($this->quantity < 0) {
+                        throw new \Exception('Adjusted stock cannot be negative.');
+                    }
+
+                    $currentStock = $this->quantity;
+
+                    // Check safety stock
+                    if ($currentStock < $product->safety_stock) {
+                        $this->dispatch('notify',
+                            type: 'warning',
+                            message: 'Stock adjusted below safety level!'
+                        );
+                    }
                     break;
             }
 
             $product->update([
-                'quantity_in_stock' => $stock,
+                'quantity_in_stock' => $currentStock,
             ]);
 
-            // Update the transaction record
+            // Build notes with reason if adjustment
+            $notes = $this->notes;
+            if ($newType === TransactionType::Adjustment) {
+                $reason = $this->adjustmentReasons[$this->adjustment_reason] ?? $this->adjustment_reason;
+                $notes = "Reason: {$reason}. Previous stock: {$product->quantity_in_stock}. " . $this->notes;
+            }
+
             $this->transaction->update([
                 'product_id' => $this->product_id,
                 'type' => $newType,
                 'quantity' => $this->quantity,
-                'notes' => $this->notes,
+                'notes' => $notes,
             ]);
 
             DB::commit();
 
             $this->reset();
-
             $this->dispatch('modal-close', name: 'edit-transaction');
             $this->dispatch('transaction-updated');
             $this->dispatch('notify',
@@ -136,14 +170,43 @@ class EditTransaction extends Component
 
     public function delete()
     {
-        $this->transaction->delete();
+        DB::beginTransaction();
 
-        $this->dispatch('modal-close', name: 'delete-transaction');
-        $this->dispatch('modal-close', name: 'edit-transaction');
-        $this->dispatch('transaction-deleted');
-        $this->dispatch('notify',
-            type: 'success',
-            message: 'Transaction deleted successfully!'
-        );
+        try {
+            $product = $this->transaction->product;
+            $type = $this->transaction->type;
+            $quantity = $this->transaction->quantity;
+
+            // Revert the transaction's effect on stock
+            switch ($type) {
+                case TransactionType::Purchase:
+                case TransactionType::Return:
+                    $product->decrement('quantity_in_stock', $quantity);
+                    break;
+                case TransactionType::Sale:
+                    $product->increment('quantity_in_stock', $quantity);
+                    break;
+                case TransactionType::Adjustment:
+                    // Can't reliably revert adjustments - just delete the record
+                    break;
+            }
+
+            $this->transaction->delete();
+            DB::commit();
+
+            $this->dispatch('modal-close', name: 'delete-transaction');
+            $this->dispatch('modal-close', name: 'edit-transaction');
+            $this->dispatch('transaction-deleted');
+            $this->dispatch('notify',
+                type: 'success',
+                message: 'Transaction deleted successfully!'
+            );
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $this->dispatch('notify',
+                type: 'error',
+                message: 'Failed to delete transaction: ' . $e->getMessage()
+            );
+        }
     }
 }
