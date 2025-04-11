@@ -1,4 +1,6 @@
-<div class="relative" wire:loading.class="opacity-50">
+<div class="relative" wire:loading.class="opacity-50"
+     x-data="{ showAdjustmentReason: @entangle('type').defer === 'adjustment' }"
+     x-on:transaction-type-updated.window="showAdjustmentReason = ($event.detail === 'adjustment')">
     <form wire:submit="update" class="p-6">
         <flux:heading size="xl" class="mb-6">Edit Transaction</flux:heading>
 
@@ -24,6 +26,7 @@
                     <flux:label badge="Required">Transaction Type</flux:label>
                     <flux:select
                         wire:model="type"
+                        x-on:change="$dispatch('transaction-type-updated', $event.target.value)"
                         required
                     >
                         <option value="">Select type</option>
@@ -40,7 +43,6 @@
                     <flux:input
                         wire:model="quantity"
                         type="number"
-                        min="1"
                         placeholder="Enter quantity"
                         required
                     />
@@ -49,7 +51,7 @@
             </div>
 
             <!-- Adjustment Reason (Conditional) -->
-            @if($type === 'adjustment')
+            <div x-show="showAdjustmentReason" x-transition>
                 <flux:field>
                     <flux:label badge="Required">Adjustment Reason</flux:label>
                     <flux:select
@@ -65,7 +67,7 @@
                     </flux:select>
                     <flux:error name="adjustment_reason" />
                 </flux:field>
-            @endif
+            </div>
 
             <!-- Notes -->
             <flux:field>
@@ -81,7 +83,7 @@
 
         <div class="mt-6 flex items-center justify-between">
             <flux:modal.trigger name="delete-transaction">
-                <flux:button  wire:loading.attr="disabled" variant="danger">Delete Transaction</flux:button>
+                <flux:button wire:loading.attr="disabled" variant="danger">Delete Transaction</flux:button>
             </flux:modal.trigger>
             <flux:button
                 type="submit"
@@ -96,3 +98,15 @@
         <x-delete-confirm-modal subject="transaction"/>
     </flux:modal>
 </div>
+
+@push('scripts')
+<script>
+    document.addEventListener('livewire:init', () => {
+        Livewire.on('transactionTypeUpdated', (type) => {
+            window.dispatchEvent(new CustomEvent('transaction-type-updated', {
+                detail: type
+            }));
+        });
+    });
+</script>
+@endpush
