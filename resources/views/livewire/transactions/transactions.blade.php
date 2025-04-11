@@ -161,29 +161,25 @@
                             {{ $transaction->user->name ?? 'System' }}
                         </td>
 
-                        <td class="px-6 py-4">
+                        <td class="px-6 py-4 max-w-xs">
                             @if($transaction->notes)
-                                <div x-data="{ expanded: false }" class="text-sm text-zinc-900 dark:text-white max-w-xs">
-                                    <template x-if="!expanded">
-                                        <div class="truncate" :title="`{{ $transaction->notes }}`">
-                                            {{ \Illuminate\Support\Str::limit($transaction->notes, 100) }}
-                                        </div>
-                                    </template>
-                                    <template x-if="expanded">
-                                        <div>{{ $transaction->notes }}</div>
-                                    </template>
-                                    <button
-                                        type="button"
-                                        class="text-blue-600 hover:underline text-xs mt-1"
-                                        x-on:click="expanded = !expanded"
-                                    >
-                                        <span x-text="expanded ? 'Show less' : 'Show more'"></span>
+                                <div x-data="{ expanded: false }" class="text-sm text-zinc-900 dark:text-white">
+                                    <div x-show="!expanded" class="truncate">
+                                        {{ Str::limit($transaction->notes, 100) }}
+                                    </div>
+                                    <div x-show="expanded" x-cloak>
+                                        {{ $transaction->notes }}
+                                    </div>
+                                    <button @click="expanded = !expanded" class="text-xs text-blue-600 hover:underline mt-1">
+                                        <span x-show="!expanded">More</span>
+                                        <span x-show="expanded">Less</span>
                                     </button>
                                 </div>
                             @else
                                 <span class="text-xs text-zinc-400 dark:text-zinc-500">No notes</span>
                             @endif
                         </td>
+
 
                         {{-- Actions --}}
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">

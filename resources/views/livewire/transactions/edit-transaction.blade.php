@@ -1,10 +1,20 @@
 <div class="relative" wire:loading.class="opacity-50"
-     x-data="{
-         type: @entangle('type'),
-         get showAdjustmentReason() {
-             return this.type === 'adjustment';
-         }
-     }">
+    x-data="{
+        type: @entangle('type'),
+        get showAdjustmentReason() {
+            return this.type === 'adjustment';
+        },
+        init() {
+            // Watch for type changes
+            this.$watch('type', (value) => {
+                if (value !== 'adjustment') {
+                    @this.set('adjustment_reason', null);
+                    @this.resetVal('adjustment_reason');
+                }
+                @this.resetVal();
+            });
+        }
+    }">
     <form wire:submit="update" class="p-6">
         <flux:heading size="xl" class="mb-6">Edit Transaction</flux:heading>
 
@@ -59,6 +69,7 @@
                     <flux:label badge="Required">Adjustment Reason</flux:label>
                     <flux:select
                         wire:model="adjustment_reason"
+                        x-bind:required="showAdjustmentReason"
                     >
                         <option value="">Select reason</option>
                         <option value="damaged">Damaged Goods</option>
