@@ -6,10 +6,10 @@
         <flux:field>
             <flux:label badge="Required">Product</flux:label>
             <flux:select
-                wire:model="productId"
-                placeholder="Select a product"
+                wire:model="product_id"
                 required
             >
+                <option value="">Select Product</option>
                 @foreach($this->products as $product)
                     <option value="{{ $product->id }}">{{ $product->name }}</option>
                 @endforeach

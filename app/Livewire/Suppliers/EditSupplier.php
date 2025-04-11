@@ -49,6 +49,8 @@ class EditSupplier extends Component
             type: 'success',
             message: 'Supplier deleted successfully!'
         );
+
+        Cache::forget('products:page:1:per_page:10:sort:created_at:dir:DESC:search::category::supplier::stock:');
     }
 
     public function update()
@@ -60,9 +62,9 @@ class EditSupplier extends Component
             'address' => 'required|string|max:1000',
         ]);
 
-        try {
-            DB::beginTransaction();
+        DB::beginTransaction();
 
+        try {
             $this->authorize('edit', $this->supplier);
             $this->supplier->update($validated);
 

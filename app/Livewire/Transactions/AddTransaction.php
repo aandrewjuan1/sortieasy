@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Cache;
 class AddTransaction extends Component
 {
     #[Validate('required|exists:products,id')]
-    public $productId;
+    public $product_id;
 
     #[Validate('required|in:purchase,sale,return,adjustment')]
     public $type;
@@ -39,10 +39,10 @@ class AddTransaction extends Component
         DB::beginTransaction();
 
         try {
-            $product = Product::findOrFail($this->productId);
+            $product = Product::findOrFail($this->product_id);
 
             Transaction::create([
-                'product_id' => $this->productId,
+                'product_id' => $this->product_id,
                 'type' => TransactionType::from($this->type),
                 'quantity' => $this->quantity,
                 'notes' => $this->notes,
@@ -57,10 +57,16 @@ class AddTransaction extends Component
                     $product->last_restocked = now();
                     break;
                 case TransactionType::Sale:
+                    if ($product->quantity_in_stock < $this->quantity) {
+                        throw new \Exception('Not enough stock available for this sale.');
+                    }
                     $product->decrement('quantity_in_stock', $this->quantity);
                     break;
                 case TransactionType::Return:
                     $product->increment('quantity_in_stock', $this->quantity);
+                    break;
+                case TransactionType::Adjustment:
+                    $product->quantity_in_stock = $this->quantity;
                     break;
             }
 

@@ -48,6 +48,8 @@ class EditProduct extends Component
     #[Validate('required|exists:suppliers,id')]
     public ?int $supplier_id = null;
 
+    protected int $originalSupplierId = 0;
+
     #[Computed]
     public function suppliers()
     {
@@ -58,8 +60,9 @@ class EditProduct extends Component
     public function editProduct($productId)
     {
         $this->resetValidation();
-        $this->product = Product::where('id', $productId)->first();
+        $this->product = Product::findOrFail($productId);
         $this->fillInputs($this->product);
+        $this->originalSupplierId = $this->product->supplier_id;
     }
 
     public function fillInputs($product)
@@ -76,13 +79,13 @@ class EditProduct extends Component
         $this->supplier_id = $product->supplier_id;
     }
 
-    public function updateProduct()
+    public function update()
     {
         $validated = $this->validate();
 
-        // Check if a product with the same SKU already exists, excluding the current product
+        // Ensure SKU is unique
         $existingProduct = Product::where('sku', $this->sku)
-            ->where('id', '!=', $this->product->id) // Exclude the current product
+            ->where('id', '!=', $this->product->id)
             ->first();
 
         if ($existingProduct) {
@@ -90,42 +93,38 @@ class EditProduct extends Component
             return;
         }
 
+        $this->authorize('edit', $this->product);
+
+        DB::beginTransaction();
+
         try {
-            DB::beginTransaction();
+            // Handle stock changes
+            if ($this->quantity_in_stock > $this->product->quantity_in_stock) {
+                $difference = $this->quantity_in_stock - $this->product->quantity_in_stock;
 
-            // Check if the stock has been updated
-            if ($this->product->quantity_in_stock != $this->quantity_in_stock) {
-                // If the new stock quantity is greater than the old stock quantity, add a purchase transaction
-                if ($this->quantity_in_stock > $this->product->quantity_in_stock) {
-                    // Record the purchase transaction (restocking)
-                    Transaction::create([
-                        'product_id' => $this->product->id,
-                        'type' => 'purchase', // Type is 'purchase' for restocking
-                        'quantity' => $this->quantity_in_stock - $this->product->quantity_in_stock, // Calculate quantity change
-                        'created_by' => Auth::id(), // Use the currently authenticated user
-                        'notes' => 'Restocking from supplier', // You can add more details if needed
-                    ]);
+                Transaction::create([
+                    'product_id' => $this->product->id,
+                    'type' => 'purchase',
+                    'quantity' => $difference,
+                    'created_by' => Auth::id(),
+                    'notes' => 'Restocking from supplier',
+                ]);
 
-                    // Clear transaction cache if quantity increased
-                    Cache::forget('transactions:page:1:per_page:10:sort:created_at:dir:DESC:search::type::date:');
-                }
-
-                // Update last restocked timestamp if quantity has changed
                 $validated['last_restocked'] = now();
+
+                Cache::forget('transactions:page:1:per_page:10:sort:created_at:dir:DESC:search::type::date:');
             }
 
-            $this->authorize('edit', $this->product);
             $this->product->update($validated);
             DB::commit();
 
-            // Check if supplier has changed and clear supplier cache if necessary
-            if ($this->product->supplier_id !== $validated['supplier_id']) {
+            // Check if supplier has changed
+            if ($this->supplier_id !== $this->originalSupplierId) {
                 Cache::forget('suppliers:page:1:per_page:10:sort:created_at:dir:DESC:search::product:');
             }
 
             $this->reset();
 
-            // Dispatch events after successful update
             $this->dispatch('modal-close', name: 'edit-product');
             $this->dispatch('product-updated');
             $this->dispatch('notify',
@@ -135,9 +134,8 @@ class EditProduct extends Component
 
         } catch (\Exception $e) {
             DB::rollBack();
-
-            // Log the error and dispatch failure notification
             Log::error('Product update failed: ' . $e->getMessage());
+
             $this->dispatch('notify',
                 type: 'error',
                 message: 'Failed to update product.'
@@ -148,7 +146,7 @@ class EditProduct extends Component
     public function render()
     {
         return view('livewire.inventory.edit-product', [
-            'suppliers' => Supplier::orderBy('name')->get(),
+            'suppliers' => $this->suppliers(),
             'categories' => Product::distinct()->orderBy('category')->pluck('category'),
         ]);
     }

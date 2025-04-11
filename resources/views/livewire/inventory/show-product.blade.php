@@ -111,7 +111,7 @@
                             <flux:button wire:click="$dispatch('edit-product', { productId: {{ $this->product->id }} })" class="bg-blue-500 dark:bg-zinc-700 text-white">Edit Product</flux:button>
                         </flux:modal.trigger>
                         <flux:modal.trigger name="delete-product">
-                            <flux:button variant="danger">Delete Product</flux:button>
+                            <flux:button wire:loading.attr="disabled" variant="danger">Delete Product</flux:button>
                         </flux:modal.trigger>
                     </div>
                 @endcan

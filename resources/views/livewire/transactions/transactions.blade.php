@@ -116,6 +116,11 @@
                                 <span>Notes</span>
                             </div>
                         </th>
+
+                        {{-- Actions Column --}}
+                        <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-zinc-500 uppercase tracking-wider dark:text-zinc-300">
+                            <span>Actions</span>
+                        </th>
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-zinc-200 dark:bg-zinc-800 dark:divide-zinc-700">
@@ -164,6 +169,17 @@
                                 <span class="text-xs text-zinc-400 dark:text-zinc-500">No notes</span>
                             @endif
                         </td>
+
+                        {{-- Actions --}}
+                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                            <div class="flex items-center justify-end space-x-2">
+                                <flux:modal.trigger name="edit-transaction">
+                                    <flux:tooltip content="Edit transaction">
+                                        <flux:button size="sm" variant="ghost" wire:click="$dispatch('edit-transaction', { transactionId: {{ $transaction->id }} })" icon="pencil-square" />
+                                    </flux:tooltip>
+                                </flux:modal.trigger>
+                            </div>
+                        </td>
                     </tr>
                     @empty
                     <tr>
@@ -183,5 +199,9 @@
 
     <flux:modal name="add-transaction" maxWidth="2xl">
         <livewire:transactions.add-transaction />
+    </flux:modal>
+
+    <flux:modal name="edit-transaction" maxWidth="2xl">
+        <livewire:transactions.edit-transaction />
     </flux:modal>
 </div>

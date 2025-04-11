@@ -8,6 +8,7 @@ use Livewire\Attributes\On;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Renderless;
+use Illuminate\Support\Facades\Cache;
 
 class ShowProduct extends Component
 {
@@ -42,6 +43,9 @@ class ShowProduct extends Component
             type: 'success',
             message: 'Product deleted successfully!'
         );
+
+        Cache::forget('suppliers:page:1:per_page:10:sort:created_at:dir:DESC:search::product:');
+        Cache::forget('transactions:page:1:per_page:10:sort:created_at:dir:DESC:search::type::date:');
     }
 
 
