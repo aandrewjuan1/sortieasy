@@ -29,6 +29,8 @@ class AddTransaction extends Component
 
     public $adjustment_reason = null;
 
+    public $available_stock = 0;
+
     public $adjustmentReasons = [
         'damaged' => 'Damaged Goods',
         'lost' => 'Lost/Missing',
@@ -47,6 +49,20 @@ class AddTransaction extends Component
     {
         $this->resetValidation();
     }
+
+    public function updatedProductId($value)
+    {
+        if ($value) {
+            $product = Product::find($value);
+            if ($product) {
+                $this->available_stock = $product->quantity_in_stock;
+                return;
+            }
+        }
+        $this->available_stock = 0;
+    }
+
+
 
     protected function rules()
     {
@@ -70,6 +86,18 @@ class AddTransaction extends Component
         if ($property === 'type') {
             $this->reset('adjustment_reason');
             $this->resetValidation();
+        }
+
+        if ($property === 'quantity' || $property === 'type') {
+            if ($this->type === 'sale' && $this->product_id && $this->quantity) {
+                $this->validate([
+                    'quantity' => ['required', 'integer', 'min:1', function ($attribute, $value, $fail) {
+                        if ($this->available_stock > 0 && $value > $this->available_stock) {
+                            $fail("Quantity exceeds available stock of {$this->available_stock}");
+                        }
+                    }]
+                ]);
+            }
         }
     }
 

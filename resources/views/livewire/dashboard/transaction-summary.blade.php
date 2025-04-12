@@ -123,9 +123,12 @@
                             {{ $transaction->user->name ?? 'System' }}
                         </td>
                         <td class="px-4 py-3">
-                            <span class="px-2 py-1 text-xs rounded-full {{ $transaction->type->color() }} dark:{{ $this->getDarkModeColor($transaction->type->value) }}">
+                            <button x-cloak
+                                wire:click=""
+                                class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full cursor-pointer {{ $transaction->type->color() }} hover:{{ $transaction->type->colorHover() }}"
+                            >
                                 {{ $transaction->type->label() }}
-                            </span>
+                            </button>
                         </td>
                         <td class="px-4 py-3 text-right font-medium {{ $this->getTransactionQtyColor($transaction->type->value) }}">
                             {{ $transaction->quantity }}

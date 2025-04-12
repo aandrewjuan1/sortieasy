@@ -55,26 +55,4 @@ enum SaleChannel: string
             default => 'bg-gray-100 text-gray-100 hover:bg-gray-200',
         };
     }
-
-    // Method to get the icon background color for each sale channel
-    public static function getIconBgColor(string $channel): string
-    {
-        return match ($channel) {
-            'online' => 'bg-blue-100 dark:bg-blue-900/30',
-            'in_store' => 'bg-green-100 dark:bg-green-900/30',
-            'phone' => 'bg-purple-100 dark:bg-purple-900/30',
-            default => 'bg-gray-100 dark:bg-gray-700',
-        };
-    }
-
-    // Method to get the dark mode color for each sale channel
-    public static function getDarkModeColor(string $channel): string
-    {
-        return match ($channel) {
-            'online' => 'bg-blue-900 text-blue-200',
-            'in_store' => 'bg-green-900 text-green-200',
-            'phone' => 'bg-purple-900 text-purple-200',
-            default => 'bg-gray-700 text-gray-300',
-        };
-    }
 }
