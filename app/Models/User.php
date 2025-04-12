@@ -69,4 +69,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Transaction::class, 'created_by');
     }
+
+    public function auditLogs()
+    {
+        return $this->hasMany(AuditLog::class);
+    }
 }

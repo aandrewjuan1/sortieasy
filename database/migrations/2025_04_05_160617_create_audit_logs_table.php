@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('audit_logs', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade'); // Tracks who made the change
-            $table->string('action'); // Describes the action performed (e.g., 'updated', 'created', 'deleted')
+            $table->enum('action', ['created', 'updated', 'deleted']);
             $table->text('description'); // Detailed description of the change (e.g., "Updated product price from $10 to $12")
             $table->string('table_name'); // The table that was affected (e.g., 'products', 'transactions')
             $table->unsignedBigInteger('record_id'); // The ID of the record that was affected (e.g., product ID, transaction ID)
