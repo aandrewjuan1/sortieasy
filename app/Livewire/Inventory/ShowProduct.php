@@ -44,6 +44,7 @@ class ShowProduct extends Component
             message: 'Product deleted successfully!'
         );
 
+        Cache::forget('audit-logs:page:1:per_page:10:sort:created_at:dir:DESC:search::user::action::table::from::to:');
         Cache::forget('suppliers:page:1:per_page:10:sort:created_at:dir:DESC:search::product:');
         Cache::forget('transactions:page:1:per_page:10:sort:created_at:dir:DESC:search::type::date:');
     }

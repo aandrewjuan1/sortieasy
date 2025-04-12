@@ -144,6 +144,7 @@ class EditSale extends Component
                 message: 'Sale updated successfully! Stock updated.'
             );
 
+            Cache::forget('audit-logs:page:1:per_page:10:sort:created_at:dir:DESC:search::user::action::table::from::to:');
             Cache::forget('products:page:1:per_page:10:sort:created_at:dir:DESC:search::category::supplier::stock:');
             Cache::forget('transactions:page:1:per_page:10:sort:created_at:dir:DESC:search::type::date:');
         } catch (\Exception $e) {
@@ -195,6 +196,7 @@ class EditSale extends Component
                 message: 'Sale deleted successfully! Stock and transaction reverted.'
             );
 
+            Cache::forget('audit-logs:page:1:per_page:10:sort:created_at:dir:DESC:search::user::action::table::from::to:');
             Cache::forget('transactions:page:1:per_page:10:sort:created_at:dir:DESC:search::type::date:');
             Cache::forget('products:page:1:per_page:10:sort:created_at:dir:DESC:search::category::supplier::stock:');
         } catch (\Exception $e) {

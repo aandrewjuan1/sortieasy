@@ -174,6 +174,7 @@ class EditTransaction extends Component
                 message: 'Transaction updated successfully!'
             );
 
+            Cache::forget('audit-logs:page:1:per_page:10:sort:created_at:dir:DESC:search::user::action::table::from::to:');
             Cache::forget('products:page:1:per_page:10:sort:created_at:dir:DESC:search::category::supplier::stock:');
         } catch (\Exception $e) {
             DB::rollBack();
@@ -219,6 +220,7 @@ class EditTransaction extends Component
                 message: 'Transaction deleted successfully!'
             );
 
+            Cache::forget('audit-logs:page:1:per_page:10:sort:created_at:dir:DESC:search::user::action::table::from::to:');
             Cache::forget('products:page:1:per_page:10:sort:created_at:dir:DESC:search::category::supplier::stock:');
         } catch (\Exception $e) {
             DB::rollBack();

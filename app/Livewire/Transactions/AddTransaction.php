@@ -187,6 +187,7 @@ class AddTransaction extends Component
                 message: 'Transaction created successfully!'
             );
 
+            Cache::forget('audit-logs:page:1:per_page:10:sort:created_at:dir:DESC:search::user::action::table::from::to:');
             Cache::forget('products:page:1:per_page:10:sort:created_at:dir:DESC:search::category::supplier::stock:');
             Cache::forget('sales:page:1:per_page:10:sort:created_at:dir:DESC:search::channel::date:');
         } catch (\Exception $e) {

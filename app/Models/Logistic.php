@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\LogisticStatus;
+use App\Traits\Auditable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -10,6 +11,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Logistic extends Model
 {
     use HasFactory;
+    use Auditable;
 
     protected $fillable = [
         'product_id',

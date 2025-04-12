@@ -73,21 +73,6 @@
 
     {{-- Filters Row --}}
     <div class="flex flex-col md:flex-row gap-4 mb-4">
-        {{-- User Filter --}}
-        <div class="w-full md:w-48">
-            <label for="userFilter" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">User</label>
-            <select
-                wire:model.live="userFilter"
-                id="userFilter"
-                class="w-full border rounded-lg px-3 py-2 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white"
-            >
-                <option value="">All Users</option>
-                @foreach($this->users as $id => $name)
-                    <option value="{{ $id }}">{{ $name }}</option>
-                @endforeach
-            </select>
-        </div>
-
         {{-- Action Filter --}}
         <div class="w-full md:w-48">
             <label for="actionFilter" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">Action</label>
@@ -99,21 +84,6 @@
                 <option value="">All Actions</option>
                 @foreach($this->availableActions as $value => $label)
                     <option value="{{ $value }}">{{ $label }}</option>
-                @endforeach
-            </select>
-        </div>
-
-        {{-- Table Filter --}}
-        <div class="w-full md:w-48">
-            <label for="tableFilter" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">Table</label>
-            <select
-                wire:model.live="tableFilter"
-                id="tableFilter"
-                class="w-full border rounded-lg px-3 py-2 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white"
-            >
-                <option value="">All Tables</option>
-                @foreach($this->availableTables as $table)
-                    <option value="{{ $table }}">{{ $table }}</option>
                 @endforeach
             </select>
         </div>
@@ -200,7 +170,7 @@
                                     $action = $logAction ? App\Enums\AuditAction::tryFrom($logAction) : null;
                                 @endphp
                                 @if($action)
-                                    <span class="px-2 py-1 text-xs rounded-full {{ $action->color() }} hover:{{ $action->colorHover() }} transition-colors">
+                                    <span class="px-2 py-1 text-xs rounded-full {{ $action->color() }}">
                                         {{ $action->label() }}
                                     </span>
                                 @else

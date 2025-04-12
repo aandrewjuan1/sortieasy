@@ -6,6 +6,7 @@ use Livewire\Component;
 use App\Models\Supplier;
 use Livewire\Attributes\Validate;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 
 class AddSupplier extends Component
 {
@@ -46,6 +47,8 @@ class AddSupplier extends Component
                 type: 'success',
                 message: 'Supplier created successfully!'
             );
+
+            Cache::forget('audit-logs:page:1:per_page:10:sort:created_at:dir:DESC:search::user::action::table::from::to:');
 
         } catch (\Exception $e) {
             DB::rollBack();
