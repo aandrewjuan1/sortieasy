@@ -63,7 +63,7 @@
 
             @can('view', Auth::user())
                 <flux:modal.trigger name="add-supplier">
-                    <flux:button variant="primary">Add Suppliers</flux:button>
+                    <flux:button variant="primary">Add Supplier</flux:button>
                 </flux:modal.trigger>
             @endcan
         </div>

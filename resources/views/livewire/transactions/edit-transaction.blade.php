@@ -24,19 +24,19 @@
         </div>
 
         <div class="space-y-6">
-            <!-- Product Selection -->
+            <!-- Product Display (readonly but still bound via hidden input) -->
             <flux:field>
-                <flux:label badge="Required">Product</flux:label>
-                <flux:select
-                    wire:model="product_id"
-                    required
-                >
-                    <option value="">Select Product</option>
-                    @foreach($this->products as $product)
-                        <option value="{{ $product->id }}">{{ $product->name }}</option>
-                    @endforeach
-                </flux:select>
-                <flux:error name="product_id" />
+                <flux:label>Product</flux:label>
+
+                <!-- Show product name -->
+                <flux:input
+                    value="{{ $product?->name }}"
+                    readonly
+                    variant="filled"
+                />
+
+                <!-- Hidden input to retain wire:model binding for product_id -->
+                <input type="hidden" wire:model="product_id">
             </flux:field>
 
             <!-- Transaction Type and Quantity -->

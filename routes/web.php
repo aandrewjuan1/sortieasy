@@ -13,6 +13,7 @@ use App\Livewire\Dashboard\AlertSummary;
 use App\Livewire\Dashboard\ProductSummary;
 use App\Livewire\Dashboard\SupplierOverview;
 use App\Livewire\Dashboard\TransactionSummary;
+use App\Livewire\Sales\Sales;
 
 Route::redirect('/', 'dashboard');
 
@@ -30,7 +31,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('inventory', Products::class)->name('inventory');
     Route::get('transactions', Transactions::class)->name('transactions');
     Route::get('logistics', Logistics::class)->name('logistics');
-    Route::get('sales', Logistics::class)->name('sales');
+    Route::get('sales', Sales::class)->name('sales');
 
     Route::get('settings/profile', Profile::class)->name('settings.profile');
     Route::get('settings/password', Password::class)->name('settings.password');

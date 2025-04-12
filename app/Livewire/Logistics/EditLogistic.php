@@ -26,6 +26,7 @@ class EditLogistic extends Component
     #[Validate('required|in:pending,shipped,delivered')]
     public string $status = 'pending';
     public ?Logistic $logistic = null;
+    public ?Product $product = null;
 
     public function fillInputs($logistic)
     {
@@ -33,6 +34,7 @@ class EditLogistic extends Component
         $this->quantity = $logistic->quantity;
         $this->delivery_date = $logistic->delivery_date->format('Y-m-d');
         $this->status = $logistic->status->value;
+        $this->product = Product::find($logistic->product_id);
     }
 
     #[On('edit-logistic')]
@@ -134,11 +136,5 @@ class EditLogistic extends Component
         );
 
         Cache::forget('products:page:1:per_page:10:sort:created_at:dir:DESC:search::category::supplier::stock:');
-    }
-
-    #[Computed]
-    public function products()
-    {
-        return Product::orderBy('name')->get();
     }
 }

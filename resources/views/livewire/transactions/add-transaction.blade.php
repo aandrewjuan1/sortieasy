@@ -26,7 +26,7 @@
             >
                 <option value="">Select Product</option>
                 @foreach($this->products as $product)
-                    <option value="{{ $product->id }}">{{ $product->name }}</option>
+                    <option value="{{ $product->id }}">{{ $product->name }} ({{ $product->sku }})</option>
                 @endforeach
             </flux:select>
             <flux:error name="product_id" />

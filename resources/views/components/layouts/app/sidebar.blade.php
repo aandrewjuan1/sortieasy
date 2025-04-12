@@ -23,13 +23,14 @@
                     <!-- Suppliers link visible to all roles -->
                     <flux:navlist.item icon="truck" :href="route('suppliers')" :current="request()->routeIs('suppliers')" wire:navigate>{{ __('Suppliers') }}</flux:navlist.item>
 
+                    <flux:navlist.item icon="presentation-chart-line" :href="route('sales')" :current="request()->routeIs('sales')" wire:navigate>{{ __('Sales') }}</flux:navlist.item>
+
                     <!-- Transactions link visible to all roles -->
                     <flux:navlist.item icon="clipboard-document-check" :href="route('transactions')" :current="request()->routeIs('transactions')" wire:navigate>{{ __('Transactions') }}</flux:navlist.item>
 
                     <!-- Logistics link visible to all roles -->
                     <flux:navlist.item icon="globe-alt" :href="route('logistics')" :current="request()->routeIs('logistics')" wire:navigate>{{ __('Logistics') }}</flux:navlist.item>
 
-                    <flux:navlist.item icon="presentation-chart-line" :href="route('sales')" :current="request()->routeIs('sales')" wire:navigate>{{ __('Sales') }}</flux:navlist.item>
 
                 </flux:navlist.group>
             </flux:navlist>

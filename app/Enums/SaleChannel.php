@@ -36,14 +36,23 @@ enum SaleChannel: string
         };
     }
 
+    public function label(): string
+    {
+        return match($this) {
+            self::Online => 'Online',
+            self::InStore => 'In-Store',
+            self::Phone => 'Phone Order',
+        };
+    }
+
     // Method to get the background color for each sale channel
     public static function getBgColor(string $channel): string
     {
         return match ($channel) {
-            'online' => 'bg-blue-500',
-            'in_store' => 'bg-green-500',
-            'phone' => 'bg-purple-500',
-            default => 'bg-gray-500',
+            'online' => 'bg-blue-100 text-blue-800 hover:bg-blue-200',
+            'in_store' => 'bg-green-100 text-green-800 hover:bg-green-200',
+            'phone' => 'bg-purple-100 text-purple-800 hover:bg-purple-200',
+            default => 'bg-gray-100 text-gray-100 hover:bg-gray-200',
         };
     }
 

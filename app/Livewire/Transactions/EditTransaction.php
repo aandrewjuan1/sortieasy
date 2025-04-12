@@ -29,6 +29,7 @@ class EditTransaction extends Component
     public ?Transaction $transaction = null;
 
     public $adjustment_reason = null;
+    public ?Product $product = null;
 
     public $adjustmentReasons = [
         'damaged' => 'Damaged Goods',
@@ -66,6 +67,7 @@ class EditTransaction extends Component
         $this->type = $transaction->type->value;
         $this->quantity = $transaction->quantity;
         $this->notes = $transaction->notes;
+        $this->product = Product::find($transaction->product_id);
 
         // Extract adjustment reason from notes if exists
         if ($transaction->type === TransactionType::Adjustment) {
@@ -84,12 +86,6 @@ class EditTransaction extends Component
         $this->transaction = Transaction::find($transactionId);
         $this->fillInputs($this->transaction);
         $this->resetValidation();
-    }
-
-    #[Computed]
-    public function products()
-    {
-        return Product::orderBy('name')->get();
     }
 
     public function update()
@@ -222,6 +218,8 @@ class EditTransaction extends Component
                 type: 'success',
                 message: 'Transaction deleted successfully!'
             );
+
+            Cache::forget('products:page:1:per_page:10:sort:created_at:dir:DESC:search::category::supplier::stock:');
         } catch (\Exception $e) {
             DB::rollBack();
             $this->dispatch('notify',

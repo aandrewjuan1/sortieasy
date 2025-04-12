@@ -69,7 +69,7 @@
 
             @can('view', Auth::user())
                 <flux:modal.trigger name="add-product">
-                    <flux:button variant="primary" wire:click="$dispatch('add-product')">Add Products</flux:button>
+                    <flux:button variant="primary" wire:click="$dispatch('add-product')">Add Product</flux:button>
                 </flux:modal.trigger>
             @endcan
         </div>
@@ -296,18 +296,18 @@
     </div>
 
     <flux:modal name="show-product" maxWidth="2xl">
-        <livewire:inventory.show-product on-load/>
+        <livewire:inventory.show-product/>
     </flux:modal>
 
     <flux:modal name="add-product" maxWidth="2xl">
-        <livewire:inventory.add-product on-load/>
+        <livewire:inventory.add-product/>
     </flux:modal>
 
     <flux:modal name="edit-product" maxWidth="2xl">
-        <livewire:inventory.edit-product on-load/>
+        <livewire:inventory.edit-product/>
     </flux:modal>
 
     <flux:modal name="edit-stocks" maxWidth="2xl">
-        <livewire:inventory.edit-stocks on-load/>
+        <livewire:inventory.edit-stocks/>
     </flux:modal>
 </div>
