@@ -61,7 +61,7 @@ class Transaction extends Model
     public function scopeWithProductAndUser($query)
     {
         return $query->with([
-            'product:id,name',  // Eager load the 'product' relation and only select the 'id' and 'name' columns
+            'product:id,name,sku',  // Eager load the 'product' relation and only select the 'id' and 'name' columns
             'user:id,name'      // Eager load the 'user' relation and only select the 'id' and 'name' columns
         ]);
     }

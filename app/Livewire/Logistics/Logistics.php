@@ -73,17 +73,11 @@ class Logistics extends Component
     #[Computed]
     public function logistics()
     {
-        return Logistic::with(['product'])
-            ->join('products', 'logistics.product_id', '=', 'products.id')
-            ->select('logistics.*') // Select all columns from logistics table
+        return Logistic::withProduct()
+            ->joinProduct()
             ->search($this->search)
             ->ofStatus($this->statusFilter)
-            ->when($this->sortBy === 'product.name', function ($query) {
-                $query->orderBy('products.name', $this->sortDir);
-            })
-            ->when($this->sortBy !== 'product.name', function ($query) {
-                $query->orderBy($this->sortBy, $this->sortDir);
-            })
+            ->sortByField($this->sortBy, $this->sortDir)
             ->paginate($this->perPage);
     }
 
