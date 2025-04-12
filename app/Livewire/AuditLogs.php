@@ -34,7 +34,7 @@ class AuditLogs extends Component
     public $userFilter = '';
 
     #[Url(history: true)]
-    public $actionFilter = '';
+    public string $actionFilter = '';
 
     #[Url(history: true)]
     public $tableFilter = '';
@@ -44,6 +44,25 @@ class AuditLogs extends Component
 
     #[Url(history: true)]
     public $dateTo = '';
+
+    public function setActionFilter($value)
+    {
+        // If we get an enum instance, use its value
+        if ($value instanceof AuditAction) {
+            $this->actionFilter = $value->value;
+        }
+        // If we get a valid string value, use it
+        elseif (is_string($value) && in_array($value, array_column(AuditAction::cases(), 'value'))) {
+            $this->actionFilter = $value;
+        }
+        // Otherwise reset to empty
+        else {
+            $this->actionFilter = '';
+        }
+
+        $this->clearCurrentPageCache();
+        $this->resetPage();
+    }
 
     public function setSortBy($sortByField)
     {
@@ -93,6 +112,7 @@ class AuditLogs extends Component
     {
         return collect(AuditAction::cases())
             ->mapWithKeys(fn($case) => [$case->value => $case->label()]);
+        // This correctly returns ['created' => 'Created', 'updated' => 'Updated', ...]
     }
 
     #[Computed()]
@@ -143,6 +163,8 @@ class AuditLogs extends Component
             $this->dateFrom,
             $this->dateTo
         );
+
+        // audit-logs:page:1:per_page:10:sort:created_at:dir:DESC:search::user::action::table::from::to:
     }
 
     protected function clearCurrentPageCache(): void

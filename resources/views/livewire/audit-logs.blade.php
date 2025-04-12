@@ -20,8 +20,13 @@
                         @endif
                         @if($actionFilter)
                             <li class="inline">Action:
-                                <span class="px-1.5 py-0.5 text-xs rounded-full {{ AuditAction::tryFrom($actionFilter)?->color() }}">
-                                    {{ AuditAction::tryFrom($actionFilter)?->label() ?? $actionFilter }}
+                                @php
+                                    // Ensure we're working with a string
+                                    $actionValue = is_string($actionFilter) ? $actionFilter : ($actionFilter instanceof App\Enums\AuditAction ? $actionFilter->value : '');
+                                    $action = $actionValue ? App\Enums\AuditAction::tryFrom($actionValue) : null;
+                                @endphp
+                                <span class="px-1.5 py-0.5 text-xs rounded-full {{ $action?->color() ?? 'bg-gray-100 text-gray-800 dark:bg-gray-600 dark:text-gray-200' }}">
+                                    {{ $action?->label() ?? $actionValue }}
                                 </span>
                             </li>
                         @endif
@@ -180,7 +185,7 @@
                 </thead>
                 <tbody class="bg-white divide-y divide-zinc-200 dark:bg-zinc-800 dark:divide-zinc-700">
                     @forelse($this->logs as $log)
-                        <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-700/50">
+                        <tr class="">
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="flex items-center">
                                     <div class="text-sm font-medium text-zinc-900 dark:text-white">
@@ -190,7 +195,9 @@
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 @php
-                                    $action = AuditAction::tryFrom($log->action);
+                                    // Ensure we're working with a string
+                                    $logAction = is_string($log->action) ? $log->action : ($log->action instanceof App\Enums\AuditAction ? $log->action->value : '');
+                                    $action = $logAction ? App\Enums\AuditAction::tryFrom($logAction) : null;
                                 @endphp
                                 @if($action)
                                     <span class="px-2 py-1 text-xs rounded-full {{ $action->color() }} hover:{{ $action->colorHover() }} transition-colors">
