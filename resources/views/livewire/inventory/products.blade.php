@@ -1,12 +1,5 @@
 <div>
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4">
-        @if (session()->has('success'))
-            <x-alert type="success" :message="session('success')" />
-        @endif
-
-        @if (session()->has('error'))
-            <x-alert type="error" :message="session('error')" />
-        @endif
         <h1 class="text-2xl font-bold dark:text-white">Products</h1>
 
         <div class="flex flex-col items-center md:flex-row gap-4 w-full md:w-auto">

@@ -117,6 +117,8 @@ class Sales extends Component
             $this->channelFilter,
             $this->dateFilter
         );
+
+        // sales:page:1:per_page:10:sort:created_at:dir:DESC:search::channel::date:
     }
 
     protected function clearCurrentPageCache(): void

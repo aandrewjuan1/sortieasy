@@ -43,7 +43,7 @@
                     <!-- Admin-specific links -->
                         <flux:navlist.item icon="users" href="" :current="request()->routeIs('admin.users')" wire:navigate>{{ __('Manage Users') }}</flux:navlist.item>
 
-                        <flux:navlist.item icon="newspaper" href="" :current="request()->routeIs('admin.users')" wire:navigate>{{ __('Audit Logs') }}</flux:navlist.item>
+                        <flux:navlist.item icon="newspaper" :href="route('audit-logs')" :current="request()->routeIs('audit-logs')" wire:navigate>{{ __('Audit Logs') }}</flux:navlist.item>
                 </flux:navlist>
             @endcan
 

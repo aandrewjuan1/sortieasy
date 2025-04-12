@@ -2,8 +2,10 @@
 
 namespace App\Livewire\Transactions;
 
+use App\Models\Sale;
 use App\Models\Product;
 use Livewire\Component;
+use App\Enums\SaleChannel;
 use App\Models\Transaction;
 use App\Enums\TransactionType;
 use Livewire\Attributes\Computed;
@@ -139,6 +141,17 @@ class AddTransaction extends Component
                         throw new \Exception('Not enough stock available for this sale.');
                     }
                     $product->decrement('quantity_in_stock', $this->quantity);
+
+                    // Create sale record using product's price field
+                    Sale::create([
+                        'product_id' => $this->product_id,
+                        'user_id' => Auth::id(),
+                        'quantity' => $this->quantity,
+                        'unit_price' => $product->price, // Using price instead of selling_price
+                        'total_price' => $product->price * $this->quantity,
+                        'channel' => $this->channel ?? SaleChannel::InStore->value, // Default to in-store
+                        'sale_date' => now()->toDateString(),
+                    ]);
                     break;
 
                 case TransactionType::Return:
@@ -175,6 +188,7 @@ class AddTransaction extends Component
             );
 
             Cache::forget('products:page:1:per_page:10:sort:created_at:dir:DESC:search::category::supplier::stock:');
+            Cache::forget('sales:page:1:per_page:10:sort:created_at:dir:DESC:search::channel::date:');
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error($e);
