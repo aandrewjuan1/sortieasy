@@ -54,12 +54,14 @@ trait Auditable
         }
 
         $changeDescriptions = [];
+
         foreach ($changes as $attribute => $newValue) {
             $oldValue = $original[$attribute] ?? null;
+
             $changeDescriptions[] = "$attribute from " .
-                                  ($oldValue === null ? 'null' : $oldValue) .
-                                  " to " .
-                                  ($newValue === null ? 'null' : $newValue);
+                $this->stringifyForAudit($oldValue) .
+                " to " .
+                $this->stringifyForAudit($newValue);
         }
 
         $this->createAuditLog(
@@ -68,6 +70,35 @@ trait Auditable
             $this->getLoggableAttributes()
         );
     }
+
+
+    protected function stringifyForAudit($value): string
+    {
+        if (is_null($value)) {
+            return 'null';
+        }
+
+        if (is_object($value)) {
+            // Handle PHP 8.1+ backed enums
+            if ($value instanceof \BackedEnum) {
+                return $value->name . ' (' . $value->value . ')';
+            }
+
+            // If it has a __toString method, use that
+            if (method_exists($value, '__toString')) {
+                return (string) $value;
+            }
+
+            // Fallback: class name
+            return get_class($value);
+        }
+
+        return (string) $value;
+    }
+
+
+
+
 
     /**
      * Log the model deletion event.
