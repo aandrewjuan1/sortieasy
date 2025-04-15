@@ -32,7 +32,7 @@ class ProductSummary extends Component
     }
 
     #[Computed]
-    public function totalStock(): int
+    public function totalStocks(): int
     {
         return $this->products->sum('quantity_in_stock');
     }

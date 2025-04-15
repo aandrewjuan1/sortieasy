@@ -1,6 +1,32 @@
 <div>
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4">
-        <h1 class="text-2xl font-bold dark:text-white">Transactions</h1>
+        <div class="flex flex-col gap-2">
+            <h1 class="text-4xl font-bold dark:text-white">All Transactions</h1>
+            <div class="flex justify-between items-center">
+                <div class="flex flex-wrap gap-4">
+                    <div class="text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                        <span class="text-zinc-500 dark:text-zinc-400">Total:</span>
+                        <span class="font-semibold">{{ $this->totalTransactions }}</span>
+                    </div>
+                    <div class="text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                        <span class="text-green-600 dark:text-green-400">Purchases:</span>
+                        <span class="font-semibold">{{ $this->purchaseCount }}</span>
+                    </div>
+                    <div class="text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                        <span class="text-blue-600 dark:text-blue-400">Sales:</span>
+                        <span class="font-semibold">{{ $this->saleCount }}</span>
+                    </div>
+                    <div class="text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                        <span class="text-purple-600 dark:text-purple-400">Returns:</span>
+                        <span class="font-semibold">{{ $this->returnCount }}</span>
+                    </div>
+                    <div class="text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                        <span class="text-yellow-600 dark:text-yellow-400">Adjustments:</span>
+                        <span class="font-semibold">{{ $this->adjustmentCount }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <div class="flex flex-col items-center md:flex-row gap-4 w-full md:w-auto">
             <div class="text-sm text-zinc-600 dark:text-zinc-300">

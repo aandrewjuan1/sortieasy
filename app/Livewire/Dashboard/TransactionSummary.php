@@ -30,6 +30,12 @@ class TransactionSummary extends Component
             });
     }
 
+    #[Computed]
+    public function totalTransactions(): int
+    {
+        return Transaction::count();
+    }
+
     protected function getTransactionTextColor(string $type): string
     {
         return match ($type) {
@@ -91,7 +97,7 @@ class TransactionSummary extends Component
         return $total > 0 ? (($this->transactionVolume[$type] ?? 0) / $total) * 100 : 0;
     }
 
-    #[Computed(persist: true, seconds: 3600)]
+    #[Computed()]
     public function transactionVolume(): array
     {
         // Get volumes from database (returns array with string keys)

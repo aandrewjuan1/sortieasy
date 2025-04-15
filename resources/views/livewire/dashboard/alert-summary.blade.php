@@ -21,32 +21,29 @@
             </div>
 
             <div class="flex flex-wrap gap-3">
-                <div class="bg-gray-100 dark:bg-zinc-700 p-3 rounded-lg flex items-center gap-2">
+                <div class="flex items-center gap-2 bg-gray-100 dark:bg-zinc-700 px-3 py-2 rounded-lg">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500 dark:text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    <div>
-                        <p class="text-sm text-gray-600 dark:text-gray-300">Total Alerts</p>
-                        <p class="text-xl font-bold text-gray-800 dark:text-gray-200">{{ $this->alertStats['total'] }}</p>
-                    </div>
+                    <span class="text-xl font-bold text-gray-800 dark:text-gray-200">
+                        Total Alerts: {{ $this->alertStats['total'] }}
+                    </span>
                 </div>
-                <div class="bg-red-100 dark:bg-red-900 p-3 rounded-lg flex items-center gap-2">
+                <div class="flex items-center gap-2 bg-red-100 dark:bg-red-900 px-3 py-2 rounded-lg">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-500 dark:text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                     </svg>
-                    <div>
-                        <p class="text-sm text-red-800 dark:text-red-200">Unresolved</p>
-                        <p class="text-xl font-bold text-red-800 dark:text-red-200">{{ $this->alertStats['unresolved'] }}</p>
-                    </div>
+                    <span class="text-xl font-bold text-gray-800 dark:text-gray-200">
+                        Unresolved: {{ $this->alertStats['unresolved'] }}
+                    </span>
                 </div>
-                <div class="bg-green-100 dark:bg-green-900 p-3 rounded-lg flex items-center gap-2">
+                <div class="flex items-center gap-2 bg-green-100 dark:bg-green-900 px-3 py-2 rounded-lg">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500 dark:text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                     </svg>
-                    <div>
-                        <p class="text-sm text-green-800 dark:text-green-200">Resolved</p>
-                        <p class="text-xl font-bold text-green-800 dark:text-green-200">{{ $this->alertStats['resolved'] }}</p>
-                    </div>
+                    <span class="text-xl font-bold text-gray-800 dark:text-gray-200">
+                        Resolved: {{ $this->alertStats['resolved'] }}
+                    </span>
                 </div>
             </div>
         </div>

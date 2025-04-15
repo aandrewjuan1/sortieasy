@@ -81,6 +81,18 @@ class Products extends Component
             ->paginate($this->perPage));
     }
 
+    #[Computed]
+    public function totalProducts(): int
+    {
+        return $this->products->count();
+    }
+
+    #[Computed]
+    public function totalStocks(): int
+    {
+        return $this->products->sum('quantity_in_stock');
+    }
+
 
     protected function getProductsCacheKey(): string
     {

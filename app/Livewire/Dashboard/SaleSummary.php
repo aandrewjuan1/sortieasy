@@ -38,7 +38,7 @@ class SaleSummary extends Component
     }
 
     // Sales data grouped by channel, uses caching for 1 hour
-    #[Computed(persist: true, seconds: 3600)]
+    #[Computed()]
     public function salesByChannel(): array
     {
         $startDate = now()->subDays($this->daysToShow);

@@ -1,16 +1,31 @@
 <div>
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4">
         <div class="flex flex-col gap-2">
-            <h1 class="text-2xl font-bold dark:text-white">Sales</h1>
+            <h1 class="text-4xl font-bold dark:text-white">Sales</h1>
             <div class="flex justify-between items-center">
-                <div class="flex space-x-4">
+                <div class="flex flex-wrap gap-4">
+                    <!-- Revenue Metrics -->
                     <div class="text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                        <span class="text-zinc-500 dark:text-zinc-400">Total Sales:</span>
-                        {{ number_format($this->sales->sum('total_price'), 2) }}
+                        <span class="text-zinc-500 dark:text-zinc-400">Total Revenue:</span>
+                        <span class="font-semibold">${{ number_format($this->totalRevenue, 2) }}</span>
                     </div>
                     <div class="text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                        <span class="text-zinc-500 dark:text-zinc-400">Total Items:</span>
-                        {{ number_format($this->sales->sum('quantity')) }}
+                        <span class="text-green-600 dark:text-green-400">Today:</span>
+                        <span class="font-semibold">${{ number_format($this->todayRevenue, 2) }}</span>
+                    </div>
+                    <div class="text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                        <span class="text-blue-600 dark:text-blue-400">This Week:</span>
+                        <span class="font-semibold">${{ number_format($this->thisWeekRevenue, 2) }}</span>
+                    </div>
+                    <div class="text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                        <span class="text-purple-600 dark:text-purple-400">This Month:</span>
+                        <span class="font-semibold">${{ number_format($this->thisMonthRevenue, 2) }}</span>
+                    </div>
+
+                    <!-- Sales Count Metrics -->
+                    <div class="text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                        <span class="text-zinc-500 dark:text-zinc-400">Total Sales Records:</span>
+                        <span class="font-semibold">{{ number_format($this->totalSalesCount) }}</span>
                     </div>
                 </div>
             </div>
@@ -210,17 +225,8 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="8" class="px-6 py-4 text-center text-sm text-zinc-500 dark:text-zinc-300">
-                            <div class="flex flex-col items-center justify-center py-8">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-zinc-400 dark:text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                </svg>
-                                <h3 class="mt-2 text-sm font-medium text-zinc-900 dark:text-white">No sales found</h3>
-                                <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">Try adjusting your search or filter criteria</p>
-                                <button wire:click="clearAllFilters" class="mt-4 inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                                    Clear all filters
-                                </button>
-                            </div>
+                        <td colspan="6" class="px-6 py-4 text-center text-sm text-zinc-500 dark:text-zinc-300">
+                            No sales found matching your criteria
                         </td>
                     </tr>
                     @endforelse

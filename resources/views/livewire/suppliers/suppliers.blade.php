@@ -1,13 +1,16 @@
 <div>
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4">
-        @if (session()->has('success'))
-            <x-alert type="success" :message="session('success')" />
-        @endif
-
-        @if (session()->has('error'))
-            <x-alert type="error" :message="session('error')" />
-        @endif
-        <h1 class="text-2xl font-bold dark:text-white">Suppliers</h1>
+        <div class="flex flex-col gap-2">
+            <h1 class="text-4xl font-bold dark:text-white">All Suppliers</h1>
+            <div class="flex justify-between items-center">
+                <div class="flex space-x-4">
+                    <div class="text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                        <span class="text-zinc-500 dark:text-zinc-400">Total Suppliers:</span>
+                        {{ $this->totalSuppliers }}
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <div class="flex flex-col items-center md:flex-row gap-4 w-full md:w-auto">
             <div class="text-sm text-zinc-600 dark:text-zinc-300">

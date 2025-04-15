@@ -1,35 +1,52 @@
 <div class="p-6 bg-white rounded-lg shadow dark:bg-zinc-800">
     <x-layouts.dashboard/>
-    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+    <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+        <!-- Header Section -->
         <div class="flex items-center gap-3">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-purple-600 dark:text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
             </svg>
             <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-200">Transaction Summary</h2>
         </div>
-        <div class="flex items-center gap-3 bg-gray-100 dark:bg-zinc-700 px-3 py-2 rounded-lg">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500 dark:text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-            </svg>
-            <span class="text-sm text-gray-600 dark:text-gray-300">Last {{ $this->daysToShow }} days</span>
+
+        <!-- Total Transactions and Date Range -->
+        <div class="flex items-center gap-4">
+            <!-- Total Transactions Badge -->
+            <div class="flex items-center gap-2 bg-indigo-100 dark:bg-indigo-900/50 px-3 py-2 rounded-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-indigo-600 dark:text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                </svg>
+                <span class="text-sm font-semibold text-indigo-800 dark:text-indigo-200">
+                    Total Records: {{ $this->totalTransactions }}
+                </span>
+            </div>
+
+            <!-- Last 30 Days Section -->
+            <div class="flex items-center gap-3 bg-gray-100 dark:bg-zinc-700 px-3 py-2 rounded-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500 dark:text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                <span class="text-sm text-gray-600 dark:text-gray-300">Last {{ $this->daysToShow }} days</span>
+            </div>
         </div>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+
         <!-- Transaction Volume -->
         <div class="bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-lg shadow p-6">
             <div class="flex items-center gap-3 mb-4">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-600 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                 </svg>
-                <h3 class="font-semibold text-gray-800 dark:text-gray-200">Transaction Volume</h3>
+                <h3 class="font-semibold text-gray-800 dark:text-gray-200">Total Items Transacted</h3>
             </div>
             <div class="space-y-4">
                 @foreach(App\Enums\TransactionType::cases() as $type)
                 <div>
                     <div class="flex justify-between items-center mb-1">
                         <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
-                            {{ $type->label() }}
+                            {{ $type->label() }} Items
                         </span>
                         <span class="text-sm font-semibold {{ $this->getTransactionTextColor($type->value) }}">
                             {{ $this->transactionVolume[$type->value] ?? 0 }}
@@ -48,9 +65,9 @@
         <div class="bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-lg shadow p-6">
             <div class="flex items-center gap-3 mb-4">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-600 dark:text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
                 </svg>
-                <h3 class="font-semibold text-gray-800 dark:text-gray-200">Transaction Types</h3>
+                <h3 class="font-semibold text-gray-800 dark:text-gray-200">Items by Transaction Type</h3>
             </div>
             <div class="grid grid-cols-2 gap-4">
                 @foreach(App\Enums\TransactionType::cases() as $type)
@@ -82,7 +99,7 @@
                     <div>
                         <p class="text-sm font-medium text-gray-700 dark:text-gray-300">{{ $type->label() }}</p>
                         <p class="text-lg font-bold {{ $this->getTransactionTextColor($type->value) }}">
-                            {{ $this->transactionVolume[$type->value] ?? 0 }}
+                            {{ $this->transactionVolume[$type->value] ?? 0 }} items
                         </p>
                     </div>
                 </div>

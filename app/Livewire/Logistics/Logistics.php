@@ -81,6 +81,38 @@ class Logistics extends Component
             ->paginate($this->perPage);
     }
 
+    #[Computed]
+    public function totalLogisticsCount(): int
+    {
+        return Logistic::count();
+    }
+
+    #[Computed]
+    public function pendingLogisticsCount(): int
+    {
+        return Logistic::where('status', 'pending')->count();
+    }
+
+    #[Computed]
+    public function shippedLogisticsCount(): int
+    {
+        return Logistic::where('status', 'shipped')->count();
+    }
+
+    #[Computed]
+    public function deliveredLogisticsCount(): int
+    {
+        return Logistic::where('status', 'delivered')->count();
+    }
+
+    #[Computed]
+    public function overdueDeliveriesCount(): int
+    {
+        return Logistic::where('status', '!=', 'delivered')
+            ->where('delivery_date', '<', now())
+            ->count();
+    }
+
     // Add this method to your Logistics component
     public function getTimeStatus(Logistic $logistic): array
     {

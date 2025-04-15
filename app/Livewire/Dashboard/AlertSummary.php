@@ -69,9 +69,4 @@ class AlertSummary extends Component
     {
         $this->reset('alerts');
     }
-
-    public function render()
-    {
-        return view('livewire.dashboard.alert-summary');
-    }
 }

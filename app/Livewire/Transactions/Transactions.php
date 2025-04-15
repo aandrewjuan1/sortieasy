@@ -74,6 +74,42 @@ class Transactions extends Component
         }
     }
 
+    #[Computed]
+    public function purchaseCount(): int
+    {
+        return Transaction::where('type', 'purchase')->count();
+    }
+
+    #[Computed]
+    public function saleCount(): int
+    {
+        return Transaction::where('type', 'sale')->count();
+    }
+
+    #[Computed]
+    public function returnCount(): int
+    {
+        return Transaction::where('type', 'return')->count();
+    }
+
+    #[Computed]
+    public function adjustmentCount(): int
+    {
+        return Transaction::where('type', 'adjustment')->count();
+    }
+
+    #[Computed]
+    public function positiveQuantityCount(): int
+    {
+        return Transaction::where('quantity', '>', 0)->count();
+    }
+
+    #[Computed]
+    public function negativeQuantityCount(): int
+    {
+        return Transaction::where('quantity', '<', 0)->count();
+    }
+
     public function clearAllFilters()
     {
         $this->reset([
@@ -100,6 +136,12 @@ class Transactions extends Component
             ->dateFilter($this->dateFilter)
             ->orderBy($this->sortBy, $this->sortDir)
             ->paginate($this->perPage));
+    }
+
+    #[Computed]
+    public function totalTransactions()
+    {
+        return Transaction::count();
     }
 
     protected function getTransactionCacheKey(): string

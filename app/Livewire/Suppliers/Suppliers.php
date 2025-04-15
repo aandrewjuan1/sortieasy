@@ -47,6 +47,12 @@ class Suppliers extends Component
         }
     }
 
+    #[Computed]
+    public function totalSuppliers(): int
+    {
+        return Supplier::count();
+    }
+
     public function clearAllFilters()
     {
         $this->reset([

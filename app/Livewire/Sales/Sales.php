@@ -90,6 +90,72 @@ class Sales extends Component
     }
 
     #[Computed]
+    public function todaySalesCount(): int
+    {
+        return Sale::whereDate('sale_date', today())->count();
+    }
+
+    #[Computed]
+    public function thisWeekSalesCount(): int
+    {
+        return Sale::whereBetween('sale_date', [now()->startOfWeek(), now()->endOfWeek()])->count();
+    }
+
+    #[Computed]
+    public function thisMonthSalesCount(): int
+    {
+        return Sale::whereBetween('sale_date', [now()->startOfMonth(), now()->endOfMonth()])->count();
+    }
+
+    #[Computed]
+    public function onlineSalesCount(): int
+    {
+        return Sale::where('channel', SaleChannel::Online->value)->count();
+    }
+
+    #[Computed]
+    public function inStoreSalesCount(): int
+    {
+        return Sale::where('channel', SaleChannel::InStore->value)->count();
+    }
+
+    #[Computed]
+    public function phoneSalesCount(): int
+    {
+        return Sale::where('channel', SaleChannel::Phone->value)->count();
+    }
+
+    #[Computed]
+    public function totalRevenue(): float
+    {
+        return Sale::sum('total_price');
+    }
+
+    #[Computed]
+    public function todayRevenue(): float
+    {
+        return Sale::whereDate('sale_date', today())->sum('total_price');
+    }
+
+    #[Computed]
+    public function totalSalesCount(): int
+    {
+        return Sale::count();
+    }
+
+    #[Computed]
+    public function thisWeekRevenue(): float
+    {
+        return Sale::whereBetween('sale_date', [now()->startOfWeek(), now()->endOfWeek()])->sum('total_price');
+    }
+
+    #[Computed]
+    public function thisMonthRevenue(): float
+    {
+        return Sale::whereBetween('sale_date', [now()->startOfMonth(), now()->endOfMonth()])->sum('total_price');
+    }
+
+    #[Computed]
     public function sales()
     {
         $cacheKey = $this->getSalesCacheKey();

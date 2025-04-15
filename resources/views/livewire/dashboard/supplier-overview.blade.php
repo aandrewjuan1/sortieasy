@@ -8,14 +8,13 @@
             <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-200">Supplier Overview</h2>
         </div>
         <div class="flex flex-wrap gap-3">
-            <div class="bg-indigo-100 dark:bg-indigo-900 p-3 rounded-lg flex items-center gap-2">
+            <div class="flex items-center gap-2 bg-indigo-100 dark:bg-indigo-900/50 px-3 py-2 rounded-lg">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-indigo-600 dark:text-indigo-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                 </svg>
-                <div>
-                    <p class="text-sm text-indigo-800 dark:text-indigo-200">Total Suppliers</p>
-                    <p class="text-xl font-bold text-indigo-800 dark:text-indigo-200">{{ $this->totalSuppliers }}</p>
-                </div>
+                <span class="text-sm font-semibold text-indigo-800 dark:text-indigo-200">
+                    Total Suppliers: {{ $this->totalSuppliers }}
+                </span>
             </div>
         </div>
     </div>

@@ -8,23 +8,21 @@
             <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-200">Product Summary</h2>
         </div>
         <div class="flex flex-wrap gap-3">
-            <div class="bg-blue-100 dark:bg-blue-900 p-3 rounded-lg flex items-center gap-2">
+            <div class="flex items-center gap-2 bg-blue-100 dark:bg-blue-900 px-3 py-2 rounded-lg">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-600 dark:text-blue-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
                 </svg>
-                <div>
-                    <p class="text-sm text-blue-800 dark:text-blue-200">Total Products</p>
-                    <p class="text-xl font-bold text-blue-800 dark:text-blue-200">{{ $this->totalProducts }}</p>
-                </div>
+                <span class="text-sm font-semibold text-indigo-800 dark:text-indigo-200">
+                    Total Products: {{ $this->totalProducts }}
+                </span>
             </div>
-            <div class="bg-green-100 dark:bg-green-900 p-3 rounded-lg flex items-center gap-2">
+            <div class="flex items-center gap-2 bg-green-100 dark:bg-green-900 px-3 py-2 rounded-lg">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-600 dark:text-green-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4" />
                 </svg>
-                <div>
-                    <p class="text-sm text-green-800 dark:text-green-200">Total Stock</p>
-                    <p class="text-xl font-bold text-green-800 dark:text-green-200">{{ $this->totalStock }}</p>
-                </div>
+                <span class="text-sm font-semibold text-indigo-800 dark:text-indigo-200">
+                    Total Stocks: {{ $this->totalStocks }}
+                </span>
             </div>
         </div>
     </div>
