@@ -5,7 +5,6 @@ namespace App\Livewire\ManageUsers;
 use App\Models\User;
 use App\Enums\UserRole;
 use Livewire\Component;
-use Illuminate\Support\Str;
 use Livewire\Attributes\Validate;
 use Illuminate\Support\Facades\Hash;
 

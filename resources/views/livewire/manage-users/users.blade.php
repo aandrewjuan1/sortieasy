@@ -215,14 +215,6 @@
                                             </flux:tooltip>
                                         </flux:modal.trigger>
                                     @endcan
-
-                                    @can('delete', $user)
-                                        <flux:modal.trigger name="confirm-user-deletion">
-                                            <flux:tooltip content="Delete user">
-                                                <flux:button size="sm" variant="ghost" wire:click="$dispatch('delete-user', { userId: {{ $user->id }} })" icon="trash" />
-                                            </flux:tooltip>
-                                        </flux:modal.trigger>
-                                    @endcan
                                 </div>
                             </td>
                         </tr>
@@ -247,7 +239,7 @@
         <livewire:manage-users.add-user />
     </flux:modal>
 
-    {{-- <flux:modal name="edit-user" maxWidth="2xl">
-        <livewire:users.edit-user />
-    </flux:modal> --}}
+    <flux:modal name="edit-user" maxWidth="2xl">
+        <livewire:manage-users.edit-user />
+    </flux:modal>
 </div>
