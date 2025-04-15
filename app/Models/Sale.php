@@ -13,8 +13,7 @@ class Sale extends Model
     use HasFactory;
     use Auditable;
 
-    protected $fillable = [
-        'product_id', 'user_id', 'quantity', 'unit_price', 'total_price', 'channel', 'sale_date'
+    protected $guarded = [
     ];
 
     protected $casts = [

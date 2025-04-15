@@ -13,11 +13,7 @@ class Logistic extends Model
     use HasFactory;
     use Auditable;
 
-    protected $fillable = [
-        'product_id',
-        'quantity',
-        'delivery_date',
-        'status',
+    protected $guarded = [
     ];
 
     protected $casts = [

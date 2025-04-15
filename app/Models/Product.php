@@ -13,18 +13,7 @@ class Product extends Model
     use HasFactory;
     use Auditable;
 
-    protected $fillable = [
-        'name',
-        'description',
-        'category',
-        'sku',
-        'price',
-        'cost',
-        'quantity_in_stock',
-        'reorder_threshold',
-        'safety_stock',
-        'last_restocked',
-        'supplier_id',
+    protected $guarded = [
     ];
 
     protected $casts = [

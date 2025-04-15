@@ -14,12 +14,7 @@ class Transaction extends Model
     use HasFactory;
     use Auditable;
 
-    protected $fillable = [
-        'product_id',
-        'type',
-        'quantity',
-        'notes',
-        'created_by',
+    protected $guarded = [
     ];
 
     protected $casts = [

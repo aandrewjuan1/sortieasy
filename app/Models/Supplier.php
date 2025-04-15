@@ -12,11 +12,7 @@ class Supplier extends Model
     use HasFactory;
     use Auditable;
 
-    protected $fillable = [
-        'name',
-        'contact_email',
-        'contact_phone',
-        'address',
+    protected $guarded = [
     ];
 
     /**

@@ -21,22 +21,28 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // Create 10 random users using the factory
-        User::factory(10)->create();
+        User::factory(10)->admin()->create(); // Active admin
+        User::factory(10)->employee()->inactive()->create(); // Inactive employee
 
         // Create a hardcoded employee user
+        // Create a hardcoded employee user
         User::factory()->create([
-            'name' => 'Employee Test', // Hardcoded name
-            'email' => 'employee@example.com', // Hardcoded email
-            'role' => UserRole::Employee->value, // Set role to 'employee'
-            'password' => bcrypt('password'), // Hardcoded password
+            'name' => 'Employee Test',
+            'email' => 'employee@example.com',
+            'role' => 'employee', // Direct string value
+            'password' => bcrypt('password'),
+            'phone' => '+1234567890', // Added phone
+            'is_active' => true, // Explicitly active
         ]);
 
         // Create a hardcoded admin user
         User::factory()->create([
-            'name' => 'Admin User', // Hardcoded name
-            'email' => 'admin@example.com', // Hardcoded email
-            'role' => UserRole::Admin->value, // Set role to 'admin'
-            'password' => bcrypt('adminpassword'), // Hardcoded password
+            'name' => 'Admin User',
+            'email' => 'admin@example.com',
+            'role' => 'admin', // Direct string value
+            'password' => bcrypt('adminpassword'),
+            'phone' => '+1987654321', // Added phone
+            'is_active' => true, // Explicitly active
         ]);
 
         // Create realistic suppliers
@@ -54,29 +60,29 @@ class DatabaseSeeder extends Seeder
             'type' => TransactionType::Sale->value,
         ]);
         // Generate 25 'return' transactions
-        Transaction::factory()->count(25)->create([
+        Transaction::factory()->count(50)->create([
             'type' => TransactionType::Return->value,
         ]);
         // Generate 25 'adjustment' transactions
-        Transaction::factory()->count(25)->create([
+        Transaction::factory()->count(50)->create([
             'type' => TransactionType::Adjustment->value,
         ]);
 
         // Create alerts for products
-        Alert::factory()->count(30)->create();
+        Alert::factory()->count(40)->create();
 
         // Create some resolved alerts
-        Alert::factory()->count(10)->resolved()->create();
+        Alert::factory()->count(20)->resolved()->create();
 
         // Create logistics records
         Logistic::factory()->count(40)->create();
 
         // Create some shipped logistics
-        Logistic::factory()->count(10)->shipped()->create();
+        Logistic::factory()->count(30)->shipped()->create();
 
         // Create some delivered logistics
-        Logistic::factory()->count(10)->delivered()->create();
+        Logistic::factory()->count(30)->delivered()->create();
 
-        Sale::factory()->count(50)->create();
+        Sale::factory()->count(100)->create();
     }
 }

@@ -10,12 +10,7 @@ class AuditLog extends Model
 {
     protected $table = 'audit_logs';
 
-    protected $fillable = [
-        'user_id',
-        'action',
-        'description',
-        'table_name',
-        'record_id',
+    protected $guarded = [
     ];
 
     protected $casts = [

@@ -12,13 +12,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
+            // Core Auth
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->enum('role', ['admin', 'employee'])->default('employee');
             $table->rememberToken();
+            $table->enum('role', ['admin', 'employee'])->default('employee');
+            $table->string('phone')->nullable();  // For contact/reset notifications
+            $table->boolean('is_active')->default(true);  // Toggle access
             $table->timestamps();
         });
 

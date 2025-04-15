@@ -2,6 +2,7 @@
 
 use App\Livewire\AuditLogs;
 use App\Livewire\Logistics\Logistics;
+use App\Livewire\ManageUsers\Users;
 use App\Livewire\Transactions\Transactions;
 use App\Livewire\Settings\Profile;
 use App\Livewire\Settings\Password;
@@ -34,6 +35,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('logistics', Logistics::class)->name('logistics');
     Route::get('sales', Sales::class)->name('sales');
     Route::get('audit-logs', AuditLogs::class)->name('audit-logs');
+    Route::get('manage-users', Users::class)->name('manage-users');
 
     Route::get('settings/profile', Profile::class)->name('settings.profile');
     Route::get('settings/password', Password::class)->name('settings.password');

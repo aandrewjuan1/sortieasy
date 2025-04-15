@@ -10,12 +10,7 @@ class Alert extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'product_id',
-        'type',
-        'message',
-        'resolved',
-        'resolved_at',
+    protected $guarded = [
     ];
 
     protected $casts = [
