@@ -55,7 +55,7 @@ class AddSupplier extends Component
 
             $this->dispatch('notify',
                 type: 'error',
-                message: 'Failed to create supplier: ' . $e->getMessage()
+                message: 'Failed to create supplier.'
             );
         }
     }

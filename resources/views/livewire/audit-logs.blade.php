@@ -186,7 +186,7 @@
                                 </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <button
+                                <button x-cloak
                                     wire:click="$set('tableFilter', '{{ $log->table_name }}')"
                                     class="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors"
                                 >

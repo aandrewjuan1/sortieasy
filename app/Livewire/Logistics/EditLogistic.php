@@ -118,7 +118,7 @@ class EditLogistic extends Component
             DB::rollBack();
             $this->dispatch('notify',
                 type: 'error',
-                message: 'Failed to update logistics entry: ' . $e->getMessage()
+                message: 'Failed to update logistics entry.'
             );
         }
     }

@@ -152,7 +152,7 @@ class EditSale extends Component
 
             $this->dispatch('notify',
                 type: 'error',
-                message: 'Failed to update sale: ' . $e->getMessage()
+                message: 'Failed to update sale.'
             );
         }
     }
@@ -203,7 +203,7 @@ class EditSale extends Component
             DB::rollBack();
             $this->dispatch('notify',
                 type: 'error',
-                message: 'Failed to delete sale: ' . $e->getMessage()
+                message: 'Failed to delete sale.'
             );
         }
     }

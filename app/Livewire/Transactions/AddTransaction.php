@@ -195,7 +195,7 @@ class AddTransaction extends Component
             Log::error($e);
             $this->dispatch('notify',
                 type: 'error',
-                message: 'Failed to create transaction: ' . $e->getMessage()
+                message: 'Failed to create transaction.'
             );
         }
     }

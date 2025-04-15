@@ -30,7 +30,7 @@ class Users extends Component
     public $sortDir = 'DESC';
 
     #[Url(history: true)]
-    public $roleFilter = '';
+    public $roleFilter = 'employee';
 
     #[Url(history: true)]
     public $statusFilter = '';
@@ -100,6 +100,8 @@ class Users extends Component
             $this->roleFilter,
             $this->statusFilter
         );
+
+        // users:page:1:per_page:10:sort:created_at:dir:DESC:search::role:employee:status:
     }
 
     protected function clearCurrentPageCache(): void
@@ -107,7 +109,7 @@ class Users extends Component
         Cache::forget($this->getUsersCacheKey());
     }
 
-    #[On('user-created')]
+    #[On('user-added')]
     #[On('user-updated')]
     #[On('user-deleted')]
     public function clearCache()

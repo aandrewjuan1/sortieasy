@@ -166,7 +166,7 @@
 
                             {{-- Role --}}
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <button
+                                <button x-cloak
                                     wire:click="$set('roleFilter', '{{ $user->role->value }}')"
                                     class="px-2 py-1 text-xs rounded-full {{ $user->role === App\Enums\UserRole::Admin ? 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200' : 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' }} hover:bg-opacity-80 transition-colors cursor-pointer"
                                 >
@@ -183,6 +183,7 @@
                             <td class="px-6 py-4 whitespace-nowrap">
                                 @can('changeStatus', $user)
                                     <button
+                                        x-cloak
                                         wire:click="toggleStatus({{ $user->id }})"
                                         wire:loading.attr="disabled"
                                         class="px-2 py-1 text-xs rounded-full {{ $user->is_active ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200' }} hover:bg-opacity-80 transition-colors cursor-pointer"
@@ -247,15 +248,11 @@
     </div>
 
     {{-- Modals --}}
-    {{-- <flux:modal name="add-user" maxWidth="2xl">
-        <livewire:users.create-user />
+    <flux:modal name="add-user" maxWidth="2xl">
+        <livewire:manage-users.add-user />
     </flux:modal>
 
-    <flux:modal name="edit-user" maxWidth="2xl">
+    {{-- <flux:modal name="edit-user" maxWidth="2xl">
         <livewire:users.edit-user />
-    </flux:modal>
-
-    <flux:modal name="confirm-user-deletion" maxWidth="md">
-        <livewire:users.delete-user />
     </flux:modal> --}}
 </div>

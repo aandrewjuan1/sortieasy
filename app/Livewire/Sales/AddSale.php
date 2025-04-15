@@ -138,7 +138,7 @@ class AddSale extends Component
 
             $this->dispatch('notify',
                 type: 'error',
-                message: 'Failed to record sale: ' . $e->getMessage()
+                message: 'Failed to record sale.'
             );
         }
     }

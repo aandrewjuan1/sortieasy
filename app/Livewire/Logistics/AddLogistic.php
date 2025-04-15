@@ -97,7 +97,7 @@ class AddLogistic extends Component
 
             $this->dispatch('notify',
                 type: 'error',
-                message: 'Failed to create logistics entry: ' . $e->getMessage()
+                message: 'Failed to create logistics entry.'
             );
         }
     }

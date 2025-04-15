@@ -181,7 +181,7 @@ class EditTransaction extends Component
 
             $this->dispatch('notify',
                 type: 'error',
-                message: 'Failed to update transaction: ' . $e->getMessage()
+                message: 'Failed to update transaction.'
             );
         }
     }
@@ -226,7 +226,7 @@ class EditTransaction extends Component
             DB::rollBack();
             $this->dispatch('notify',
                 type: 'error',
-                message: 'Failed to delete transaction: ' . $e->getMessage()
+                message: 'Failed to delete transaction.'
             );
         }
     }

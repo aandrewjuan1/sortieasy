@@ -108,8 +108,7 @@ class AddProduct extends Component
         } catch (\Exception $e) {
             DB::rollBack();
 
-            $this->dispatch('error', message: 'Failed to create product: ' . $e->getMessage());
-
+            $this->dispatch('error', message: 'Failed to create product');
         }
     }
 
