@@ -1,7 +1,7 @@
 <div>
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4">
         <div class="flex flex-col gap-2">
-            <h1 class="text-4xl font-bold dark:text-white">All Suppliers</h1>
+            <h1 class="text-4xl font-bold dark:text-white">Suppliers</h1>
             <div class="flex justify-between items-center">
                 <div class="flex space-x-4">
                     <div class="text-sm font-medium text-zinc-700 dark:text-zinc-300">

@@ -3,14 +3,41 @@
         <div class="flex flex-col gap-2">
             <h1 class="text-4xl font-bold dark:text-white">Products</h1>
             <div class="flex justify-between items-center">
-                <div class="flex space-x-4">
+                <div class="flex flex-wrap gap-4">
+                    <!-- Basic Count Metrics -->
                     <div class="text-sm font-medium text-zinc-700 dark:text-zinc-300">
                         <span class="text-zinc-500 dark:text-zinc-400">Total Products:</span>
-                        {{ $this->totalProducts }}
+                        <span class="font-semibold">{{ $this->totalProducts }}</span>
                     </div>
                     <div class="text-sm font-medium text-zinc-700 dark:text-zinc-300">
                         <span class="text-zinc-500 dark:text-zinc-400">Total Stocks:</span>
-                        {{ $this->totalStocks }}
+                        <span class="font-semibold">{{ $this->totalStocks }}</span>
+                    </div>
+
+                    <!-- Inventory Value -->
+                    <div class="text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                        <span class="text-blue-600 dark:text-blue-400">Inventory Value:</span>
+                        <span class="font-semibold">${{ number_format($this->totalInventoryValue, 2) }}</span>
+                    </div>
+
+                    <!-- Stock Status Metrics -->
+                    <div class="text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                        <span class="text-yellow-600 dark:text-yellow-400">Low Stock:</span>
+                        <span class="font-semibold">{{ $this->lowStockCount }}</span>
+                    </div>
+                    <div class="text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                        <span class="text-red-600 dark:text-red-400">Critical Stock:</span>
+                        <span class="font-semibold">{{ $this->criticalStockCount }}</span>
+                    </div>
+                    <div class="text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                        <span class="text-red-800 dark:text-red-300">Out of Stock:</span>
+                        <span class="font-semibold">{{ $this->outOfStockCount }}</span>
+                    </div>
+
+                    <!-- Profit Metrics -->
+                    <div class="text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                        <span class="text-green-600 dark:text-green-400">Avg Margin:</span>
+                        <span class="font-semibold">{{ number_format($this->averageProfitMargin, 1) }}%</span>
                     </div>
                 </div>
             </div>

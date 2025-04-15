@@ -9,6 +9,7 @@ use Livewire\Attributes\Url;
 use Livewire\WithPagination;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Computed;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
 
 #[Title('Products')]
@@ -35,6 +36,65 @@ class Products extends Component
 
     #[Url(history: true)]
     public $stockFilter = '';
+
+    #[Computed]
+    public function totalInventoryValue(): float
+    {
+        return Product::query()
+            ->search($this->search)
+            ->categoryFilter($this->categoryFilter)
+            ->supplierFilter($this->supplierFilter)
+            ->stockFilter($this->stockFilter)
+            ->sum(DB::raw('quantity_in_stock * price'));
+    }
+
+    #[Computed]
+    public function lowStockCount(): int
+    {
+        return Product::query()
+            ->search($this->search)
+            ->categoryFilter($this->categoryFilter)
+            ->supplierFilter($this->supplierFilter)
+            ->whereColumn('quantity_in_stock', '<=', 'reorder_threshold')
+            ->whereColumn('quantity_in_stock', '>', 'safety_stock')
+            ->count();
+    }
+
+    #[Computed]
+    public function criticalStockCount(): int
+    {
+        return Product::query()
+            ->search($this->search)
+            ->categoryFilter($this->categoryFilter)
+            ->supplierFilter($this->supplierFilter)
+            ->whereColumn('quantity_in_stock', '<=', 'safety_stock')
+            ->count();
+    }
+
+    #[Computed]
+    public function outOfStockCount(): int
+    {
+        return Product::query()
+            ->search($this->search)
+            ->categoryFilter($this->categoryFilter)
+            ->supplierFilter($this->supplierFilter)
+            ->where('quantity_in_stock', 0)
+            ->count();
+    }
+
+    #[Computed]
+    public function averageProfitMargin(): float
+    {
+        $result = Product::query()
+            ->search($this->search)
+            ->categoryFilter($this->categoryFilter)
+            ->supplierFilter($this->supplierFilter)
+            ->where('cost', '>', 0)
+            ->selectRaw('AVG(((price - cost) / price) * 100) as avg_margin')
+            ->first();
+
+        return (float) ($result->avg_margin ?? 0);
+    }
 
     public function setSortBy($sortByField)
     {
@@ -84,13 +144,13 @@ class Products extends Component
     #[Computed]
     public function totalProducts(): int
     {
-        return $this->products->count();
+        return Product::count();
     }
 
     #[Computed]
     public function totalStocks(): int
     {
-        return $this->products->sum('quantity_in_stock');
+        return Product::sum('quantity_in_stock');
     }
 
 
