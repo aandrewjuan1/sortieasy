@@ -31,30 +31,10 @@ class EditSale extends Component
 
     public $available_stock = 0;
     public $unit_price = 0.00;
+    public $quantityError = '';
 
     public ?Sale $sale = null;
     public ?Product $product = null;
-
-    public function updated($propertyName)
-    {
-        if (in_array($propertyName, ['quantity', 'product_id'])) {
-            $this->calculateTotal();
-        }
-
-        if ($propertyName === 'quantity') {
-            $this->validate([
-                'quantity' => ['required', 'integer', 'min:1', function ($attribute, $value, $fail) {
-                    if ($this->product_id && $this->sale) {
-                        // Add the previous quantity back to stock temporarily
-                        $effectiveStock = $this->available_stock + $this->sale->quantity;
-                        if ($value > $effectiveStock) {
-                            $fail("Quantity exceeds available stock of {$effectiveStock}");
-                        }
-                    }
-                }]
-            ]);
-        }
-    }
 
     public function calculateTotal()
     {
@@ -69,6 +49,7 @@ class EditSale extends Component
     {
         $this->sale = Sale::where('id', $saleId)->first();
         $this->fillInputs($this->sale);
+        $this->quantityError = null;
         $this->resetValidation();
     }
 
@@ -94,6 +75,7 @@ class EditSale extends Component
     public function update()
     {
         $this->validate();
+        $this->authorize('edit', $this->sale);
 
         DB::beginTransaction();
 
@@ -110,9 +92,9 @@ class EditSale extends Component
             // Restore previous sale quantity to stock first
             $product->increment('quantity_in_stock', $this->sale->quantity);
 
-            // Now check if there's enough stock for new quantity
-            if ($product->quantity_in_stock < $this->quantity) {
-                throw new \Exception("Insufficient stock. Available: {$product->quantity_in_stock}");
+            if ($this->quantity > $product->quantity_in_stock) {
+                $this->quantityError = "Quantity exceeds available stock";
+                return;
             }
 
             // Update the sale
@@ -158,6 +140,8 @@ class EditSale extends Component
     public function delete()
     {
         DB::beginTransaction();
+
+        $this->authorize('delete', $this->sale);
 
         try {
             if (!$this->sale) {

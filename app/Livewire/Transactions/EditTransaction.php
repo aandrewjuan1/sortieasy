@@ -32,6 +32,8 @@ class EditTransaction extends Component
     public ?Product $product = null;
     public $quantityError = null;
 
+    public $available_stock = null;
+
     public $adjustmentReasons = [
         'damaged' => 'Damaged Goods',
         'lost' => 'Lost/Missing',
@@ -86,6 +88,7 @@ class EditTransaction extends Component
     {
         $this->transaction = Transaction::find($transactionId);
         $this->fillInputs($this->transaction);
+        $this->quantityError = null;
         $this->resetValidation();
     }
 
@@ -109,7 +112,9 @@ class EditTransaction extends Component
 
     public function update()
     {
-       $this->validate();
+        $this->validate();
+
+        $this->authorize('edit', $this->transaction);
 
         DB::beginTransaction();
 
@@ -207,6 +212,8 @@ class EditTransaction extends Component
 
     public function delete()
     {
+        $this->authorize('delete', $this->transaction);
+
         DB::beginTransaction();
 
         try {

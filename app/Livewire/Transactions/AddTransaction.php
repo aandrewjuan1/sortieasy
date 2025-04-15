@@ -56,6 +56,7 @@ class AddTransaction extends Component
 
     public function updatedProductId($value)
     {
+        $this->quantityError = null;
         if ($value) {
             $product = Product::find($value);
             if ($product) {

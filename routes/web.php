@@ -19,6 +19,7 @@ use App\Livewire\Sales\Sales;
 
 Route::redirect('/', 'dashboard');
 
+
 Route::middleware(['auth'])->group(function () {
     Route::redirect('dashboard', 'dashboard/product-summary')->name('dashboard');
     Route::redirect('settings', 'settings/profile');
@@ -34,12 +35,16 @@ Route::middleware(['auth'])->group(function () {
     Route::get('transactions', Transactions::class)->name('transactions');
     Route::get('logistics', Logistics::class)->name('logistics');
     Route::get('sales', Sales::class)->name('sales');
-    Route::get('audit-logs', AuditLogs::class)->name('audit-logs');
-    Route::get('manage-users', Users::class)->name('manage-users');
+
 
     Route::get('settings/profile', Profile::class)->name('settings.profile');
     Route::get('settings/password', Password::class)->name('settings.password');
     Route::get('settings/appearance', Appearance::class)->name('settings.appearance');
+});
+
+Route::middleware(['auth','admin'])->group(function () {
+    Route::get('audit-logs', AuditLogs::class)->name('audit-logs');
+    Route::get('manage-users', Users::class)->name('manage-users');
 });
 
 require __DIR__.'/auth.php';

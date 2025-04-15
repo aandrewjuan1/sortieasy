@@ -38,6 +38,12 @@
                     <p class="text-sm text-gray-500">
                         Available stock: {{ $available_stock }}
                     </p>
+                    <div role="alert" aria-live="polite" aria-atomic="true" class="mt-3 text-sm font-medium text-red-500 dark:text-red-400" data-flux-error>
+                        @if ($quantityError)
+                            <flux:icon icon="exclamation-triangle" variant="mini" class="inline" />
+                            {{ $quantityError }}
+                        @endif
+                    </div>
                     <flux:error name="quantity" />
                 </flux:field>
 
@@ -95,9 +101,14 @@
         </div>
 
         <div class="mt-6 flex items-center justify-between">
-            <flux:modal.trigger name="delete-sale">
-                <flux:button  wire:loading.attr="disabled" variant="danger">Delete Sale</flux:button>
-            </flux:modal.trigger>
+            @can('delete', $this->sale)
+                <flux:modal.trigger name="delete-sale">
+                    <flux:button  wire:loading.attr="disabled" variant="danger">Delete Sale</flux:button>
+                </flux:modal.trigger>
+            @else
+                <!-- This empty div will push the update button to the right when delete is visible -->
+                <div></div>
+            @endcan
             <div class="flex justify-end gap-4">
                 <flux:button
                     type="submit"

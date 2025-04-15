@@ -36,16 +36,19 @@ class AddSale extends Component
 
     public function updatedProductId($value)
     {
+        $this->resetValidation();
         if ($value) {
             $product = Product::find($value);
             if ($product) {
                 $this->available_stock = $product->quantity_in_stock;
                 $this->unit_price = $product->price;
                 $this->calculateTotal();
+
                 return; // 👈 Exit early to avoid resetting values
             }
         }
         // Only reset if no product is selected
+        $this->quantityError = null;
         $this->available_stock = 0;
         $this->unit_price = 0.00;
         $this->calculateTotal();

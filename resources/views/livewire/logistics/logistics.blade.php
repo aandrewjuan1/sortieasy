@@ -61,9 +61,11 @@
                 <option value="50">50 per page</option>
             </select>
 
-            <flux:modal.trigger name="add-logistic">
-                <flux:button variant="primary">Add Logistic</flux:button>
-            </flux:modal.trigger>
+            @can('view', Auth::user())
+                <flux:modal.trigger name="add-logistic">
+                    <flux:button variant="primary">Add Logistic</flux:button>
+                </flux:modal.trigger>
+            @endcan
         </div>
     </div>
 
@@ -169,12 +171,21 @@
 
                             {{-- Actions --}}
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                <div class="flex items-center justify-end space-x-2">
-                                    <flux:modal.trigger name="edit-logistic">
-                                        <flux:tooltip content="Edit logistic">
-                                            <flux:button size="sm" variant="ghost" wire:click="$dispatch('edit-logistic', { logisticId: {{ $logistic->id }} })" icon="pencil-square" />
-                                        </flux:tooltip>
-                                    </flux:modal.trigger>
+                                <div class-center justify-end space-x-2">
+                                    @can('edit', $logistic)
+                                        <flux:modal.trigger name="edit-logistic">
+                                            <flux:tooltip content="Edit logistic">
+                                                <flux:button size="sm" variant="ghost" wire:click="$dispatch('edit-logistic', { logisticId: {{ $logistic->id }} })" icon="pencil-square" />
+                                            </flux:tooltip>
+                                        </flux:modal.trigger>
+                                    @endcan
+                                    @can('editStatus', $logistic)
+                                        <flux:modal.trigger name="edit-status">
+                                            <flux:tooltip content="Edit status">
+                                                <flux:button size="sm" variant="ghost" wire:click="$dispatch('edit-status', { logisticId: {{ $logistic->id }} })" icon="archive-box-arrow-down" />
+                                            </flux:tooltip>
+                                        </flux:modal.trigger>
+                                    @endcan
                                 </div>
                             </td>
                         </tr>
@@ -197,6 +208,10 @@
 
     <flux:modal name="edit-logistic" maxWidth="2xl">
         <livewire:logistics.edit-logistic on-load/>
+    </flux:modal>
+
+    <flux:modal name="edit-status" maxWidth="2xl">
+        <livewire:logistics.edit-status on-load/>
     </flux:modal>
 
     <flux:modal name="add-logistic" maxWidth="2xl">

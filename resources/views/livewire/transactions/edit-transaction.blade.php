@@ -106,9 +106,14 @@
         </div>
 
         <div class="mt-6 flex items-center justify-between">
-            <flux:modal.trigger name="delete-transaction">
-                <flux:button wire:loading.attr="disabled" variant="danger">Delete Transaction</flux:button>
-            </flux:modal.trigger>
+            @can('delete',$this->transaction)
+                <flux:modal.trigger name="delete-transaction">
+                    <flux:button wire:loading.attr="disabled" variant="danger">Delete Transaction</flux:button>
+                </flux:modal.trigger>
+            @else
+                <!-- This empty div will push the update button to the right when delete is visible -->
+                <div></div>
+            @endcan
             <flux:button
                 type="submit"
                 variant="primary"

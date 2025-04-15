@@ -14,17 +14,9 @@ class UserPolicy
     /**
      * Determine whether the user can view any models.
      */
-    public function viewAny(User $user): bool
+    public function view(User $user): bool
     {
         return $user->role === UserRole::Admin;
-    }
-
-    /**
-     * Determine whether the user can view the model.
-     */
-    public function view(User $user, User $model): bool
-    {
-        return $user->role === UserRole::Admin || $user->id === $model->id;
     }
 
     /**

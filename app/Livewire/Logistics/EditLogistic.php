@@ -10,6 +10,7 @@ use Livewire\Attributes\Computed;
 use Livewire\Attributes\Validate;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 
 class EditLogistic extends Component
@@ -56,6 +57,7 @@ class EditLogistic extends Component
     {
         $this->logistic = Logistic::where('id', $logisticId)->first();
         $this->fillInputs($this->logistic);
+        $this->quantityError = null;
         $this->resetValidation();
     }
 
@@ -133,6 +135,7 @@ class EditLogistic extends Component
 
     public function delete()
     {
+        $this->authorize('delete', Auth::user());
         $this->logistic->delete();
 
         $this->dispatch('modal-close', name: 'delete-logistic');

@@ -17,7 +17,7 @@ return new class extends Migration
             $table->enum('type', ['purchase', 'sale', 'return', 'adjustment']);
             $table->integer('quantity');
             $table->text('notes')->nullable(); // Added recommendation
-            $table->foreignId('created_by')->constrained('users')->onDelete('set null');
+            $table->foreignId('created_by')->nullable()->constrained('users')->onDelete('set null');
             $table->timestamps();
 
             $table->index('created_at'); // For reporting

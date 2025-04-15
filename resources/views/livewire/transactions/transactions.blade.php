@@ -189,15 +189,17 @@
 
 
                         {{-- Actions --}}
-                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                            <div class="flex items-center justify-end space-x-2">
-                                <flux:modal.trigger name="edit-transaction">
-                                    <flux:tooltip content="Edit transaction">
-                                        <flux:button size="sm" variant="ghost" wire:click="$dispatch('edit-transaction', { transactionId: {{ $transaction->id }} })" icon="pencil-square" />
-                                    </flux:tooltip>
-                                </flux:modal.trigger>
-                            </div>
-                        </td>
+                        @can('edit', $transaction)
+                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                <div class="flex items-center justify-end space-x-2">
+                                    <flux:modal.trigger name="edit-transaction">
+                                        <flux:tooltip content="Edit transaction">
+                                            <flux:button size="sm" variant="ghost" wire:click="$dispatch('edit-transaction', { transactionId: {{ $transaction->id }} })" icon="pencil-square" />
+                                        </flux:tooltip>
+                                    </flux:modal.trigger>
+                                </div>
+                            </td>
+                        @endcan
                     </tr>
                     @empty
                     <tr>

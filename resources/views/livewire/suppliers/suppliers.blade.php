@@ -122,10 +122,12 @@
                             </button>
                         </th>
 
-                        {{-- Actions Column --}}
-                        <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-zinc-500 uppercase tracking-wider dark:text-zinc-300">
-                            <span>Actions</span>
-                        </th>
+                        @can('view', Auth::user())
+                            {{-- Actions Column --}}
+                            <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-zinc-500 uppercase tracking-wider dark:text-zinc-300">
+                                <span>Actions</span>
+                            </th>
+                        @endcan
                     </tr>
                 </thead>
 
@@ -183,18 +185,17 @@
                             </td>
 
                             {{-- Actions --}}
-                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                <div class="flex items-center justify-end space-x-2">
-                                    @can('edit', $supplier)
-                                        <flux:modal.trigger name="edit-supplier">
-                                            <flux:tooltip content="Edit supplier">
-                                                <flux:button size="sm" variant="ghost" wire:click="$dispatch('edit-supplier', { supplierId: {{ $supplier->id }} })" icon="pencil-square" />
-                                            </flux:tooltip>
-                                        </flux:modal.trigger>
-                                    @endcan
-
-                                </div>
-                            </td>
+                            @can('edit', $supplier)
+                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                    <div class="flex items-center justify-end space-x-2">
+                                            <flux:modal.trigger name="edit-supplier">
+                                                <flux:tooltip content="Edit supplier">
+                                                    <flux:button size="sm" variant="ghost" wire:click="$dispatch('edit-supplier', { supplierId: {{ $supplier->id }} })" icon="pencil-square" />
+                                                </flux:tooltip>
+                                            </flux:modal.trigger>
+                                    </div>
+                                </td>
+                            @endcan
                         </tr>
                     @empty
                         <tr>

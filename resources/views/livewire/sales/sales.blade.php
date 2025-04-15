@@ -196,15 +196,17 @@
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-zinc-500 dark:text-zinc-300">
                             {{ $sale->user->name ?? 'System' }}
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                            <div class="flex items-center justify-end space-x-2">
-                                <flux:modal.trigger name="edit-sale">
-                                    <flux:tooltip content="Edit sale">
-                                        <flux:button size="sm" variant="ghost" wire:click="$dispatch('edit-sale', {     saleId: {{ $sale->id }} })" icon="pencil-square" />
-                                    </flux:tooltip>
-                                </flux:modal.trigger>
-                            </div>
-                        </td>
+                        @can('edit', $sale)
+                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                <div class="flex items-center justify-end space-x-2">
+                                    <flux:modal.trigger name="edit-sale">
+                                        <flux:tooltip content="Edit sale">
+                                            <flux:button size="sm" variant="ghost" wire:click="$dispatch('edit-sale', {     saleId: {{ $sale->id }} })" icon="pencil-square" />
+                                        </flux:tooltip>
+                                    </flux:modal.trigger>
+                                </div>
+                            </td>
+                        @endcan
                     </tr>
                     @empty
                     <tr>
@@ -225,8 +227,6 @@
                 </tbody>
             </table>
         </div>
-
-
 
         {{-- Pagination --}}
         <div class="px-4 py-3 border-t border-zinc-200 dark:border-zinc-700 sm:px-6">
