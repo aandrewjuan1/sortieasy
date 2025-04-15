@@ -7,7 +7,6 @@ use App\Livewire\Dashboard\ProductSummary;
 use App\Livewire\Dashboard\SaleSummary;
 use App\Livewire\Dashboard\TransactionSummary;
 use App\Livewire\Dashboard\SupplierOverview;
-use App\Livewire\Dashboard\AlertSummary;
 use App\Livewire\Inventory\Products;
 use App\Livewire\Suppliers\Suppliers;
 use App\Livewire\Sales\Sales;
@@ -29,7 +28,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('dashboard/supplier-overview', SupplierOverview::class)->name('dashboard.supplier-overview');
     Route::get('dashboard/transaction-summary', TransactionSummary::class)->name('dashboard.transaction-summary');
     Route::get('dashboard/sale-summary', SaleSummary::class)->name('dashboard.sale-summary');
-    Route::get('dashboard/alert-summary', AlertSummary::class)->name('dashboard.alert-summary');
 
     // Sidebar nav routes
     Route::get('inventory', Products::class)->name('inventory');

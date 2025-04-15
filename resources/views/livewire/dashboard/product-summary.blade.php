@@ -5,7 +5,12 @@
             <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-600 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
             </svg>
-            <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-200">Product Summary</h2>
+            <div>
+                <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-200">Product Summary</h2>
+                <a href="{{route('inventory')}}" wire:navigate class="text-blue-600 hover:underline text-sm font-medium dark:text-blue-400">
+                    View all products
+                </a>
+            </div>
         </div>
         <div class="flex flex-wrap gap-3">
             <div class="flex items-center gap-2 bg-blue-100 dark:bg-blue-900 px-3 py-2 rounded-lg">
@@ -75,55 +80,6 @@
             </div>
         </div>
 
-        <!-- Safety Stock Alerts -->
-        <div class="bg-white dark:bg-zinc-800 border border-orange-200 dark:border-orange-800 rounded-lg shadow flex flex-col" style="height: 400px;">
-            <div class="p-4 border-b border-orange-200 dark:border-orange-800 bg-orange-50 dark:bg-orange-900/20 rounded-t-lg flex items-center gap-3">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-orange-600 dark:text-orange-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                </svg>
-                <div>
-                    <h3 class="font-semibold text-orange-800 dark:text-orange-200">Safety Stock</h3>
-                    <p class="text-sm text-orange-600 dark:text-orange-300">{{ $this->safetyStockProducts->count() }} critical products</p>
-                </div>
-            </div>
-            <div class="overflow-y-auto flex-1">
-                <table class="w-full">
-                    <thead class="sticky top-0 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-zinc-700 dark:text-gray-400">
-                        <tr>
-                            <th class="px-4 py-3 text-left">Product</th>
-                            <th class="px-4 py-3 text-right">Stock</th>
-                            <th class="px-4 py-3 text-right">Safety Level</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($this->safetyStockProducts as $product)
-                        <tr class="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-zinc-700">
-                            <td class="px-4 py-3 text-gray-800 dark:text-gray-200 flex items-center gap-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6" />
-                                </svg>
-                                {{ $product->name }}
-                            </td>
-                            <td class="px-4 py-3 text-right text-orange-600 dark:text-orange-400 font-medium">{{ $product->quantity_in_stock }}</td>
-                            <td class="px-4 py-3 text-right text-gray-600 dark:text-gray-400">{{ $product->safety_stock }}</td>
-                        </tr>
-                        @empty
-                        <tr>
-                            <td colspan="3" class="px-4 py-4 text-center text-gray-500 dark:text-gray-400">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mx-auto mb-1 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                                </svg>
-                                No safety stock alerts
-                            </td>
-                        </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <!-- Overstocked Products -->
         <div class="bg-white dark:bg-zinc-800 border border-purple-200 dark:border-purple-800 rounded-lg shadow flex flex-col" style="height: 400px;">
             <div class="p-4 border-b border-purple-200 dark:border-purple-800 bg-purple-50 dark:bg-purple-900/20 rounded-t-lg flex items-center gap-3">
@@ -171,15 +127,15 @@
             </div>
         </div>
 
-        <!-- Restock Recommendations -->
-        <div class="bg-white dark:bg-zinc-800 border border-blue-200 dark:border-blue-800 rounded-lg shadow flex flex-col" style="height: 400px;">
-            <div class="p-4 border-b border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/20 rounded-t-lg flex items-center gap-3">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-600 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+        <!-- Out of Stock Products -->
+        <div class="bg-white dark:bg-zinc-800 border border-gray-300 dark:border-gray-700 rounded-lg shadow flex flex-col" style="height: 400px;">
+            <div class="p-4 border-b border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-900/20 rounded-t-lg flex items-center gap-3">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600 dark:text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-12.728 12.728m0-12.728l12.728 12.728" />
                 </svg>
                 <div>
-                    <h3 class="font-semibold text-blue-800 dark:text-blue-200">Restock Needed</h3>
-                    <p class="text-sm text-blue-600 dark:text-blue-300">{{ $this->restockRecommendations->count() }} suggested orders</p>
+                    <h3 class="font-semibold text-gray-800 dark:text-gray-200">Out of Stock</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">{{ $this->outOfStockProducts->count() }} products need restocking</p>
                 </div>
             </div>
             <div class="overflow-y-auto flex-1">
@@ -188,22 +144,65 @@
                         <tr>
                             <th class="px-4 py-3 text-left">Product</th>
                             <th class="px-4 py-3 text-right">Stock</th>
-                            <th class="px-4 py-3 text-right">Order Qty</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($this->restockRecommendations as $product)
+                        @forelse($this->outOfStockProducts as $product)
                         <tr class="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-zinc-700">
                             <td class="px-4 py-3 text-gray-800 dark:text-gray-200 flex items-center gap-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
                                 </svg>
                                 {{ $product->name }}
                             </td>
-                            <td class="px-4 py-3 text-right text-blue-600 dark:text-blue-400 font-medium">{{ $product->quantity_in_stock }}</td>
-                            <td class="px-4 py-3 text-right text-gray-600 dark:text-gray-400 font-medium">
-                                {{ max($product->safety_stock, $product->reorder_threshold) - $product->quantity_in_stock }}
+                            <td class="px-4 py-3 text-right text-gray-600 dark:text-gray-400 font-medium">0</td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="2" class="px-4 py-4 text-center text-gray-500 dark:text-gray-400">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mx-auto mb-1 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                </svg>
+                                All products in stock
                             </td>
+                        </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Critical Stock Products -->
+        <div class="bg-white dark:bg-zinc-800 border border-pink-200 dark:border-pink-800 rounded-lg shadow flex flex-col" style="height: 400px;">
+            <div class="p-4 border-b border-pink-200 dark:border-pink-800 bg-pink-50 dark:bg-pink-900/20 rounded-t-lg flex items-center gap-3">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-pink-600 dark:text-pink-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+                <div>
+                    <h3 class="font-semibold text-pink-800 dark:text-pink-200">Critical Stock</h3>
+                    <p class="text-sm text-pink-600 dark:text-pink-300">{{ $this->criticalStockProducts->count() }} products critically low</p>
+                </div>
+            </div>
+            <div class="overflow-y-auto flex-1">
+                <table class="w-full">
+                    <thead class="sticky top-0 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-zinc-700 dark:text-gray-400">
+                        <tr>
+                            <th class="px-4 py-3 text-left">Product</th>
+                            <th class="px-4 py-3 text-right">Stock</th>
+                            <th class="px-4 py-3 text-right">Safety Stock</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($this->criticalStockProducts as $product)
+                        <tr class="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-zinc-700">
+                            <td class="px-4 py-3 text-gray-800 dark:text-gray-200 flex items-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-pink-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
+                                </svg>
+                                {{ $product->name }}
+                            </td>
+                            <td class="px-4 py-3 text-right text-pink-600 dark:text-pink-400 font-medium">{{ $product->quantity_in_stock }}</td>
+                            <td class="px-4 py-3 text-right text-gray-600 dark:text-gray-400">{{ $product->safety_stock }}</td>
                         </tr>
                         @empty
                         <tr>
@@ -211,7 +210,7 @@
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mx-auto mb-1 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                                 </svg>
-                                No restock recommendations
+                                No critical stock alerts
                             </td>
                         </tr>
                         @endforelse

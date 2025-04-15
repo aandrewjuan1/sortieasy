@@ -5,7 +5,12 @@
             <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-green-600 dark:text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
             </svg>
-            <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-200">Sale Summary</h2>
+            <div>
+                <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-200">Sale Summary</h2>
+                <a href="{{route('sales')}}" wire:navigate class="text-blue-600 hover:underline text-sm font-medium dark:text-blue-400">
+                    View all sales
+                </a>
+            </div>
         </div>
         <div class="flex items-center gap-3 bg-gray-100 dark:bg-zinc-700 px-3 py-2 rounded-lg">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500 dark:text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">

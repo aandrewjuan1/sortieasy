@@ -33,14 +33,6 @@
                 :active="request()->routeIs('dashboard.sale-summary')">
                 Sale Summary
             </flux:navbar.item>
-
-            <flux:navbar.item
-                icon="bell-alert"
-                :href="route('dashboard.alert-summary')"
-                wire:navigate
-                :active="request()->routeIs('dashboard.alert-summary')">
-                Alert Summary
-            </flux:navbar.item>
         </flux:navbar>
     </flux:header>
     {{ $slot }}

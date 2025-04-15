@@ -6,7 +6,12 @@
             <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-purple-600 dark:text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
             </svg>
-            <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-200">Transaction Summary</h2>
+            <div>
+                <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-200">Transaction Summary</h2>
+                <a href="{{route('transactions')}}" wire:navigate class="text-blue-600 hover:underline text-sm font-medium dark:text-blue-400">
+                    View all transactions
+                </a>
+            </div>
         </div>
 
         <!-- Total Transactions and Date Range -->
