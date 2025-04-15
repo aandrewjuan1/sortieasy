@@ -35,6 +35,9 @@
                         wire:change="calculateTotal"
                         required
                     />
+                    <p class="text-sm text-gray-500">
+                        Available stock: {{ $available_stock }}
+                    </p>
                     <flux:error name="quantity" />
                 </flux:field>
 

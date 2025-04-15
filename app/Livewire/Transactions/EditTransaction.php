@@ -30,6 +30,7 @@ class EditTransaction extends Component
 
     public $adjustment_reason = null;
     public ?Product $product = null;
+    public $quantityError = null;
 
     public $adjustmentReasons = [
         'damaged' => 'Damaged Goods',
@@ -86,6 +87,24 @@ class EditTransaction extends Component
         $this->transaction = Transaction::find($transactionId);
         $this->fillInputs($this->transaction);
         $this->resetValidation();
+    }
+
+    public function updated($property)
+    {
+        if (in_array($property, ['quantity', 'type', 'product_id'])) {
+            $this->quantityError = null;
+
+            if ($this->type === 'sale' && $this->product_id && $this->quantity) {
+                if ($this->quantity > $this->available_stock) {
+                    $this->quantityError = "Quantity exceeds available stock of {$this->available_stock}";
+                }
+            }
+        }
+
+        if ($property === 'type') {
+            $this->reset('adjustment_reason');
+            $this->resetValidation();
+        }
     }
 
     public function update()

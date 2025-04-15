@@ -28,6 +28,20 @@ class EditLogistic extends Component
     public ?Logistic $logistic = null;
     public ?Product $product = null;
 
+    public $available_stock = 0;
+
+    public $quantityError = null;
+
+    public function updatedQuantity($value)
+    {
+        if ($value > $this->available_stock) {
+            $this->quantityError = "Quantity exceeds available stock of {$this->available_stock}";
+            return;
+        } else {
+            $this->quantityError = null;
+        }
+    }
+
     public function fillInputs($logistic)
     {
         $this->product_id = $logistic->product_id;
@@ -49,57 +63,50 @@ class EditLogistic extends Component
     {
         $this->validate();
 
+        if ($this->quantity > $this->available_stock) {
+            $this->quantityError = "Quantity exceeds available stock of {$this->available_stock}";
+            return;
+        }
+
         DB::beginTransaction();
 
         try {
-            $product = Product::findOrFail($this->product_id);
-            $originalStatus = $this->logistic->status->value; // Get the string value of the enum
+            $originalProduct = Product::findOrFail($this->logistic->product_id);
+            $newProduct = Product::findOrFail($this->product_id);
+
+            $originalStatus = $this->logistic->status->value;
             $originalQuantity = $this->logistic->quantity;
-            $newStatus = $this->status; // This is already a string from the form input
+            $newStatus = $this->status;
 
-            // Case 1: Changing from "shipped" to "pending" → Return stock
-            if ($originalStatus === 'shipped' && $newStatus === 'pending') {
-                $product->increment('quantity_in_stock', $originalQuantity);
-            }
-            // Case 2: Changing from "pending" to "shipped" → Deduct stock
-            elseif ($originalStatus === 'pending' && $newStatus === 'shipped') {
-                if ($product->quantity_in_stock < $this->quantity) {
-                    throw new \Exception('Insufficient stock available');
-                }
-                $product->decrement('quantity_in_stock', $this->quantity);
-            }
-            // Case 3: Changing from "shipped" to "delivered" → No stock change
-            elseif ($originalStatus === 'shipped' && $newStatus === 'delivered') {
-                $product->update(['last_restocked' => now()]);
-            }
-            // Case 4: Changing quantity while in "shipped"
-            elseif ($originalStatus === 'shipped' && $newStatus === 'shipped' && $this->quantity != $originalQuantity) {
-                $difference = $originalQuantity - $this->quantity;
-                if ($difference > 0) {
-                    $product->increment('quantity_in_stock', $difference);
-                } else {
-                    $needed = abs($difference);
-                    if ($product->quantity_in_stock < $needed) {
-                        throw new \Exception('Insufficient stock for quantity adjustment');
-                    }
-                    $product->decrement('quantity_in_stock', $needed);
-                }
+            // Product changed
+            $productChanged = $this->product_id !== $this->logistic->product_id;
+
+            // Handle stock rollback for old product if needed
+            if ($originalStatus === 'shipped') {
+                $originalProduct->increment('quantity_in_stock', $originalQuantity);
             }
 
-            // Update the logistic record
+            // Handle new product stock deduction if needed
+            if ($newStatus === 'shipped') {
+                if ($newProduct->quantity_in_stock < $this->quantity) {
+                    throw new \Exception('Insufficient stock available for the selected product');
+                }
+                $newProduct->decrement('quantity_in_stock', $this->quantity);
+            }
+
+            // Update the logistic entry
             $this->logistic->update([
                 'product_id' => $this->product_id,
                 'quantity' => $this->quantity,
                 'delivery_date' => $this->delivery_date,
-                'status' => $newStatus // Use the validated string value
+                'status' => $newStatus,
             ]);
 
-            // Check stock levels
-            if (($newStatus === 'shipped' || $originalStatus === 'shipped') &&
-                $product->quantity_in_stock <= $product->reorder_threshold) {
+            // Check stock level after update
+            if ($newStatus === 'shipped' && $newProduct->quantity_in_stock <= $newProduct->reorder_threshold) {
                 $this->dispatch('notify',
                     type: 'warning',
-                    message: "Product {$product->name} is now below reorder threshold!"
+                    message: "Product {$newProduct->name} is now below the reorder threshold!"
                 );
             }
 
@@ -122,6 +129,7 @@ class EditLogistic extends Component
             );
         }
     }
+
 
     public function delete()
     {

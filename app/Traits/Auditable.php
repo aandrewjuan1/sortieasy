@@ -5,6 +5,7 @@ namespace App\Traits;
 use App\Models\AuditLog;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 
 trait Auditable
 {
@@ -24,6 +25,8 @@ trait Auditable
         static::deleted(function (Model $model) {
             $model->logDeletion();
         });
+
+        Cache::forget('audit-logs:page:1:per_page:10:sort:created_at:dir:DESC:search::user::action::table::from::to:');
     }
 
     /**

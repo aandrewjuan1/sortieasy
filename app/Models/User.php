@@ -33,6 +33,12 @@ class User extends Authenticatable
         'remember_token',
     ];
 
+    protected array $loggable = [
+        'name',
+        'email',
+        // any other safe fields
+    ];
+
     /**
      * Get the attributes that should be cast.
      *

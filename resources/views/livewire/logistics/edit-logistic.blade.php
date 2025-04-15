@@ -34,6 +34,15 @@
                         placeholder="Enter quantity"
                         required
                     />
+                    <p class="text-sm text-gray-500">
+                        Available stock: {{ $available_stock }}
+                    </p>
+                    <div role="alert" aria-live="polite" aria-atomic="true" class="mt-3 text-sm font-medium text-red-500 dark:text-red-400" data-flux-error>
+                        @if ($quantityError)
+                            <flux:icon icon="exclamation-triangle" variant="mini" class="inline" />
+                            {{ $quantityError }}
+                        @endif
+                    </div>
                     <flux:error name="quantity" />
                 </flux:field>
 

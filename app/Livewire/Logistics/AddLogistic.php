@@ -24,58 +24,44 @@ class AddLogistic extends Component
     #[Validate('required|in:pending,shipped,delivered')]
     public string $status = 'pending';
 
-    public function mount()
+    public $available_stock = 0;
+
+    public $quantityError = null;
+
+    public function updatedQuantity($value)
     {
-        $this->delivery_date = now()->format('Y-m-d');
+        if ($value > $this->available_stock) {
+            $this->quantityError = "Quantity exceeds available stock of {$this->available_stock}";
+            return;
+        } else {
+            $this->quantityError = null;
+        }
     }
 
     public function save()
     {
         $this->validate();
 
+        if ($this->quantity > $this->available_stock) {
+            $this->quantityError = "Quantity exceeds available stock of {$this->available_stock}";
+            return;
+        }
+
         DB::beginTransaction();
 
         try {
             $product = Product::findOrFail($this->product_id);
 
-            // Check stock if status is shipped
-            if ($this->status === 'shipped' && $product->quantity_in_stock < $this->quantity) {
-                throw new \Exception('Insufficient stock available');
-            }
-
-            $logistic = Logistic::create([
+            Logistic::create([
                 'product_id' => $this->product_id,
                 'quantity' => $this->quantity,
                 'delivery_date' => $this->delivery_date,
                 'status' => $this->status
             ]);
 
-            // Handle stock changes based on status
-            if ($this->status === 'shipped') {
+            // ✅ Update stock if status is shipped or delivered
+            if (in_array($this->status, ['shipped', 'delivered'])) {
                 $product->decrement('quantity_in_stock', $this->quantity);
-
-                // Check if stock falls below reorder threshold
-                if ($product->quantity_in_stock <= $product->reorder_threshold) {
-                    $this->dispatch('notify',
-                        type: 'warning',
-                        message: "Product {$product->name} is now below reorder threshold!"
-                    );
-                }
-            }
-            // If directly marked as "delivered" (unlikely, but possible)
-            elseif ($this->status === 'delivered') {
-                // Ensure stock was already deducted when shipped
-                if ($logistic->status !== 'shipped') {
-                    $product->decrement('quantity_in_stock', $this->quantity);
-                }
-
-                // Record delivery completion (e.g., update last_delivered_at)
-                $product->update(['last_restocked' => now()]);
-
-                $this->dispatch('notify',
-                    type: 'info',
-                    message: "Product {$product->name} successfully delivered!"
-                );
             }
 
             DB::commit();
@@ -100,6 +86,19 @@ class AddLogistic extends Component
                 message: 'Failed to create logistics entry.'
             );
         }
+    }
+
+
+    public function updatedProductId($value)
+    {
+        if ($value) {
+            $product = Product::find($value);
+            if ($product) {
+                $this->available_stock = $product->quantity_in_stock;
+                return;
+            }
+        }
+        $this->available_stock = 0;
     }
 
     #[Computed]

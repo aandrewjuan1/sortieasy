@@ -34,12 +34,6 @@ class AddSale extends Component
     public $available_stock = 0;
     public $unit_price = 0.00;
 
-    public function mount()
-    {
-        $this->sale_date = now()->format('Y-m-d');
-        $this->calculateTotal();
-    }
-
     public function updatedProductId($value)
     {
         if ($value) {

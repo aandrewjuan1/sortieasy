@@ -35,27 +35,25 @@ class EditSale extends Component
     public ?Sale $sale = null;
     public ?Product $product = null;
 
-    public function mount()
+    public function updated($propertyName)
     {
-        $this->sale_date = now()->format('Y-m-d');
-        $this->calculateTotal();
-    }
-
-    public function updatedProductId($value)
-    {
-        if ($value) {
-            $product = Product::find($value);
-            if ($product) {
-                $this->available_stock = $product->quantity_in_stock;
-                $this->unit_price = $product->price;
-                $this->calculateTotal();
-                return; // 👈 Exit early to avoid resetting values
-            }
+        if (in_array($propertyName, ['quantity', 'product_id'])) {
+            $this->calculateTotal();
         }
-        // Only reset if no product is selected
-        $this->available_stock = 0;
-        $this->unit_price = 0.00;
-        $this->calculateTotal();
+
+        if ($propertyName === 'quantity') {
+            $this->validate([
+                'quantity' => ['required', 'integer', 'min:1', function ($attribute, $value, $fail) {
+                    if ($this->product_id && $this->sale) {
+                        // Add the previous quantity back to stock temporarily
+                        $effectiveStock = $this->available_stock + $this->sale->quantity;
+                        if ($value > $effectiveStock) {
+                            $fail("Quantity exceeds available stock of {$effectiveStock}");
+                        }
+                    }
+                }]
+            ]);
+        }
     }
 
     public function calculateTotal()

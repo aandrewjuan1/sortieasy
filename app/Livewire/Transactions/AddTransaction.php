@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Cache;
 class AddTransaction extends Component
 {
     #[Validate('required|exists:products,id')]
-    public $product_id;
+    public int $product_id;
 
     #[Validate('required|in:purchase,sale,return,adjustment')]
     public $type;
@@ -32,6 +32,8 @@ class AddTransaction extends Component
     public $adjustment_reason = null;
 
     public $available_stock = 0;
+
+    public $quantityError = null;
 
     public $adjustmentReasons = [
         'damaged' => 'Damaged Goods',
@@ -85,21 +87,19 @@ class AddTransaction extends Component
 
     public function updated($property)
     {
+        if (in_array($property, ['quantity', 'type', 'product_id'])) {
+            $this->quantityError = null;
+
+            if ($this->type === 'sale' && $this->product_id && $this->quantity) {
+                if ($this->quantity > $this->available_stock) {
+                    $this->quantityError = "Quantity exceeds available stock of {$this->available_stock}";
+                }
+            }
+        }
+
         if ($property === 'type') {
             $this->reset('adjustment_reason');
             $this->resetValidation();
-        }
-
-        if ($property === 'quantity' || $property === 'type') {
-            if ($this->type === 'sale' && $this->product_id && $this->quantity) {
-                $this->validate([
-                    'quantity' => ['required', 'integer', 'min:1', function ($attribute, $value, $fail) {
-                        if ($this->available_stock > 0 && $value > $this->available_stock) {
-                            $fail("Quantity exceeds available stock of {$this->available_stock}");
-                        }
-                    }]
-                ]);
-            }
         }
     }
 
