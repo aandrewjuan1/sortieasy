@@ -46,10 +46,10 @@ class DatabaseSeeder extends Seeder
         ]);
 
         // Create realistic suppliers
-        Supplier::factory()->count(50)->create();
+        Supplier::factory()->count(10)->create();
 
         // Create realistic products, each associated with a supplier
-        Product::factory()->count(50)->create();
+        Product::factory()->count(55)->create();
 
         // Generate 25 'purchase' transactions
         Transaction::factory()->count(25)->create([

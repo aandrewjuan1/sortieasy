@@ -11,21 +11,19 @@ class AlertFactory extends Factory
 {
     public function definition(): array
     {
-        // Randomly select a Severity enum case
         $severity = $this->faker->randomElement(Severity::cases());
 
         return [
-            'product_id' => Product::factory(), // Create a related product
-            'type' => $this->faker->randomElement(['low_stock', 'over_stock', 'restock_suggestion']), // Use random alert type
-            'message' => $this->generateMessage($severity),  // Use the severity-based message
-            'severity' => $severity->value,  // Use the enum value for severity
-            'resolved' => $this->faker->boolean(20), // 20% chance of being resolved
+            'product_id' => Product::inRandomOrder()->value('id') ?? Product::factory(), // Prefer existing product, fallback to create
+            'type' => $this->faker->randomElement(['low_stock', 'over_stock', 'restock_suggestion']),
+            'message' => $this->generateMessage($severity),
+            'severity' => $severity->value,
+            'resolved' => $this->faker->boolean(20),
             'resolved_at' => function (array $attributes) {
                 return $attributes['resolved'] ? $this->faker->dateTimeThisMonth() : null;
             },
             'user_id' => function (array $attributes) {
-                // If resolved, assign a user to the alert, else leave it null
-                return $attributes['resolved'] ? User::factory()->create()->id : null;
+                return $attributes['resolved'] ? User::inRandomOrder()->value('id') ?? User::factory()->create()->id : null;
             },
         ];
     }

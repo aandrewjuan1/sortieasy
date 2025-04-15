@@ -14,7 +14,7 @@ class LogisticFactory extends Factory
         $status = $this->faker->randomElement(LogisticStatus::cases());
 
         return [
-            'product_id' => Product::factory(),
+            'product_id' => Product::inRandomOrder()->value('id') ?? Product::factory(),
             'quantity' => $this->faker->numberBetween(1, 100),
             'delivery_date' => $this->faker->dateTimeBetween('now', '+1 month'),
             'status' => $status->value,  // Use the enum value
