@@ -1,5 +1,6 @@
 <?php
 
+use App\Livewire\Dashboard\LogisticSummary;
 use App\Livewire\Settings\Appearance;
 use App\Livewire\Settings\Profile;
 use App\Livewire\Settings\Password;
@@ -28,6 +29,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('dashboard/supplier-overview', SupplierOverview::class)->name('dashboard.supplier-overview');
     Route::get('dashboard/transaction-summary', TransactionSummary::class)->name('dashboard.transaction-summary');
     Route::get('dashboard/sale-summary', SaleSummary::class)->name('dashboard.sale-summary');
+    Route::get('dashboard/logistic-summary', LogisticSummary::class)->name('dashboard.logistic-summary');
 
     // Sidebar nav routes
     Route::get('inventory', Products::class)->name('inventory');
