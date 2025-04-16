@@ -1,4 +1,4 @@
-# Clone Guide for Laravel 12 Livewire Starter Kit
+# Clone Guide for Repo using Laravel Herd
 
 This guide will help you quickly set up the project using the Tall Stack with Laravel 12 and Livewire, all through the Laravel Herd tool.
 
@@ -11,21 +11,26 @@ Before you start, make sure you have the following installed:
 
 ## Steps to Clone the Project
 
-1. **Clone the Repository**
+1. **Install Laravel Herd**
 
-   First, clone the repository to your local machine using Git:
-
-   ```bash
-   git clone https://github.com/aandrewjuan1/sortieasy.git
-   cd your-repository
-   
-2. **Install Laravel Herd**
+    Download and install Laravel Herd from the official website: [Laravel Herd](https://laravel.com/herd)
     
-    Download and install Laravel Herd from the official website: Laravel Herd
-   - After installation, open your terminal and confirm that Herd is installed properly by checking the version:
+    After installation:
+    
+    - Open your terminal.
+    - Confirm Herd is installed by checking the version:
 
     ```bash
     herd --version
+    
+2. **Clone the Repository Inside the Herd Folder**
+
+   In your terminal, navigate to the Herd directory and clone the repository:
+
+   ```bash
+   cd C:\Users\<YourUsername>\Herd
+   git clone https://github.com/aandrewjuan1/sortieasy.git
+   cd sortieasy
 
 3. **Install Dependencies**
 
