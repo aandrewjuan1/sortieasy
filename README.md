@@ -13,7 +13,7 @@ Before you start, make sure you have the following installed:
 
 1. **Install Laravel Herd**
 
-    Download and install Laravel Herd from the official website: [Laravel Herd](https://laravel.com/herd](https://herd.laravel.com/windows))
+    Download and install Laravel Herd from the official website: [Laravel Herd](https://herd.laravel.com/windows)
     
     After installation:
     
