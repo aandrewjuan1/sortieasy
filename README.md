@@ -4,25 +4,24 @@ This guide will help you quickly set up the project using the Tall Stack with La
 Prerequisites
 Before you start, make sure you have the following installed:
 
-Laravel Herd (this simplifies setting up the environment for Laravel)
+Laravel Herd: Simplifies setting up the environment for Laravel projects.
 
-Git (for cloning the repository)
+Git: For cloning the repository.
 
 Steps to Clone the Project
-Clone the Repository
-
-First, clone the repository to your local machine using Git.
+1. Clone the Repository
+First, clone the repository to your local machine using Git:
 
 bash
 Copy
 Edit
 git clone https://github.com/your-username/your-repository.git
 cd your-repository
-Install Laravel Herd
-
+2. Install Laravel Herd
 Laravel Herd is a development environment that helps you set up PHP, Composer, Node, and other tools. It ensures compatibility with the versions required for this project.
 
-Download and install Laravel Herd from the official website: https://laravel.com/
+Download and install Laravel Herd from the official website:
+Laravel Herd
 
 After installation, open your terminal and confirm that Herd is installed properly by checking the version:
 
@@ -30,9 +29,8 @@ bash
 Copy
 Edit
 herd --version
-Install Dependencies
-
-Run the following commands to install all necessary dependencies for the project.
+3. Install Dependencies
+Run the following commands to install all necessary dependencies for the project:
 
 Install PHP dependencies:
 
@@ -46,9 +44,8 @@ bash
 Copy
 Edit
 npm install
-Set Up Environment
-
-Copy the .env.example file to create your .env file:
+4. Set Up Environment
+Next, set up your environment by copying the .env.example file to create your .env file:
 
 bash
 Copy
@@ -60,14 +57,12 @@ bash
 Copy
 Edit
 php artisan key:generate
-Run Migrations and Seed the Database
-
+5. Run Migrations and Seed the Database
 Set up your database and run migrations:
 
 bash
 Copy
 Edit
 php artisan migrate --seed
-Start the Development Server in Laravel Herd
-
+6. Start the Development Server in Laravel Herd
 Now that your environment is set up, you can start the development server directly within Laravel Herd. Open Laravel Herd, and it will automatically manage the necessary services and start the server for you.
