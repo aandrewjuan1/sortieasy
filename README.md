@@ -16,7 +16,7 @@ Before you start, make sure you have the following installed:
    First, clone the repository to your local machine using Git:
 
    ```bash
-   git clone https://github.com/your-username/your-repository.git
+   git clone https://github.com/aandrewjuan1/sortieasy.git
    cd your-repository
    
 2. **Install Laravel Herd**
