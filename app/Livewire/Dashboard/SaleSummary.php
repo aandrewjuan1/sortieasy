@@ -21,6 +21,43 @@ class SaleSummary extends Component
         return array_sum(array_column($this->salesByChannel, 'count'));
     }
 
+    // New computed property for chart data
+    #[Computed]
+    public function chartData(): array
+    {
+        $salesByChannel = $this->salesByChannel;
+
+        // Transform the channel names for display
+        $labels = array_map(function($channel) {
+            return match($channel) {
+                'in_store' => 'In-Store',
+                'online' => 'Online',
+                'phone' => 'Phone',
+            };
+        }, array_keys($salesByChannel));
+
+        return [
+            'labels' => $labels,
+            'datasets' => [
+                [
+                    'label' => 'Sales Count',
+                    'data' => array_column($salesByChannel, 'count'),
+                    'backgroundColor' => ['#4e73df', '#1cc88a', '#36b9cc', '#f6c23e'],
+                    'borderColor' => ['#4e73df', '#1cc88a', '#36b9cc', '#f6c23e'],
+                    'borderWidth' => 1
+                ],
+                [
+                    'label' => 'Revenue',
+                    'data' => array_column($salesByChannel, 'revenue'),
+                    'backgroundColor' => ['#2e59d9', '#17a673', '#2c9faf', '#dda20a'],
+                    'borderColor' => ['#2e59d9', '#17a673', '#2c9faf', '#dda20a'],
+                    'borderWidth' => 1,
+                    'type' => 'bar'
+                ]
+            ]
+        ];
+    }
+
     // Retrieve recent sales data
     #[Computed]
     public function recentSales(): Collection

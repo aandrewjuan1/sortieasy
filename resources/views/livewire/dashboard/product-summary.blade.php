@@ -1,4 +1,4 @@
-<div class="p-6 bg-white rounded-lg shadow dark:bg-zinc-800">
+<div class="bg-white dark:bg-zinc-800">
     <x-layouts.dashboard/>
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
         <div class="flex items-center gap-3">

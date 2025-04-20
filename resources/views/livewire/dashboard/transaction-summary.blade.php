@@ -1,4 +1,4 @@
-<div class="p-6 bg-white rounded-lg shadow dark:bg-zinc-800">
+<div class="bg-white dark:bg-zinc-800">
     <x-layouts.dashboard/>
     <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
         <!-- Header Section -->
@@ -26,13 +26,7 @@
                 </span>
             </div>
 
-            <!-- Last 30 Days Section -->
-            <div class="flex items-center gap-3 bg-gray-100 dark:bg-zinc-700 px-3 py-2 rounded-lg">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500 dark:text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-                <span class="text-sm text-gray-600 dark:text-gray-300">Last {{ $this->daysToShow }} days</span>
-            </div>
+
         </div>
     </div>
 
@@ -44,6 +38,14 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                 </svg>
                 <h3 class="font-semibold text-gray-800 dark:text-gray-200">Total Items Transacted</h3>
+                <flux:spacer/>
+                <!-- Last 30 Days Section -->
+                <div class="flex items-center gap-3 bg-gray-100 dark:bg-zinc-700 px-3 py-2 rounded-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500 dark:text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    <span class="text-sm text-gray-600 dark:text-gray-300">Last {{ $this->daysToShow }} days</span>
+                </div>
             </div>
             <div class="space-y-4">
                 @foreach(App\Enums\TransactionType::cases() as $type)
@@ -72,6 +74,14 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
                 </svg>
                 <h3 class="font-semibold text-gray-800 dark:text-gray-200">Items by Transaction Type</h3>
+                <flux:spacer/>
+                <!-- Last 30 Days Section -->
+                <div class="flex items-center gap-3 bg-gray-100 dark:bg-zinc-700 px-3 py-2 rounded-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500 dark:text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    <span class="text-sm text-gray-600 dark:text-gray-300">Last {{ $this->daysToShow }} days</span>
+                </div>
             </div>
             <div class="grid grid-cols-2 gap-4">
                 @foreach(App\Enums\TransactionType::cases() as $type)

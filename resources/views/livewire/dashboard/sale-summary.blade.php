@@ -1,4 +1,4 @@
-<div class="p-6 bg-white rounded-lg shadow dark:bg-zinc-800">
+<div class="bg-white dark:bg-zinc-800">
     <x-layouts.dashboard/>
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
         <div class="flex items-center gap-3">
@@ -22,6 +22,7 @@
 
     <!-- Revenue Summary -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+
         <div class="bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-lg shadow p-6">
             <div class="flex items-center gap-3 mb-4">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-600 dark:text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -65,7 +66,92 @@
         </div>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+        <div class="bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-lg shadow p-6">
+            <div class="flex items-center gap-3 mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-600 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+                <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">Sales Bar Chart</h3>
+            </div>
+            <div class="h-80">
+                <canvas id="salesChart"></canvas>
+            </div>
+        </div>
+
+        @script
+        <script>
+            const ctx = document.getElementById('salesChart').getContext('2d');
+            const darkMode = Flux.dark;
+
+            const salesChart = new Chart(ctx, {
+                type: 'bar',
+                data: @js($this->chartData),
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        tooltip: {
+                            backgroundColor: darkMode ? '#374151' : '#ffffff',
+                            titleColor: darkMode ? '#f3f4f6' : '#111827',
+                            bodyColor: darkMode ? '#e5e7eb' : '#1f2937',
+                            borderColor: darkMode ? '#4b5563' : '#d1d5db',
+                            borderWidth: 1,
+                            usePointStyle: true,
+                            callbacks: {
+                                label(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) label += ': ';
+                                    label += context.datasetIndex === 0
+                                        ? `${context.raw} sales`
+                                        : `$${context.raw.toLocaleString()}`;
+                                    return label;
+                                }
+                            }
+                        },
+                        legend: {
+                            position: 'top',
+                            align: 'center',
+                            labels: {
+                                boxWidth: 12,
+                                padding: 16,
+                                usePointStyle: true,
+                                font: {
+                                    family: 'Inter, sans-serif',
+                                    size: 12
+                                },
+                                color: darkMode ? '#e5e7eb' : '#1f2937'
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                color: darkMode ? '#9ca3af' : '#6b7280',
+                                callback(value) {
+                                    return Number.isInteger(value) ? value : null;
+                                }
+                            },
+                            grid: {
+                                color: darkMode ? 'rgba(156, 163, 175, 0.1)' : 'rgba(209, 213, 219, 0.5)'
+                            }
+                        },
+                    },
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    animation: {
+                        duration: 1000,
+                        easing: 'easeOutQuart'
+                    }
+                }
+            });
+        </script>
+        @endscript
+
+
         <!-- Revenue by Channel -->
         <div class="bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-lg shadow p-6">
             <div class="flex items-center gap-3 mb-4">
