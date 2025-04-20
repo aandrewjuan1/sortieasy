@@ -17,47 +17,6 @@ class TransactionSummary extends Component
     public int $recentTransactionsLimit = 10;
 
     #[Computed]
-    public function dailyTransactionData(): array
-    {
-        $days = $this->daysToShow;
-        $startDate = Carbon::now()->subDays($days - 1)->startOfDay();
-        $endDate = Carbon::now()->endOfDay();
-
-        // Get daily counts for each transaction type
-        $results = Transaction::selectRaw('
-                DATE(created_at) as date,
-                type,
-                SUM(quantity) as total
-            ')
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->groupBy('date', 'type')
-            ->get()
-            ->groupBy('date');
-
-        // Initialize data structure
-        $data = [];
-        $types = TransactionType::cases();
-
-        // Fill with zeros for all days and types
-        for ($i = 0; $i < $days; $i++) {
-            $date = $startDate->copy()->addDays($i)->format('Y-m-d');
-            $data[$date] = array_fill_keys(
-                array_map(fn($type) => $type->value, $types),
-                0
-            );
-        }
-
-        // Fill with actual data
-        foreach ($results as $date => $records) {
-            foreach ($records as $record) {
-                $data[$date][$record->type] = $record->total;
-            }
-        }
-
-        return $data;
-    }
-
-    #[Computed]
     public function recentTransactions(): Collection
     {
         return Transaction::with(['product', 'user'])
