@@ -194,8 +194,8 @@
                                 </button>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-zinc-500 dark:text-zinc-300">
-                                <div>{{ $log->created_at->format('M d, Y') }}</div>
-                                <div class="text-xs">{{ $log->created_at->format('h:i A') }}</div>
+                                <div>{{ $log->created_at->setTimezone(config('app.timezone'))->format('M d, Y') }}</div>
+                                <div class="text-xs">{{ $log->created_at->setTimezone(config('app.timezone'))->format('h:i A') }}</div>
                             </td>
                         </tr>
                     @empty

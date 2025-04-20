@@ -161,10 +161,10 @@
                     <tr class="">
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="text-sm font-medium text-zinc-900 dark:text-white">
-                                {{ $transaction->created_at->format('M d, Y') }}
+                                {{ $transaction->created_at->setTimezone(config('app.timezone'))->format('M d, Y') }}
                             </div>
                             <div class="text-xs text-zinc-500 dark:text-zinc-400">
-                                {{ $transaction->created_at->format('H:i') }}
+                                {{ $transaction->created_at->setTimezone(config('app.timezone'))->format('H:i') }}
                             </div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
