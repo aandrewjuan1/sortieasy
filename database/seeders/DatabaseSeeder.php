@@ -44,16 +44,13 @@ class DatabaseSeeder extends Seeder
         Supplier::factory()->count(10)->create();
         Product::factory()->count(55)->create();
 
-        Transaction::factory()->count(25)->create([
+        Transaction::factory()->count(200)->create([
             'type' => TransactionType::Purchase->value,
         ]);
-        Transaction::factory()->count(25)->create([
-            'type' => TransactionType::Sale->value,
-        ]);
-        Transaction::factory()->count(50)->create([
+        Transaction::factory()->count(500)->create([
             'type' => TransactionType::Return->value,
         ]);
-        Transaction::factory()->count(50)->create([
+        Transaction::factory()->count(800)->create([
             'type' => TransactionType::Adjustment->value,
         ]);
 
@@ -61,6 +58,6 @@ class DatabaseSeeder extends Seeder
         Logistic::factory()->count(30)->shipped()->create();
         Logistic::factory()->count(30)->delivered()->create();
 
-        Sale::factory()->count(100)->create();
+        Sale::factory()->count(5000)->create();
     }
 }
