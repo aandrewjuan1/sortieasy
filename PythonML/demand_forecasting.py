@@ -217,6 +217,8 @@ def generate_restock_recommendations(forecast_df: pd.DataFrame, stock_df: pd.Dat
 
 # ------------------ Main Execution ------------------
 
+# ------------------ Main Execution ------------------
+
 def main() -> None:
     logger.info("🚀 Starting demand forecasting process...")
 
@@ -234,30 +236,41 @@ def main() -> None:
     forecasts = []
 
     for product_id in processed_data["product_id"].unique():
+        logger.info(f"🔄 Forecasting for product_id={product_id}...")
         forecast = train_and_forecast(processed_data[processed_data["product_id"] == product_id], product_id, lag_days)
         if forecast is not None:
+            forecast["predicted_quantity"] = forecast["predicted_quantity"].round(2)
+            forecast["created_at"] = datetime.now()
+            forecast["updated_at"] = datetime.now()
             forecasts.append(forecast)
+            logger.info(f"✅ Forecast completed for product_id={product_id}.")
 
     if not forecasts:
         logger.warning("⚠️ No forecasts generated.")
         return
 
     final_forecast = pd.concat(forecasts, ignore_index=True)
-    final_forecast['created_at'] = datetime.now()
-    final_forecast['updated_at'] = datetime.now()
-    final_forecast.to_sql("demand_forecasts", engine, if_exists="replace", index=False)
-    logger.info(f"✅ Saved {len(final_forecast)} forecast records.")
 
-    stock_df = sales_data[['product_id', 'quantity_in_stock']].drop_duplicates()
+    try:
+        final_forecast.to_sql("demand_forecasts", engine, if_exists="append", index=False)
+        logger.info(f"✅ Inserted {len(final_forecast)} rows into demand_forecasts.")
+    except Exception as e:
+        logger.error(f"❌ Failed to save demand forecasts: {e}")
+
+    # Get current stock levels
+    stock_df = sales_data[["product_id", "quantity_in_stock"]].drop_duplicates()
+
     recommendations = generate_restock_recommendations(final_forecast, stock_df)
-
     if recommendations is not None:
-        recommendations['created_at'] = datetime.now()
-        recommendations['updated_at'] = datetime.now()
-        recommendations.to_sql("restocking_recommendations", engine, if_exists="replace", index=False)
-        logger.info("✅ Saved restocking recommendations.")
+        recommendations["created_at"] = datetime.now()
+        recommendations["updated_at"] = datetime.now()
+        try:
+            recommendations.to_sql("restocking_recommendations", engine, if_exists="append", index=False)
+            logger.info("✅ Restocking recommendations saved.")
+        except Exception as e:
+            logger.error(f"❌ Failed to save restocking recommendations: {e}")
 
-    logger.info("🏁 Forecasting process completed successfully.")
+    logger.info("🏁 Forecasting pipeline completed successfully.")
 
 if __name__ == "__main__":
     main()

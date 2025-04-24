@@ -17,6 +17,27 @@
                                 Out of Stock
                             </span>
                         @endif
+                        @if($this->product->inventory_status)
+                            @php
+                                $statusClasses = [
+                                    'normal' => 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
+                                    'slow_moving' => 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200',
+                                    'obsolete' => 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200',
+                                ];
+                                $statusValue = $this->product->inventory_status->value;
+                                $class = $statusClasses[$statusValue] ?? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200';
+
+                                $displayText = match($statusValue) {
+                                    'normal' => 'Normal',
+                                    'slow_moving' => 'Slow Moving',
+                                    'obsolete' => 'Obsolete',
+                                    default => ucfirst(str_replace('_', ' ', $statusValue))
+                                };
+                            @endphp
+                            <span class="ml-2 px-2 py-1 text-xs rounded-full {{ $class }}">
+                                {{ $displayText }}
+                            </span>
+                        @endif
                     </p>
                     <div class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
                         {{ Str::limit($this->product->description, 50) }}

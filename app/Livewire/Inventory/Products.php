@@ -37,6 +37,9 @@ class Products extends Component
     #[Url(history: true)]
     public $stockFilter = '';
 
+    #[Url(history: true)]
+    public $statusFilter = '';
+
     #[Computed]
     public function totalInventoryValue(): float
     {
@@ -106,7 +109,7 @@ class Products extends Component
 
     public function updated($property)
     {
-        if (in_array($property, ['search', 'categoryFilter', 'supplierFilter', 'stockFilter', 'perPage'])) {
+        if (in_array($property, ['search', 'categoryFilter', 'supplierFilter', 'stockFilter', 'statusFilter', 'perPage'])) {
             $this->clearCurrentPageCache();
             $this->resetPage();
         }
@@ -119,6 +122,7 @@ class Products extends Component
             'categoryFilter',
             'supplierFilter',
             'stockFilter',
+            'statusFilter',
             'perPage',
             'sortBy',
             'sortDir',
@@ -137,6 +141,7 @@ class Products extends Component
             ->categoryFilter($this->categoryFilter)
             ->stockFilter($this->stockFilter)
             ->supplierFilter($this->supplierFilter)
+            ->statusFilter($this->statusFilter) // Add this line
             ->orderByField($this->sortBy, $this->sortDir)
             ->paginate($this->perPage));
     }
@@ -157,7 +162,7 @@ class Products extends Component
     protected function getProductsCacheKey(): string
     {
         return sprintf(
-            'products:page:%d:per_page:%d:sort:%s:dir:%s:search:%s:category:%s:supplier:%s:stock:%s',
+            'products:page:%d:per_page:%d:sort:%s:dir:%s:search:%s:category:%s:supplier:%s:stock:%s:status:%s',
             $this->getPage(),
             $this->perPage,
             $this->sortBy,
@@ -165,10 +170,10 @@ class Products extends Component
             $this->search,
             $this->categoryFilter,
             $this->supplierFilter,
-            $this->stockFilter
+            $this->stockFilter,
+            $this->statusFilter
         );
-
-        // products:page:1:per_page:10:sort:created_at:dir:DESC:search::category::supplier::stock:
+        // products:page:1:per_page:10:sort:created_at:dir:DESC:search::category::supplier::stock::status:
     }
 
     protected function clearCurrentPageCache(): void

@@ -50,7 +50,7 @@ class EditSupplier extends Component
             message: 'Supplier deleted successfully!'
         );
         Cache::forget('audit-logs:page:1:per_page:10:sort:created_at:dir:DESC:search::user::action::table::from::to:');
-        Cache::forget('products:page:1:per_page:10:sort:created_at:dir:DESC:search::category::supplier::stock:');
+        Cache::forget('products:page:1:per_page:10:sort:created_at:dir:DESC:search::category::supplier::stock::status:');
     }
 
     public function update()
@@ -81,6 +81,7 @@ class EditSupplier extends Component
             );
 
             Cache::forget('audit-logs:page:1:per_page:10:sort:created_at:dir:DESC:search::user::action::table::from::to:');
+            Cache::forget('products:page:1:per_page:10:sort:created_at:dir:DESC:search::category::supplier::stock::status:');
         } catch (\Exception $e) {
             DB::rollBack();
 

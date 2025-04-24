@@ -42,6 +42,14 @@ class Product extends Model
         return $query;
     }
 
+    public function scopeStatusFilter($query, $status)
+    {
+        if ($status) {
+            return $query->where('inventory_status', $status);
+        }
+        return $query;
+    }
+
     public function scopeCategoryFilter(Builder $query, ?string $category)
     {
         if ($category) {

@@ -65,6 +65,9 @@
                         @if($stockFilter)
                             <li class="inline">Stock: <strong>{{ $stockFilter }}</strong></li>
                         @endif
+                        @if($statusFilter)
+                            <li class="inline">Status: <strong>{{ str_replace('_', ' ', ucfirst($statusFilter)) }}</strong></li>
+                        @endif
                     </ul>
                 @else
                     <span class="ml-2 text-zinc-500 dark:text-zinc-400">None</span>
@@ -170,6 +173,19 @@
                                 <option value="low">Low</option>
                                 <option value="critical">Critical</option>
                             </select>
+                        </th>
+
+                        {{-- Inventory Status Column --}}
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider dark:text-zinc-300">
+                            <div class="flex items-center">
+                                <span>Status</span>
+                                <select wire:model.live="statusFilter" class="ml-2 text-sm border rounded dark:bg-zinc-700 bg-transparent">
+                                    <option value="">All</option>
+                                    @foreach(\App\Enums\InventoryStatus::cases() as $status)
+                                        <option value="{{ $status->value }}">{{ str_replace('_', ' ', ucfirst($status->value)) }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
                         </th>
 
                         {{-- Last Restocked Column --}}
@@ -290,6 +306,37 @@
                                     <div class="text-xs text-zinc-400 mt-1">
                                         Reorder at: {{ $product->reorder_threshold }}
                                     </div>
+                                </td>
+
+                                {{-- Inventory Status --}}
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-zinc-500 dark:text-zinc-300">
+                                    @if($product->inventory_status)
+                                        @php
+                                            $statusClasses = [
+                                                'normal' => 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 hover:bg-green-200 dark:hover:bg-green-800',
+                                                'slow_moving' => 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200 hover:bg-yellow-200 dark:hover:bg-yellow-800',
+                                                'obsolete' => 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200 hover:bg-red-200 dark:hover:bg-red-800',
+                                            ];
+                                            $statusValue = $product->inventory_status->value;
+                                            $class = $statusClasses[$statusValue] ?? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 hover:bg-blue-200 dark:hover:bg-blue-800';
+
+                                            // Format the display text
+                                            $displayText = match($statusValue) {
+                                                'normal' => 'Normal',
+                                                'slow_moving' => 'Slow Moving',
+                                                'obsolete' => 'Obsolete',
+                                                default => ucfirst(str_replace('_', ' ', $statusValue))
+                                            };
+                                        @endphp
+                                        <button
+                                            wire:click="$set('statusFilter', '{{ $statusValue }}')"
+                                            class="px-2 py-1 text-xs font-medium rounded-full {{ $class }} cursor-pointer transition-colors"
+                                        >
+                                            {{ $displayText }}
+                                        </button>
+                                    @else
+                                        <span class="text-zinc-400">Not set</span>
+                                    @endif
                                 </td>
 
                                 {{-- Last Restocked --}}
