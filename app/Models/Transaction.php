@@ -105,4 +105,10 @@ class Transaction extends Model
     {
         return $this->belongsTo(User::class, 'created_by');
     }
+
+    // Define the relationship with AnomalyDetectionResult
+    public function anomalyDetectionResults()
+    {
+        return $this->hasMany(AnomalyDetectionResult::class);
+    }
 }

@@ -1,0 +1,112 @@
+2025-04-22 04:57:04,175 - db - INFO - Connecting to database at C:\Users\WINDOWS 10\Herd\sortieasy\database\database.sqlite
+2025-04-22 04:57:04,179 - demand_forecast - ERROR - Database connection failed: unsupported operand type(s) for -: 'Engine' and 'set'
+2025-04-22 04:57:34,329 - db_connection - INFO - Connecting to SQLite database at: C:\Users\WINDOWS 10\Herd\sortieasy\database/database.sqlite
+2025-04-22 04:57:34,601 - db_connection - INFO - Successfully connected to SQLite database
+2025-04-22 04:57:34,601 - demand_forecast - INFO - Database connection successful
+2025-04-22 04:57:34,601 - demand_forecast - INFO - Starting demand forecast pipeline
+2025-04-22 04:57:34,601 - demand_forecast - INFO - Loading sales data from database
+2025-04-22 04:57:34,637 - demand_forecast - INFO - Loaded 5000 sales records
+2025-04-22 04:57:34,637 - demand_forecast - INFO - Loading product data from database
+2025-04-22 04:57:34,640 - demand_forecast - INFO - Loaded 55 products
+2025-04-22 04:57:34,669 - demand_forecast - WARNING - No valid data for product ID 1 after feature engineering
+2025-04-22 04:57:34,682 - demand_forecast - WARNING - No valid data for product ID 2 after feature engineering
+2025-04-22 04:57:34,693 - demand_forecast - WARNING - No valid data for product ID 3 after feature engineering
+2025-04-22 04:57:34,705 - demand_forecast - WARNING - No valid data for product ID 4 after feature engineering
+2025-04-22 04:57:34,718 - demand_forecast - WARNING - No valid data for product ID 5 after feature engineering
+2025-04-22 04:57:34,730 - demand_forecast - WARNING - No valid data for product ID 6 after feature engineering
+2025-04-22 04:57:34,742 - demand_forecast - WARNING - No valid data for product ID 7 after feature engineering
+2025-04-22 04:57:34,753 - demand_forecast - WARNING - No valid data for product ID 8 after feature engineering
+2025-04-22 04:57:34,765 - demand_forecast - WARNING - No valid data for product ID 9 after feature engineering
+2025-04-22 04:57:34,778 - demand_forecast - WARNING - No valid data for product ID 10 after feature engineering
+2025-04-22 04:57:34,793 - demand_forecast - WARNING - No valid data for product ID 11 after feature engineering
+2025-04-22 04:57:34,805 - demand_forecast - WARNING - No valid data for product ID 12 after feature engineering
+2025-04-22 04:57:34,817 - demand_forecast - WARNING - No valid data for product ID 13 after feature engineering
+2025-04-22 04:57:34,829 - demand_forecast - WARNING - No valid data for product ID 14 after feature engineering
+2025-04-22 04:57:34,841 - demand_forecast - WARNING - No valid data for product ID 15 after feature engineering
+2025-04-22 04:57:34,853 - demand_forecast - WARNING - No valid data for product ID 16 after feature engineering
+2025-04-22 04:57:34,865 - demand_forecast - WARNING - No valid data for product ID 17 after feature engineering
+2025-04-22 04:57:34,877 - demand_forecast - WARNING - No valid data for product ID 18 after feature engineering
+2025-04-22 04:57:34,889 - demand_forecast - WARNING - No valid data for product ID 19 after feature engineering
+2025-04-22 04:57:34,901 - demand_forecast - WARNING - No valid data for product ID 20 after feature engineering
+2025-04-22 04:57:34,913 - demand_forecast - WARNING - No valid data for product ID 21 after feature engineering
+2025-04-22 04:57:34,931 - demand_forecast - WARNING - No valid data for product ID 22 after feature engineering
+2025-04-22 04:57:34,948 - demand_forecast - WARNING - No valid data for product ID 23 after feature engineering
+2025-04-22 04:57:34,962 - demand_forecast - WARNING - No valid data for product ID 24 after feature engineering
+2025-04-22 04:57:34,976 - demand_forecast - WARNING - No valid data for product ID 25 after feature engineering
+2025-04-22 04:57:34,991 - demand_forecast - WARNING - No valid data for product ID 26 after feature engineering
+2025-04-22 04:57:35,006 - demand_forecast - WARNING - No valid data for product ID 27 after feature engineering
+2025-04-22 04:57:35,020 - demand_forecast - WARNING - No valid data for product ID 28 after feature engineering
+2025-04-22 04:57:35,037 - demand_forecast - WARNING - No valid data for product ID 29 after feature engineering
+2025-04-22 04:57:35,050 - demand_forecast - WARNING - No valid data for product ID 30 after feature engineering
+2025-04-22 04:57:35,062 - demand_forecast - WARNING - No valid data for product ID 31 after feature engineering
+2025-04-22 04:57:35,074 - demand_forecast - WARNING - No valid data for product ID 32 after feature engineering
+2025-04-22 04:57:35,088 - demand_forecast - WARNING - No valid data for product ID 33 after feature engineering
+2025-04-22 04:57:35,100 - demand_forecast - WARNING - No valid data for product ID 34 after feature engineering
+2025-04-22 04:57:35,111 - demand_forecast - WARNING - No valid data for product ID 35 after feature engineering
+2025-04-22 04:57:35,123 - demand_forecast - WARNING - No valid data for product ID 36 after feature engineering
+2025-04-22 04:57:35,138 - demand_forecast - WARNING - No valid data for product ID 37 after feature engineering
+2025-04-22 04:57:35,151 - demand_forecast - WARNING - No valid data for product ID 38 after feature engineering
+2025-04-22 04:57:35,163 - demand_forecast - WARNING - No valid data for product ID 39 after feature engineering
+2025-04-22 04:57:35,174 - demand_forecast - WARNING - No valid data for product ID 40 after feature engineering
+2025-04-22 04:57:35,187 - demand_forecast - INFO - Prepared data for product ID 41 with 59 records
+2025-04-22 04:57:35,200 - demand_forecast - INFO - Prepared data for product ID 42 with 60 records
+2025-04-22 04:57:35,211 - demand_forecast - INFO - Prepared data for product ID 43 with 60 records
+2025-04-22 04:57:35,224 - demand_forecast - INFO - Prepared data for product ID 44 with 60 records
+2025-04-22 04:57:35,236 - demand_forecast - INFO - Prepared data for product ID 45 with 60 records
+2025-04-22 04:57:35,249 - demand_forecast - INFO - Prepared data for product ID 46 with 58 records
+2025-04-22 04:57:35,261 - demand_forecast - INFO - Prepared data for product ID 47 with 60 records
+2025-04-22 04:57:35,274 - demand_forecast - INFO - Prepared data for product ID 48 with 59 records
+2025-04-22 04:57:35,285 - demand_forecast - INFO - Prepared data for product ID 49 with 60 records
+2025-04-22 04:57:35,298 - demand_forecast - INFO - Prepared data for product ID 50 with 59 records
+2025-04-22 04:57:35,311 - demand_forecast - INFO - Prepared data for product ID 51 with 333 records
+2025-04-22 04:57:35,324 - demand_forecast - INFO - Prepared data for product ID 52 with 319 records
+2025-04-22 04:57:35,338 - demand_forecast - INFO - Prepared data for product ID 53 with 317 records
+2025-04-22 04:57:35,351 - demand_forecast - INFO - Prepared data for product ID 54 with 334 records
+2025-04-22 04:57:35,365 - demand_forecast - INFO - Prepared data for product ID 55 with 331 records
+2025-04-22 04:57:35,366 - demand_forecast - INFO - Training model for product ID 41
+2025-04-22 04:57:35,495 - demand_forecast - INFO - Model for product ID 41 - MAE: 7.31, RMSE: 9.59, R2: 0.00
+2025-04-22 04:57:35,495 - demand_forecast - INFO - Training model for product ID 42
+2025-04-22 04:57:35,514 - demand_forecast - INFO - Model for product ID 42 - MAE: 9.08, RMSE: 9.08, R2: 0.00
+2025-04-22 04:57:35,514 - demand_forecast - INFO - Training model for product ID 43
+2025-04-22 04:57:35,533 - demand_forecast - INFO - Model for product ID 43 - MAE: 8.49, RMSE: 8.58, R2: 0.00
+2025-04-22 04:57:35,533 - demand_forecast - INFO - Training model for product ID 44
+2025-04-22 04:57:35,558 - demand_forecast - INFO - Model for product ID 44 - MAE: 7.00, RMSE: 7.00, R2: 0.00
+2025-04-22 04:57:35,558 - demand_forecast - INFO - Training model for product ID 45
+2025-04-22 04:57:35,586 - demand_forecast - INFO - Model for product ID 45 - MAE: 13.17, RMSE: 14.53, R2: 0.00
+2025-04-22 04:57:35,586 - demand_forecast - INFO - Training model for product ID 46
+2025-04-22 04:57:35,615 - demand_forecast - INFO - Model for product ID 46 - MAE: 0.51, RMSE: 0.68, R2: 0.00
+2025-04-22 04:57:35,615 - demand_forecast - INFO - Training model for product ID 47
+2025-04-22 04:57:35,646 - demand_forecast - INFO - Model for product ID 47 - MAE: 8.08, RMSE: 8.79, R2: 0.00
+2025-04-22 04:57:35,646 - demand_forecast - INFO - Training model for product ID 48
+2025-04-22 04:57:35,667 - demand_forecast - INFO - Model for product ID 48 - MAE: 0.88, RMSE: 0.95, R2: 0.00
+2025-04-22 04:57:35,667 - demand_forecast - INFO - Training model for product ID 49
+2025-04-22 04:57:35,693 - demand_forecast - INFO - Model for product ID 49 - MAE: 5.17, RMSE: 5.64, R2: 0.00
+2025-04-22 04:57:35,693 - demand_forecast - INFO - Training model for product ID 50
+2025-04-22 04:57:35,712 - demand_forecast - INFO - Model for product ID 50 - MAE: 0.07, RMSE: 0.07, R2: 0.00
+2025-04-22 04:57:35,712 - demand_forecast - INFO - Training model for product ID 51
+2025-04-22 04:57:35,734 - demand_forecast - INFO - Model for product ID 51 - MAE: 0.22, RMSE: 0.26, R2: 0.00
+2025-04-22 04:57:35,734 - demand_forecast - INFO - Training model for product ID 52
+2025-04-22 04:57:35,760 - demand_forecast - INFO - Model for product ID 52 - MAE: 0.23, RMSE: 0.34, R2: 0.00
+2025-04-22 04:57:35,761 - demand_forecast - INFO - Training model for product ID 53
+2025-04-22 04:57:35,794 - demand_forecast - INFO - Model for product ID 53 - MAE: 0.16, RMSE: 0.21, R2: 0.00
+2025-04-22 04:57:35,794 - demand_forecast - INFO - Training model for product ID 54
+2025-04-22 04:57:35,821 - demand_forecast - INFO - Model for product ID 54 - MAE: 0.17, RMSE: 0.33, R2: 0.00
+2025-04-22 04:57:35,822 - demand_forecast - INFO - Training model for product ID 55
+2025-04-22 04:57:35,844 - demand_forecast - INFO - Model for product ID 55 - MAE: 0.16, RMSE: 0.19, R2: 0.00
+2025-04-22 04:57:35,844 - demand_forecast - INFO - Trained models for 15 products
+2025-04-22 04:57:36,015 - demand_forecast - ERROR - Error generating forecast for product ID 41: "['dayofweek', 'month', 'quarter', 'year', 'day', 'is_weekend', 'is_holiday'] not in index"
+2025-04-22 04:57:36,015 - demand_forecast - ERROR - Error generating forecast for product ID 42: "['dayofweek', 'month', 'quarter', 'year', 'day', 'is_weekend', 'is_holiday'] not in index"
+2025-04-22 04:57:36,016 - demand_forecast - ERROR - Error generating forecast for product ID 43: "['dayofweek', 'month', 'quarter', 'year', 'day', 'is_weekend', 'is_holiday'] not in index"
+2025-04-22 04:57:36,016 - demand_forecast - ERROR - Error generating forecast for product ID 44: "['dayofweek', 'month', 'quarter', 'year', 'day', 'is_weekend', 'is_holiday'] not in index"
+2025-04-22 04:57:36,017 - demand_forecast - ERROR - Error generating forecast for product ID 45: "['dayofweek', 'month', 'quarter', 'year', 'day', 'is_weekend', 'is_holiday'] not in index"
+2025-04-22 04:57:36,017 - demand_forecast - ERROR - Error generating forecast for product ID 46: "['dayofweek', 'month', 'quarter', 'year', 'day', 'is_weekend', 'is_holiday'] not in index"
+2025-04-22 04:57:36,017 - demand_forecast - ERROR - Error generating forecast for product ID 47: "['dayofweek', 'month', 'quarter', 'year', 'day', 'is_weekend', 'is_holiday'] not in index"
+2025-04-22 04:57:36,018 - demand_forecast - ERROR - Error generating forecast for product ID 48: "['dayofweek', 'month', 'quarter', 'year', 'day', 'is_weekend', 'is_holiday'] not in index"
+2025-04-22 04:57:36,018 - demand_forecast - ERROR - Error generating forecast for product ID 49: "['dayofweek', 'month', 'quarter', 'year', 'day', 'is_weekend', 'is_holiday'] not in index"
+2025-04-22 04:57:36,018 - demand_forecast - ERROR - Error generating forecast for product ID 50: "['dayofweek', 'month', 'quarter', 'year', 'day', 'is_weekend', 'is_holiday'] not in index"
+2025-04-22 04:57:36,019 - demand_forecast - ERROR - Error generating forecast for product ID 51: "['dayofweek', 'month', 'quarter', 'year', 'day', 'is_weekend', 'is_holiday'] not in index"
+2025-04-22 04:57:36,019 - demand_forecast - ERROR - Error generating forecast for product ID 52: "['dayofweek', 'month', 'quarter', 'year', 'day', 'is_weekend', 'is_holiday'] not in index"
+2025-04-22 04:57:36,020 - demand_forecast - ERROR - Error generating forecast for product ID 53: "['dayofweek', 'month', 'quarter', 'year', 'day', 'is_weekend', 'is_holiday'] not in index"
+2025-04-22 04:57:36,021 - demand_forecast - ERROR - Error generating forecast for product ID 54: "['dayofweek', 'month', 'quarter', 'year', 'day', 'is_weekend', 'is_holiday'] not in index"
+2025-04-22 04:57:36,022 - demand_forecast - ERROR - Error generating forecast for product ID 55: "['dayofweek', 'month', 'quarter', 'year', 'day', 'is_weekend', 'is_holiday'] not in index"
+2025-04-22 04:57:36,022 - demand_forecast - WARNING - No forecasts generated

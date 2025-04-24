@@ -1,0 +1,13 @@
+2025-04-21 01:09:19,794 - __main__ - INFO - Connecting to database at: C:\Users\WINDOWS 10\Herd\sortieasy\database\database.sqlite
+2025-04-21 01:09:19,816 - __main__ - ERROR - Fatal error in main execution: Missing required tables: {'inventory_logs'}. Please ensure your Laravel migrations have run.
+Traceback (most recent call last):
+  File "C:\Users\WINDOWS 10\Herd\sortieasy\PythonML/demand_forecasting.py", line 483, in main
+    forecaster = InventoryForecaster()
+  File "C:\Users\WINDOWS 10\Herd\sortieasy\PythonML/demand_forecasting.py", line 57, in __init__
+    self.validate_database()
+    ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\WINDOWS 10\Herd\sortieasy\PythonML/demand_forecasting.py", line 81, in validate_database
+    raise ValueError(
+    ...<2 lines>...
+    )
+ValueError: Missing required tables: {'inventory_logs'}. Please ensure your Laravel migrations have run.

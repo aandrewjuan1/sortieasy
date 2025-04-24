@@ -10,46 +10,71 @@ use App\Models\Supplier;
 use App\Models\Transaction;
 use App\Enums\TransactionType;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Carbon;
 
 class DatabaseSeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
         User::factory(10)->admin()->create();
         User::factory(10)->employee()->inactive()->create();
 
-        // Create a hardcoded employee user
+        // Hardcoded users
         User::factory()->create([
             'name' => 'Employee Test',
             'email' => 'employee@example.com',
-            'role' => 'employee', // Direct string value
+            'role' => 'employee',
             'password' => bcrypt('password'),
-            'phone' => '+1234567890', // Added phone
-            'is_active' => true, // Explicitly active
+            'phone' => '+1234567890',
+            'is_active' => true,
         ]);
 
-        // Create a hardcoded admin user
         User::factory()->create([
             'name' => 'Admin User',
             'email' => 'admin@example.com',
-            'role' => 'admin', // Direct string value
+            'role' => 'admin',
             'password' => bcrypt('adminpassword'),
-            'phone' => '+1987654321', // Added phone
-            'is_active' => true, // Explicitly active
+            'phone' => '+1987654321',
+            'is_active' => true,
         ]);
 
         Supplier::factory()->count(10)->create();
-        Product::factory()->count(55)->create();
 
+        // Create 55 products with different categories
+        $normalProducts = Product::factory()->count(40)->create(['quantity_in_stock' => rand(100, 300)]);
+        $slowProducts = Product::factory()->count(10)->create(['quantity_in_stock' => rand(50, 100)]);
+        $obsoleteProducts = Product::factory()->count(5)->create(['quantity_in_stock' => rand(30, 60)]);
+
+        // Create ~4,000 sales for normal products (80% of total)
+        foreach ($normalProducts as $product) {
+            Sale::factory()->count(100)->normal()->create([
+                'product_id' => $product->id,
+            ]);
+        }
+
+        // Create ~900 sales for slow-moving products (18% of total)
+        foreach ($slowProducts as $product) {
+            Sale::factory()->count(90)->slowMoving()->create([
+                'product_id' => $product->id,
+            ]);
+        }
+
+        // Create ~100 sales for obsolete products (2% of total)
+        foreach ($obsoleteProducts as $product) {
+            Sale::factory()->count(20)->obsolete()->create([
+                'product_id' => $product->id,
+            ]);
+        }
+
+        // Other random data
         Transaction::factory()->count(200)->create([
             'type' => TransactionType::Purchase->value,
         ]);
+
         Transaction::factory()->count(500)->create([
             'type' => TransactionType::Return->value,
         ]);
+
         Transaction::factory()->count(800)->create([
             'type' => TransactionType::Adjustment->value,
         ]);
@@ -57,7 +82,5 @@ class DatabaseSeeder extends Seeder
         Logistic::factory()->count(40)->create();
         Logistic::factory()->count(30)->shipped()->create();
         Logistic::factory()->count(30)->delivered()->create();
-
-        Sale::factory()->count(5000)->create();
     }
 }

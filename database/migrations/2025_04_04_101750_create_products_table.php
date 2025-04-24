@@ -1,8 +1,9 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
+use App\Enums\InventoryStatus;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
 return new class extends Migration
 {
@@ -24,6 +25,7 @@ return new class extends Migration
             $table->integer('safety_stock')->default(5); // Added recommendation
             $table->date('last_restocked')->nullable(); // Added recommendation
             $table->foreignId('supplier_id')->nullable()->constrained()->onDelete('set null');
+            $table->enum('inventory_status', InventoryStatus::getValues())->nullable();
             $table->timestamps();
 
             $table->index('sku'); // For faster lookups

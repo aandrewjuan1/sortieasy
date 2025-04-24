@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Traits\Auditable;
+use App\Enums\InventoryStatus;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
@@ -18,6 +19,7 @@ class Product extends Model
 
     protected $casts = [
         'last_restocked' => 'date',
+        'inventory_status' => InventoryStatus::class
     ];
 
     public function scopeSearch(Builder $query, $search)
@@ -100,15 +102,20 @@ class Product extends Model
     {
         return $this->hasMany(Sale::class);
     }
+    public function restockingRecommendations()
+    {
+        return $this->hasMany(RestockingRecommendation::class);
+    }
+
+    // Define the relationship with AnomalyDetectionResult
+    public function anomalyDetectionResults()
+    {
+        return $this->hasMany(AnomalyDetectionResult::class);
+    }
 
     public function transactions()
     {
         return $this->hasMany(Transaction::class);
-    }
-
-    public function alerts()
-    {
-        return $this->hasMany(Alert::class);
     }
 
     public function logistics()
