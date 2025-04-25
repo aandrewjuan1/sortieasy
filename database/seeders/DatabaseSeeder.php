@@ -40,31 +40,34 @@ class DatabaseSeeder extends Seeder
 
         Supplier::factory()->count(10)->create();
 
-        // Create 55 products with different categories
-        $normalProducts = Product::factory()->count(40)->create(['quantity_in_stock' => rand(100, 300)]);
-        $slowProducts = Product::factory()->count(10)->create(['quantity_in_stock' => rand(50, 100)]);
-        $obsoleteProducts = Product::factory()->count(5)->create(['quantity_in_stock' => rand(30, 60)]);
+        // Use withoutEvents to prevent observer triggers during seeding
+        Product::withoutEvents(function () {
+            // Create 55 products with different categories
+            $normalProducts = Product::factory()->count(40)->create(['quantity_in_stock' => rand(100, 300)]);
+            $slowProducts = Product::factory()->count(10)->create(['quantity_in_stock' => rand(50, 100)]);
+            $obsoleteProducts = Product::factory()->count(5)->create(['quantity_in_stock' => rand(30, 60)]);
 
-        // Create ~4,000 sales for normal products (80% of total)
-        foreach ($normalProducts as $product) {
-            Sale::factory()->count(100)->normal()->create([
-                'product_id' => $product->id,
-            ]);
-        }
+            // Create sales for normal products
+            foreach ($normalProducts as $product) {
+                Sale::factory()->count(100)->normal()->create([
+                    'product_id' => $product->id,
+                ]);
+            }
 
-        // Create ~900 sales for slow-moving products (18% of total)
-        foreach ($slowProducts as $product) {
-            Sale::factory()->count(90)->slowMoving()->create([
-                'product_id' => $product->id,
-            ]);
-        }
+            // Create sales for slow-moving products
+            foreach ($slowProducts as $product) {
+                Sale::factory()->count(90)->slowMoving()->create([
+                    'product_id' => $product->id,
+                ]);
+            }
 
-        // Create ~100 sales for obsolete products (2% of total)
-        foreach ($obsoleteProducts as $product) {
-            Sale::factory()->count(20)->obsolete()->create([
-                'product_id' => $product->id,
-            ]);
-        }
+            // Create sales for obsolete products
+            foreach ($obsoleteProducts as $product) {
+                Sale::factory()->count(20)->obsolete()->create([
+                    'product_id' => $product->id,
+                ]);
+            }
+        });
 
         // Other random data
         Transaction::factory()->count(200)->create([

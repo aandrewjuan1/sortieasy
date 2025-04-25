@@ -204,6 +204,7 @@ def generate_restock_recommendations(forecast_df: pd.DataFrame, stock_df: pd.Dat
         merged["avg_daily_demand"] = merged["predicted_quantity"] / FORECAST_DAYS
         merged["safety_stock"] = merged["avg_daily_demand"] * SAFETY_DAYS
         merged["projected_stock"] = merged["quantity_in_stock"] - merged["predicted_quantity"]
+
         merged["reorder_quantity"] = merged.apply(
             lambda row: max(0, -row["projected_stock"] + row["safety_stock"]),
             axis=1
@@ -261,14 +262,21 @@ def main() -> None:
     stock_df = sales_data[["product_id", "quantity_in_stock"]].drop_duplicates()
 
     recommendations = generate_restock_recommendations(final_forecast, stock_df)
-    if recommendations is not None:
+    if recommendations is not None and not recommendations.empty:
+        recommendations.rename(columns={
+            "predicted_quantity": "total_forecasted_demand"
+        }, inplace=True)
         recommendations["created_at"] = datetime.now()
         recommendations["updated_at"] = datetime.now()
+
         try:
             recommendations.to_sql("restocking_recommendations", engine, if_exists="append", index=False)
             logger.info("✅ Restocking recommendations saved.")
         except Exception as e:
             logger.error(f"❌ Failed to save restocking recommendations: {e}")
+    else:
+        logger.warning("⚠️ No recommendations to save.")
+
 
     logger.info("🏁 Forecasting pipeline completed successfully.")
 

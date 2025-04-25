@@ -3,6 +3,7 @@
 namespace App\Livewire\Dashboard;
 
 use App\Models\Product;
+use App\Models\RestockingRecommendation;
 use Livewire\Component;
 use Livewire\Attributes\Computed;
 use Illuminate\Support\Collection;
@@ -21,6 +22,7 @@ class ProductSummary extends Component
             'reorder_threshold',
             'safety_stock'
         ])
+        ->with('restockingRecommendations') // eager load if you add a relationship
         ->orderBy('name')
         ->get();
     }
@@ -82,6 +84,15 @@ class ProductSummary extends Component
 
     private function isOverstocked($p): bool
     {
-        return $p->quantity_in_stock > ($p->reorder_threshold * 2);
+        // Option 3: Combination approach
+        $overstockMultiplier = 3;
+        $baseThreshold = $p->reorder_threshold * $overstockMultiplier;
+
+        if ($p->restockingRecommendations->isNotEmpty()) {
+            $forecastedDemand = $p->restockingRecommendations->first()->total_forecasted_demand ?? 0;
+            return $p->quantity_in_stock > max($baseThreshold, $forecastedDemand * 1.5);
+        }
+
+        return $p->quantity_in_stock > $baseThreshold;
     }
 }

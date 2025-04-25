@@ -113,10 +113,14 @@
                             </span>
                         </div>
                         <div class="text-sm text-gray-600 dark:text-gray-400">
-                            @if($delivery->days_until == 0)
+                            @php
+                                $days = round($delivery->days_until);
+                            @endphp
+
+                            @if($days <= 0)
                                 <span class="text-green-600 dark:text-green-400">Today</span>
                             @else
-                                in {{ $delivery->days_until }} day{{ $delivery->days_until > 1 ? 's' : '' }}
+                                in {{ $days }} day{{ $days > 1 ? 's' : '' }}
                             @endif
                         </div>
                     </div>

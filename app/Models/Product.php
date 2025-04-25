@@ -2,13 +2,16 @@
 
 namespace App\Models;
 
+use App\Observers\ProductObserver;
 use App\Traits\Auditable;
 use App\Enums\InventoryStatus;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 
+#[ObservedBy([ProductObserver::class])]
 class Product extends Model
 {
     use HasFactory;
@@ -61,9 +64,9 @@ class Product extends Model
     public function scopeStockFilter(Builder $query, ?string $stockStatus)
     {
         return match ($stockStatus) {
-            'low' => $query->where('quantity_in_stock', '<=', DB::raw('reorder_threshold'))
-                        ->where('quantity_in_stock', '>', DB::raw('safety_stock')),
-            'critical' => $query->where('quantity_in_stock', '<=', DB::raw('safety_stock')),
+            'low' => $query->where('quantity_in_stock', '<=', DB::raw('safety_stock'))
+                        ->where('quantity_in_stock', '>', DB::raw('reorder_threshold')),
+            'critical' => $query->where('quantity_in_stock', '<=', DB::raw('reorder_threshold')),
             default => $query,
         };
     }

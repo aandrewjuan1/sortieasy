@@ -282,12 +282,12 @@
                                 {{-- Quantity --}}
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="flex items-center">
-                                        <span class="text-sm {{ $product->quantity_in_stock <= $product->safety_stock ? 'text-red-600 dark:text-red-400 font-bold' : ($product->quantity_in_stock <= $product->reorder_threshold ? 'text-yellow-600 dark:text-yellow-400' : 'text-zinc-500 dark:text-zinc-300') }}">
+                                        <span class="text-sm {{ $product->quantity_in_stock <= $product->reorder_threshold ? 'text-red-600 dark:text-red-400 font-bold' : ($product->quantity_in_stock <= $product->safety_stock ? 'text-yellow-600 dark:text-yellow-400 ' : 'text-zinc-500 dark:text-zinc-300' ) }}">
                                             {{ $product->quantity_in_stock }}
                                         </span>
-                                        @if($product->quantity_in_stock <= $product->reorder_threshold)
+                                        @if($product->quantity_in_stock <= $product->safety_stock)
                                             @php
-                                                $level = $product->quantity_in_stock <= $product->safety_stock ? 'critical' : 'low';
+                                                $level = $product->quantity_in_stock <= $product->reorder_threshold ? 'critical' : 'low';
                                                 $isCritical = $level === 'critical';
                                                 $buttonClasses = $isCritical
                                                     ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200 hover:bg-red-200 dark:hover:bg-red-800'

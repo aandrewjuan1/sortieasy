@@ -18,7 +18,6 @@ return new class extends Migration
             $table->float('projected_stock')->default(0);
             $table->float('reorder_quantity')->default(0);
             $table->timestamps();
-
         });
     }
 

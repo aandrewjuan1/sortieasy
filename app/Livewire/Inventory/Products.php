@@ -58,8 +58,8 @@ class Products extends Component
             ->search($this->search)
             ->categoryFilter($this->categoryFilter)
             ->supplierFilter($this->supplierFilter)
-            ->whereColumn('quantity_in_stock', '<=', 'reorder_threshold')
-            ->whereColumn('quantity_in_stock', '>', 'safety_stock')
+            ->whereColumn('quantity_in_stock', '<=', 'safety_stock')
+            ->whereColumn('quantity_in_stock', '>', 'reorder_threshold')
             ->count();
     }
 
@@ -70,7 +70,7 @@ class Products extends Component
             ->search($this->search)
             ->categoryFilter($this->categoryFilter)
             ->supplierFilter($this->supplierFilter)
-            ->whereColumn('quantity_in_stock', '<=', 'safety_stock')
+            ->whereColumn('quantity_in_stock', '<=', 'reorder_threshold')
             ->count();
     }
 
