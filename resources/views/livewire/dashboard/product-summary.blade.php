@@ -31,7 +31,6 @@
             </div>
         </div>
     </div>
-
     <!-- Restocking Recommendations -->
     <div class="bg-white dark:bg-zinc-800 border border-yellow-200 dark:border-yellow-800 rounded-lg shadow flex flex-col mb-6" style="height: 400px;">
         <div class="p-4 border-b border-yellow-200 dark:border-yellow-800 bg-yellow-50 dark:bg-yellow-900/20 rounded-t-lg flex items-center gap-3">
@@ -42,6 +41,9 @@
                 <h3 class="font-semibold text-yellow-800 dark:text-yellow-200">Restocking Recommendations</h3>
                 <p class="text-sm text-yellow-600 dark:text-yellow-300">
                     {{ $this->products->filter(fn($p) => $p->restockingRecommendations->isNotEmpty())->count() }} products to review
+                </p>
+                <p class="text-xs text-yellow-600 dark:text-yellow-400 mt-1">
+                    <strong>Note:</strong> The restocking recommendations are generated based on a supervised learning algorithm or demand prediction script to forecast inventory needs.
                 </p>
             </div>
         </div>
@@ -63,9 +65,11 @@
                 <tbody>
                     @forelse($this->products->filter(fn($p) => $p->restockingRecommendations->isNotEmpty()) as $product)
                         @php $recommendation = $product->restockingRecommendations->first(); @endphp
-                        <tr class="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-zinc-700">
+                        <tr class="cursor-pointer border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-zinc-700" wire:click="$dispatch('edit-stocks', { productId: {{ $product->id }} });
+                            $dispatch('modal-show', { name: 'edit-stocks' })" wire:key="product-{{ $product->id }}">
                             <td class="px-4 py-3 text-gray-800 dark:text-gray-200">
-                                {{ $product->name }}
+                                <span class="block">{{ $product->name }}</span>
+                                <span class="text-xs text-zinc-500 dark:text-zinc-400">{{ $product->sku }}</span>
                             </td>
                             <td class="px-4 py-3 text-right text-yellow-600 dark:text-yellow-400">
                                 {{ number_format($recommendation->total_forecasted_demand, 0) }}
@@ -79,7 +83,7 @@
                             <td class="px-4 py-3 text-right text-gray-600 dark:text-gray-400">
                                 {{ $product->reorder_threshold }}
                             </td>
-                            <td class="px-4 py-3 text-right @if($product->suggested_reorder_threshold && $product->suggested_reorder_threshold != $product->reorder_threshold) text-yellow-600 dark:text-yellow-400 font-medium @else text-gray-600 dark:text-gray-400 @endif">
+                            <td class="px-4 py-3 text-right @if($product->suggested_reorder_threshold > $product->reorder_threshold) text-yellow-600 dark:text-yellow-400 font-medium @else text-gray-600 dark:text-gray-400 @endif">
                                 {{ $product->suggested_reorder_threshold ?? '-' }}
                                 @if($product->suggested_reorder_threshold && $product->suggested_reorder_threshold != $product->reorder_threshold)
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -90,7 +94,7 @@
                             <td class="px-4 py-3 text-right text-gray-600 dark:text-gray-400">
                                 {{ $product->safety_stock }}
                             </td>
-                            <td class="px-4 py-3 text-right @if($product->suggested_safety_stock && $product->suggested_safety_stock != $product->safety_stock) text-yellow-600 dark:text-yellow-400 font-medium @else text-gray-600 dark:text-gray-400 @endif">
+                            <td class="px-4 py-3 text-right @if($product->suggested_safety_stock > $product->safety_stock) text-yellow-600 dark:text-yellow-400 font-medium @else text-gray-600 dark:text-gray-400 @endif">
                                 {{ $product->suggested_safety_stock ?? '-' }}
                                 @if($product->suggested_safety_stock && $product->suggested_safety_stock != $product->safety_stock)
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -322,4 +326,7 @@
             </div>
         </div>
     </div>
+    <flux:modal name="edit-stocks" maxWidth="2xl">
+        <livewire:inventory.edit-stocks/>
+    </flux:modal>
 </div>

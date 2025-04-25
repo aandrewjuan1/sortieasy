@@ -3,28 +3,22 @@
 namespace App\Livewire\Dashboard;
 
 use App\Models\Product;
-use App\Models\RestockingRecommendation;
 use Livewire\Component;
+use Livewire\Attributes\On;
+use Livewire\Attributes\Title;
 use Livewire\Attributes\Computed;
 use Illuminate\Support\Collection;
-use Livewire\Attributes\Title;
+use App\Models\RestockingRecommendation;
 
 #[Title('Dashboard')]
 class ProductSummary extends Component
 {
     #[Computed]
+    #[On('product-updated')]
     public function products(): Collection
     {
-        return Product::select([
-            'id',
-            'name',
-            'quantity_in_stock',
-            'reorder_threshold',
-            'suggested_reorder_threshold',
-            'suggested_safety_stock',
-            'safety_stock'
-        ])
-        ->with('restockingRecommendations') // eager load if you add a relationship
+        return Product
+        ::with('restockingRecommendations') // eager load if you add a relationship
         ->orderBy('name')
         ->get();
     }
