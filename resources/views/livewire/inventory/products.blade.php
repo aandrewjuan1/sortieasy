@@ -329,6 +329,7 @@
                                             };
                                         @endphp
                                         <button
+                                            x-cloak
                                             wire:click="$set('statusFilter', '{{ $statusValue }}')"
                                             class="px-2 py-1 text-xs font-medium rounded-full {{ $class }} cursor-pointer transition-colors"
                                         >

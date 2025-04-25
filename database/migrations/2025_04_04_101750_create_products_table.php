@@ -21,14 +21,22 @@ return new class extends Migration
             $table->decimal('price', 10, 2);
             $table->decimal('cost', 10, 2)->nullable();
             $table->integer('quantity_in_stock')->default(0);
+
             $table->integer('reorder_threshold')->default(10);
-            $table->integer('safety_stock')->default(5); // Added recommendation
-            $table->date('last_restocked')->nullable(); // Added recommendation
+            $table->integer('suggested_reorder_threshold')->nullable();
+
+            $table->integer('safety_stock')->default(5);
+            $table->integer('suggested_safety_stock')->nullable();
+
+            $table->date('last_restocked')->nullable();
+            $table->date('last_forecast_update')->nullable();
+
             $table->foreignId('supplier_id')->nullable()->constrained()->onDelete('set null');
             $table->enum('inventory_status', InventoryStatus::getValues())->nullable();
+
             $table->timestamps();
 
-            $table->index('sku'); // For faster lookups
+            $table->index('sku');
         });
     }
 

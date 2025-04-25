@@ -20,6 +20,8 @@ class ProductSummary extends Component
             'name',
             'quantity_in_stock',
             'reorder_threshold',
+            'suggested_reorder_threshold',
+            'suggested_safety_stock',
             'safety_stock'
         ])
         ->with('restockingRecommendations') // eager load if you add a relationship

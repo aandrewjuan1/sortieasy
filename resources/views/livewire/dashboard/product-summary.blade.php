@@ -53,6 +53,10 @@
                         <th class="px-4 py-3 text-right">Forecast</th>
                         <th class="px-4 py-3 text-right">In Stock</th>
                         <th class="px-4 py-3 text-right">Projected</th>
+                        <th class="px-4 py-3 text-right">Current Threshold</th>
+                        <th class="px-4 py-3 text-right">Suggested Threshold</th>
+                        <th class="px-4 py-3 text-right">Current Safety</th>
+                        <th class="px-4 py-3 text-right">Suggested Safety</th>
                         <th class="px-4 py-3 text-right">Reorder Qty</th>
                     </tr>
                 </thead>
@@ -72,13 +76,35 @@
                             <td class="px-4 py-3 text-right text-gray-600 dark:text-gray-400">
                                 {{ number_format($recommendation->projected_stock, 0) }}
                             </td>
+                            <td class="px-4 py-3 text-right text-gray-600 dark:text-gray-400">
+                                {{ $product->reorder_threshold }}
+                            </td>
+                            <td class="px-4 py-3 text-right @if($product->suggested_reorder_threshold && $product->suggested_reorder_threshold != $product->reorder_threshold) text-yellow-600 dark:text-yellow-400 font-medium @else text-gray-600 dark:text-gray-400 @endif">
+                                {{ $product->suggested_reorder_threshold ?? '-' }}
+                                @if($product->suggested_reorder_threshold && $product->suggested_reorder_threshold != $product->reorder_threshold)
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                                    </svg>
+                                @endif
+                            </td>
+                            <td class="px-4 py-3 text-right text-gray-600 dark:text-gray-400">
+                                {{ $product->safety_stock }}
+                            </td>
+                            <td class="px-4 py-3 text-right @if($product->suggested_safety_stock && $product->suggested_safety_stock != $product->safety_stock) text-yellow-600 dark:text-yellow-400 font-medium @else text-gray-600 dark:text-gray-400 @endif">
+                                {{ $product->suggested_safety_stock ?? '-' }}
+                                @if($product->suggested_safety_stock && $product->suggested_safety_stock != $product->safety_stock)
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                                    </svg>
+                                @endif
+                            </td>
                             <td class="px-4 py-3 text-right text-yellow-800 dark:text-yellow-300 font-semibold">
                                 {{ number_format($recommendation->reorder_quantity, 0) }}
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="px-4 py-4 text-center text-gray-500 dark:text-gray-400">
+                            <td colspan="9" class="px-4 py-4 text-center text-gray-500 dark:text-gray-400">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mx-auto mb-1 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                                 </svg>

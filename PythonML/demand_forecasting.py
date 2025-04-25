@@ -15,6 +15,7 @@ from db import get_engine, test_db_connection
 REQUIRED_TABLES = {'sales', 'products'}
 SAFETY_DAYS = 5
 FORECAST_DAYS = 30
+MIN_TRAINING_SAMPLES = 60
 
 # Set up logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
@@ -122,7 +123,7 @@ def train_model(X_train: pd.DataFrame, y_train: pd.Series, X_val: Optional[pd.Da
 
 def train_and_forecast(product_df: pd.DataFrame, product_id: int, lag_days: List[int]) -> Optional[pd.DataFrame]:
     """Train model per product and generate forecasts."""
-    if len(product_df) < 14:
+    if len(product_df) < MIN_TRAINING_SAMPLES:
         logger.warning(f"⚠️ Insufficient data for product {product_id}. Skipping.")
         return None
 
@@ -205,8 +206,12 @@ def generate_restock_recommendations(forecast_df: pd.DataFrame, stock_df: pd.Dat
         merged["safety_stock"] = merged["avg_daily_demand"] * SAFETY_DAYS
         merged["projected_stock"] = merged["quantity_in_stock"] - merged["predicted_quantity"]
 
+        # Update the reorder threshold calculation
+        merged["reorder_threshold"] = merged["avg_daily_demand"] * (SAFETY_DAYS + FORECAST_DAYS)
+
+        # Then calculate reorder quantity based on the reorder threshold and current stock
         merged["reorder_quantity"] = merged.apply(
-            lambda row: max(0, -row["projected_stock"] + row["safety_stock"]),
+            lambda row: max(0, row["reorder_threshold"] - row["quantity_in_stock"]),
             axis=1
         )
 
@@ -215,6 +220,28 @@ def generate_restock_recommendations(forecast_df: pd.DataFrame, stock_df: pd.Dat
     except Exception as e:
         logger.error(f"Failed to generate restocking recommendations: {e}")
         return None
+
+def update_product_suggestions(recommendations: pd.DataFrame):
+    """Update products table with suggested reorder threshold, safety stock, and forecast update date."""
+    try:
+        with engine.begin() as conn:
+            for _, row in recommendations.iterrows():
+                conn.execute(text("""
+                    UPDATE products
+                    SET
+                        suggested_reorder_threshold = :reorder_qty,
+                        suggested_safety_stock = :safety,
+                        last_forecast_update = :updated_at
+                    WHERE id = :product_id
+                """), {
+                    "reorder_qty": int(round(row["reorder_quantity"])),
+                    "safety": int(round(row["reorder_quantity"] * SAFETY_DAYS / FORECAST_DAYS)),  # Or use row["safety_stock"] directly if available
+                    "updated_at": datetime.now(),
+                    "product_id": int(row["product_id"])
+                })
+        logger.info("✅ Updated products with forecast suggestions.")
+    except Exception as e:
+        logger.error(f"❌ Failed to update product suggestions: {e}")
 
 # ------------------ Main Execution ------------------
 
@@ -252,6 +279,16 @@ def main() -> None:
 
     final_forecast = pd.concat(forecasts, ignore_index=True)
 
+    # Delete previous forecast data from the demand_forecasts table
+    try:
+        with engine.begin() as conn:
+            conn.execute(text("DELETE FROM demand_forecasts"))
+        logger.info("✅ Deleted previous forecast data from demand_forecasts table.")
+    except Exception as e:
+        logger.error(f"❌ Failed to delete previous demand forecast data: {e}")
+        return
+
+    # Now insert the new forecast data into the demand_forecasts table
     try:
         final_forecast.to_sql("demand_forecasts", engine, if_exists="append", index=False)
         logger.info(f"✅ Inserted {len(final_forecast)} rows into demand_forecasts.")
@@ -272,11 +309,11 @@ def main() -> None:
         try:
             recommendations.to_sql("restocking_recommendations", engine, if_exists="append", index=False)
             logger.info("✅ Restocking recommendations saved.")
+            update_product_suggestions(recommendations)
         except Exception as e:
             logger.error(f"❌ Failed to save restocking recommendations: {e}")
     else:
         logger.warning("⚠️ No recommendations to save.")
-
 
     logger.info("🏁 Forecasting pipeline completed successfully.")
 
