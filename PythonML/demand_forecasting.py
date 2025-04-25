@@ -226,24 +226,28 @@ def update_product_suggestions(recommendations: pd.DataFrame):
     try:
         with engine.begin() as conn:
             for _, row in recommendations.iterrows():
+                # Calculate Suggested Reorder Threshold (reorder):
+                avg_daily_demand = row["total_forecasted_demand"] / FORECAST_DAYS  # Updated column name
+                safety_stock = avg_daily_demand * SAFETY_DAYS
+                reorder = (avg_daily_demand * FORECAST_DAYS) + safety_stock
+
+                # Execute the update for the product
                 conn.execute(text("""
                     UPDATE products
                     SET
-                        suggested_reorder_threshold = :reorder_qty,
+                        suggested_reorder_threshold = :reorder,
                         suggested_safety_stock = :safety,
                         last_forecast_update = :updated_at
                     WHERE id = :product_id
                 """), {
-                    "reorder_qty": int(round(row["reorder_quantity"])),
-                    "safety": int(round(row["reorder_quantity"] * SAFETY_DAYS / FORECAST_DAYS)),  # Or use row["safety_stock"] directly if available
+                    "reorder": int(round(reorder)),  # Suggested reorder threshold
+                    "safety": int(round(safety_stock)),  # Suggested safety stock
                     "updated_at": datetime.now(),
                     "product_id": int(row["product_id"])
                 })
         logger.info("✅ Updated products with forecast suggestions.")
     except Exception as e:
         logger.error(f"❌ Failed to update product suggestions: {e}")
-
-# ------------------ Main Execution ------------------
 
 # ------------------ Main Execution ------------------
 

@@ -86,15 +86,20 @@ class ProductSummary extends Component
 
     private function isOverstocked($p): bool
     {
-        // Option 3: Combination approach
-        $overstockMultiplier = 3;
-        $baseThreshold = $p->reorder_threshold * $overstockMultiplier;
+        // Assuming there's a relationship to restocking recommendations
+        $recommendation = $p->restockingRecommendations()->first();
 
-        if ($p->restockingRecommendations->isNotEmpty()) {
-            $forecastedDemand = $p->restockingRecommendations->first()->total_forecasted_demand ?? 0;
-            return $p->quantity_in_stock > max($baseThreshold, $forecastedDemand * 1.5);
+        // If no restocking recommendation exists, we might consider it as not overstocked
+        if (!$recommendation) {
+            return false;
         }
 
-        return $p->quantity_in_stock > $baseThreshold;
+        // Calculate the reorder threshold and forecasted demand
+        $forecastedDemand = $recommendation->total_forecasted_demand;
+        $reorderThreshold = $p->suggested_reorder_threshold;
+
+        // Consider overstocked if the quantity is greater than the reorder threshold
+        // and the stock exceeds the demand forecast by a significant amount
+        return $p->quantity_in_stock > ($reorderThreshold + $forecastedDemand);
     }
 }
