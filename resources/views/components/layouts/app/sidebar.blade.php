@@ -14,27 +14,56 @@
 
             <flux:navlist variant="outline">
                 <flux:navlist.group class="grid">
-                    <!-- Dashboard link visible to everyone -->
-                    <flux:navlist.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard*')"  wire:navigate>{{ __('Dashboard') }}</flux:navlist.item>
 
-                    <!-- Inventory link visible to all roles -->
-                    <flux:navlist.item icon="archive-box" :href="route('inventory')" :current="request()->routeIs('inventory')" wire:navigate>{{ __('Inventory') }}</flux:navlist.item>
+                    <flux:separator />
 
-                    <!-- Suppliers link visible to all roles -->
-                    <flux:navlist.item icon="truck" :href="route('suppliers')" :current="request()->routeIs('suppliers')" wire:navigate>{{ __('Suppliers') }}</flux:navlist.item>
+                    <flux:navlist.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard*')" wire:navigate>
+                        {{ __('Dashboard') }}
+                    </flux:navlist.item>
 
-                    <flux:navlist.item icon="presentation-chart-line" :href="route('sales')" :current="request()->routeIs('sales')" wire:navigate>{{ __('Sales') }}</flux:navlist.item>
 
-                    <!-- Transactions link visible to all roles -->
-                    <flux:navlist.item icon="clipboard-document-check" :href="route('transactions')" :current="request()->routeIs('transactions')" wire:navigate>{{ __('Transactions') }}</flux:navlist.item>
 
-                    <!-- Logistics link visible to all roles -->
-                    <flux:navlist.item icon="globe-alt" :href="route('logistics')" :current="request()->routeIs('logistics')" wire:navigate>{{ __('Logistics') }}</flux:navlist.item>
+                    <flux:navlist.item icon="archive-box" :href="route('inventory')" :current="request()->routeIs('inventory')" wire:navigate>
+                        {{ __('Inventory') }}
+                    </flux:navlist.item>
 
-                    <flux:navlist.item icon="cursor-arrow-ripple" :href="route('forecasts')" :current="request()->routeIs('forecasts')" wire:navigate>{{ __('Demand Forecasts') }}</flux:navlist.item>
+                    <flux:navlist.item icon="truck" :href="route('suppliers')" :current="request()->routeIs('suppliers')" wire:navigate>
+                        {{ __('Suppliers') }}
+                    </flux:navlist.item>
 
+                    <flux:navlist.item icon="presentation-chart-line" :href="route('sales')" :current="request()->routeIs('sales')" wire:navigate>
+                        {{ __('Sales') }}
+                    </flux:navlist.item>
+
+                    <flux:navlist.item icon="clipboard-document-check" :href="route('transactions')" :current="request()->routeIs('transactions')" wire:navigate>
+                        {{ __('Transactions') }}
+                    </flux:navlist.item>
+
+                    <flux:navlist.item icon="globe-alt" :href="route('logistics')" :current="request()->routeIs('logistics')" wire:navigate>
+                        {{ __('Logistics') }}
+                    </flux:navlist.item>
+
+                    <flux:separator />
+
+                    <!-- Predictive Tools Section -->
+                    <div class="px-3 pt-2 pb-1 text-xs font-semibold uppercase text-zinc-500 dark:text-zinc-400">
+                        {{ __('Predictive Tools') }}
+                    </div>
+
+                    <flux:navlist.item icon="rectangle-group" :href="route('restocking-recommendations')" :current="request()->routeIs('restocking-recommendations')" wire:navigate>
+                        <div class="flex items-center gap-2">
+                            {{ __('Restock Recommends') }}
+                        </div>
+                    </flux:navlist.item>
+
+                    <flux:navlist.item icon="cursor-arrow-ripple" :href="route('forecasts')" :current="request()->routeIs('forecasts')" wire:navigate>
+                        <div class="flex items-center gap-2">
+                            {{ __('Demand Forecasts') }}
+                        </div>
+                    </flux:navlist.item>
                 </flux:navlist.group>
             </flux:navlist>
+
 
 
             <flux:spacer />
@@ -45,8 +74,11 @@
                         <flux:navlist.item icon="users" :href="route('manage-users')" :current="request()->routeIs('manage-users')" wire:navigate>{{ __('Manage Users') }}</flux:navlist.item>
 
                         <flux:navlist.item icon="newspaper" :href="route('audit-logs')" :current="request()->routeIs('audit-logs')" wire:navigate>{{ __('Audit Logs') }}</flux:navlist.item>
+                        <flux:separator />
                 </flux:navlist>
             @endcan
+
+
 
 
             <!-- Desktop User Menu -->

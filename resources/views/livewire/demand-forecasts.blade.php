@@ -1,9 +1,13 @@
 <div>
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4">
         <div class="flex flex-col gap-2">
-            <h1 class="text-4xl font-bold dark:text-white">
+            <h1 class="inline-flex text-4xl font-bold dark:text-white items-center gap-2 whitespace-nowrap">
                 Demand Forecasts
+                <flux:modal.trigger name="forecast-info">
+                    <flux:icon.information-circle class="size-8 cursor-pointer" />
+                </flux:modal.trigger>
             </h1>
+
             <flux:modal name="forecast-info">
                 <div class="space-y-6">
                     <div>
@@ -83,9 +87,6 @@
                 </button>
             </div>
 
-            <flux:modal.trigger name="forecast-info">
-                <flux:icon.information-circle class="size-8 cursor-pointer" />
-            </flux:modal.trigger>
 
             {{-- Search --}}
             <div class="relative w-full md:w-72">

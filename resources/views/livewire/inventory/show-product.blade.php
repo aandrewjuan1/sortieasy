@@ -7,7 +7,61 @@
         @if($this->product)
             <div class="bg-white dark:bg-zinc-800 p-6 rounded-lg">
                 <h2 class="text-2xl font-semibold text-gray-800 dark:text-zinc-100 mb-4">Product Details</h2>
+                @if($this->product->restockingRecommendations->isNotEmpty())
+                    <flux:modal.trigger name="show-recommendation">
+                        <flux:button class="mb-4 bg-indigo-500 dark:bg-indigo-700 text-white">
+                            View Restocking Recommendation
+                        </flux:button>
+                    </flux:modal.trigger>
+                    <flux:modal name="show-recommendation" class="min-w-[30rem]">
+                    <div class="space-y-6">
+                        @php
+                            $recommendation = $this->product->restockingRecommendations->first();
+                        @endphp
 
+                        <div class="space-y-4">
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <span class="text-gray-600 dark:text-zinc-400 font-medium">Forecasted Demand:</span>
+                                    <p class="text-gray-900 dark:text-zinc-200 text-lg">
+                                        {{ number_format($recommendation->total_forecasted_demand, 2) }}
+                                    </p>
+                                </div>
+                                <div>
+                                    <span class="text-gray-600 dark:text-zinc-400 font-medium">Current Stock:</span>
+                                    <p class="text-gray-900 dark:text-zinc-200 text-lg">
+                                        {{ $recommendation->quantity_in_stock }}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <span class="text-gray-600 dark:text-zinc-400 font-medium">Projected Stock:</span>
+                                    <p class="text-gray-900 dark:text-zinc-200 text-lg">
+                                        {{ number_format($recommendation->projected_stock, 2) }}
+                                        @if($recommendation->projected_stock < $this->product->safety_stock)
+                                            <span class="ml-2 text-red-500 dark:text-red-400 text-sm">(Below Safety Stock)</span>
+                                        @endif
+                                    </p>
+                                </div>
+                                <div>
+                                    <span class="text-gray-600 dark:text-zinc-400 font-medium">Recommended Order:</span>
+                                    <p class="text-2xl font-semibold text-indigo-600 dark:text-indigo-400">
+                                        {{ number_format($recommendation->reorder_quantity, 2) }}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="pt-4 border-t border-gray-200 dark:border-zinc-600">
+                                <div class="text-sm text-gray-500 dark:text-zinc-400">
+                                    Last updated: {{ $recommendation->updated_at->format('M j, Y g:i A') }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </flux:modal>
+                @endif
                 <div class="mb-4">
                     <span class="text-gray-600 dark:text-zinc-400 font-medium">Name:</span>
                     <p class="text-lg text-gray-900 dark:text-zinc-200">

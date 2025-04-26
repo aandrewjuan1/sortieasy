@@ -13,7 +13,7 @@ use App\Livewire\Suppliers\Suppliers;
 use Illuminate\Support\Facades\Route;
 use App\Livewire\Dashboard\SaleSummary;
 use App\Livewire\Dashboard\ProductSummary;
-use App\Livewire\Dashboard\RestockingRecommendations;
+use App\Livewire\RestockingRecommendations;
 use App\Livewire\Dashboard\LogisticSummary;
 use App\Livewire\Transactions\Transactions;
 use App\Livewire\Dashboard\SupplierOverview;
@@ -28,8 +28,6 @@ Route::middleware(['auth'])->group(function () {
 
     // Dashboard routes
     Route::get('dashboard/product-summary', ProductSummary::class)->name('dashboard.product-summary');
-    Route::get('dashboard/restocking-recommendations', RestockingRecommendations::class)->name('dashboard.restocking-recommendations');
-
     Route::get('dashboard/supplier-overview', SupplierOverview::class)->name('dashboard.supplier-overview');
     Route::get('dashboard/transaction-summary', TransactionSummary::class)->name('dashboard.transaction-summary');
     Route::get('dashboard/sale-summary', SaleSummary::class)->name('dashboard.sale-summary');
@@ -42,6 +40,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('transactions', Transactions::class)->name('transactions');
     Route::get('logistics', Logistics::class)->name('logistics');
     Route::get('forecasts', DemandForecasts::class)->name('forecasts');
+    Route::get('restocking-recommendations', RestockingRecommendations::class)->name('restocking-recommendations');
 
     // Settings routes
     Route::get('settings/profile', Profile::class)->name('settings.profile');

@@ -3,6 +3,7 @@
 namespace App\Observers;
 
 use App\Models\Product;
+use Illuminate\Support\Facades\Cache;
 use App\Models\RestockingRecommendation;
 
 class ProductObserver
@@ -22,6 +23,7 @@ class ProductObserver
 
         // Check if the restocking recommendation needs to be deleted
         $this->deleteRestockingRecommendationIfFulfilled($product);
+        Cache::forget('restocking_recommendations:page:1:per_page:10:sort:name:dir:ASC:search:');
     }
 
     /**
