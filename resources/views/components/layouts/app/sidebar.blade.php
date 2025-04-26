@@ -31,6 +31,7 @@
                     <!-- Logistics link visible to all roles -->
                     <flux:navlist.item icon="globe-alt" :href="route('logistics')" :current="request()->routeIs('logistics')" wire:navigate>{{ __('Logistics') }}</flux:navlist.item>
 
+                    <flux:navlist.item icon="cursor-arrow-ripple" :href="route('forecasts')" :current="request()->routeIs('forecasts')" wire:navigate>{{ __('Demand Forecasts') }}</flux:navlist.item>
 
                 </flux:navlist.group>
             </flux:navlist>

@@ -19,10 +19,11 @@ class ShowProduct extends Component
     public function product(): ?Product
     {
         if ($this->productId) {
-            return Product::findOrFail($this->productId);
+            return Product::with('restockingRecommendations')->findOrFail($this->productId);
         }
         return null;
     }
+
     #[On('show-product')]
     public function setMediaId(int $productId)
     {

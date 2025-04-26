@@ -3,7 +3,6 @@
 namespace App\Livewire\Inventory;
 
 use App\Models\Product;
-use Livewire\Attributes\Renderless;
 use Livewire\Component;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Url;
@@ -11,8 +10,10 @@ use Livewire\WithPagination;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Computed;
 use Illuminate\Support\Facades\DB;
+use Livewire\Attributes\Renderless;
 use Illuminate\Support\Facades\Cache;
 use App\Jobs\RunInventoryStatusDetection;
+use App\Events\InventoryStatusDetectionCompleted;
 
 #[Title('Products')]
 class Products extends Component
@@ -192,6 +193,7 @@ class Products extends Component
         // products:page:1:per_page:10:sort:created_at:dir:DESC:search::category::supplier::stock::status:
     }
 
+    #[On('inventoryStatusDetectionCompleted')]
     protected function clearCurrentPageCache(): void
     {
         Cache::forget($this->getProductsCacheKey());

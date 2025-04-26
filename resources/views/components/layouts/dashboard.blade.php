@@ -11,6 +11,15 @@
             </flux:navbar.item>
 
             <flux:navbar.item
+                icon="rectangle-group"
+                :href="route('dashboard.restocking-recommendations')"
+                wire:navigate
+                :active="request()->routeIs('dashboard.restocking-recommendations')">
+                Restocking Recommendations
+
+            </flux:navbar.item>
+
+            <flux:navbar.item
                 icon="users"
                 :href="route('dashboard.supplier-overview')"
                 wire:navigate

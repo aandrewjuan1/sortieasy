@@ -2,14 +2,16 @@
 
 namespace App\Jobs;
 
-use App\Services\InventoryStatusService;
+use App\Events\InventeroryStatusCompleted;
+use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Queue\SerializesModels;
+use App\Services\InventoryStatusService;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use Carbon\Carbon;
+use App\Events\InventoryStatusDetectionCompleted;
 
 class RunInventoryStatusDetection implements ShouldQueue
 {
@@ -69,7 +71,7 @@ class RunInventoryStatusDetection implements ShouldQueue
                 ->where('id', $update['id'])
                 ->update(['inventory_status' => $update['inventory_status']]);
         }
-
         logger('✅ Inventory Status Detection Completed. Updated ' . count($updates) . ' products.');
+        InventeroryStatusCompleted::dispatch();
     }
 }
