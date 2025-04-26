@@ -56,6 +56,18 @@ class RestockingRecommendations extends Component
         }
     }
 
+    public function clearAllFilters()
+    {
+        $this->reset([
+            'search',
+            'perPage',
+            'sortBy',
+            'sortDir',
+        ]);
+        $this->resetPage();
+        $this->clearCurrentPageCache();
+    }
+
     #[Computed]
     public function products()
     {

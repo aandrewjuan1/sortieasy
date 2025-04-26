@@ -217,7 +217,7 @@
                     @empty
                     <tr>
                         <td colspan="6" class="px-6 py-4 text-center text-sm text-zinc-500 dark:text-zinc-300">
-                            No demand forecasts found matching your criteria
+                            No demand forecasts found
                         </td>
                     </tr>
                     @endforelse
