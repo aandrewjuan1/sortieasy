@@ -7,8 +7,8 @@ use Carbon\Carbon;
 
 class InventoryStatusService
 {
-    const SLOW_MOVING_DAYS_THRESHOLD = 30;  // New: Days since last sale to consider "Slow Moving"
-    const OBSOLETE_DAYS_THRESHOLD = 90;     // Days since last sale to consider "Obsolete"
+    protected const SLOW_MOVING_DAYS_THRESHOLD = 30;  // New: Days since last sale to consider "Slow Moving"
+    protected const OBSOLETE_DAYS_THRESHOLD = 90;     // Days since last sale to consider "Obsolete"
 
     public function determineStatus($product, $salesStats)
     {

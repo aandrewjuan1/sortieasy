@@ -3,6 +3,7 @@
 namespace App\Livewire\Inventory;
 
 use App\Models\Product;
+use Livewire\Attributes\Renderless;
 use Livewire\Component;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Url;
@@ -11,6 +12,7 @@ use Livewire\Attributes\Title;
 use Livewire\Attributes\Computed;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
+use App\Jobs\RunInventoryStatusDetection;
 
 #[Title('Products')]
 class Products extends Component
@@ -51,6 +53,18 @@ class Products extends Component
             ->sum(DB::raw('quantity_in_stock * price'));
     }
 
+    #[Renderless]
+    public function runDetection()
+    {
+        RunInventoryStatusDetection::dispatch();
+
+        $this->dispatch('notify',
+            type: 'success',
+            message: 'Inventory status detection has been dispatched!'
+        );
+    }
+
+
     #[Computed]
     public function lowStockCount(): int
     {
@@ -58,8 +72,9 @@ class Products extends Component
             ->search($this->search)
             ->categoryFilter($this->categoryFilter)
             ->supplierFilter($this->supplierFilter)
-            ->whereColumn('quantity_in_stock', '<=', 'safety_stock')
-            ->whereColumn('quantity_in_stock', '>', 'reorder_threshold')
+            // Low stock: safety_stock < quantity_in_stock <= reorder_threshold
+            ->whereColumn('quantity_in_stock', '>', 'safety_stock')
+            ->whereColumn('quantity_in_stock', '<=', 'reorder_threshold')
             ->count();
     }
 
@@ -70,7 +85,8 @@ class Products extends Component
             ->search($this->search)
             ->categoryFilter($this->categoryFilter)
             ->supplierFilter($this->supplierFilter)
-            ->whereColumn('quantity_in_stock', '<=', 'reorder_threshold')
+            // Critical stock: quantity_in_stock <= safety_stock
+            ->whereColumn('quantity_in_stock', '<=', 'safety_stock')
             ->count();
     }
 

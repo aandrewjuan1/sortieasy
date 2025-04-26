@@ -64,9 +64,11 @@ class Product extends Model
     public function scopeStockFilter(Builder $query, ?string $stockStatus)
     {
         return match ($stockStatus) {
-            'low' => $query->where('quantity_in_stock', '<=', DB::raw('safety_stock'))
-                        ->where('quantity_in_stock', '>', DB::raw('reorder_threshold')),
-            'critical' => $query->where('quantity_in_stock', '<=', DB::raw('reorder_threshold')),
+            'low' => $query->where('quantity_in_stock', '<=', DB::raw('reorder_threshold'))
+                           ->where('quantity_in_stock', '>', DB::raw('safety_stock')),
+
+            'critical' => $query->where('quantity_in_stock', '<=', DB::raw('safety_stock')),
+
             default => $query,
         };
     }

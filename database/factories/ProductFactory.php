@@ -73,6 +73,9 @@ class ProductFactory extends Factory
         $skuPrefix = strtoupper(substr($product['category'], 0, 4));
         $sku = $skuPrefix . '-' . $this->faker->unique()->numberBetween(1000, 9999);
 
+        $safetyStock = $this->faker->numberBetween(50, 100);
+        $reorderThreshold = $this->faker->numberBetween($safetyStock + 1, $safetyStock + 50);
+        $quantityInStock = $this->faker->numberBetween($safetyStock + 1, $reorderThreshold - 1);
         return [
             'name' => $product['name'],
             'description' => $this->faker->sentence(),
@@ -80,9 +83,9 @@ class ProductFactory extends Factory
             'sku' => $sku,
             'price' => $product['price'],
             'cost' => round($product['price'] * 0.6, 2),
-            'quantity_in_stock' => $this->faker->numberBetween(50, 150),
-            'reorder_threshold' => $this->faker->numberBetween(25, 50),
-            'safety_stock' => $this->faker->numberBetween(50, 70),
+            'quantity_in_stock' => $quantityInStock,
+            'reorder_threshold' => $reorderThreshold,
+            'safety_stock' => $safetyStock,
             'last_restocked' => $this->faker->date(),
             'supplier_id' => Supplier::inRandomOrder()->first()?->id,
             'created_at' => now(),
