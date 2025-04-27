@@ -95,6 +95,20 @@
                 </div>
             </div>
 
+            <select wire:model.live="statusFilter"
+            class="w-full md:w-32 border rounded-lg px-3 py-2 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white">
+                <option value="">All</option>
+                @foreach(\App\Enums\InventoryStatus::cases() as $status)
+                    <option value="{{ $status->value }}">{{ str_replace('_', ' ', ucfirst($status->value)) }}</option>
+                @endforeach
+            </select>
+
+            <select wire:model.live="stockFilter" class="w-full md:w-32 border rounded-lg px-3 py-2 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white">
+                <option value="">All</option>
+                <option value="low">Low</option>
+                <option value="critical">Critical</option>
+            </select>
+
             {{-- Per Page --}}
             <select wire:model.live="perPage"
                 class="w-full md:w-32 border rounded-lg px-3 py-2 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white">
@@ -103,19 +117,6 @@
                 <option value="25">25 per page</option>
                 <option value="50">50 per page</option>
             </select>
-
-            <div>
-                <flux:tooltip content="Run inventory status detection for all products in the background">
-                    <flux:button wire:click="runDetection" wire:loading.attr="disabled">
-                        <span wire:loading.remove>
-                            🔍 Detect Inventory Status
-                        </span>
-                        <span wire:loading>
-                            ⏳ Processing...
-                        </span>
-                    </flux:button>
-                </flux:tooltip>
-            </div>
 
             @can('view', Auth::user())
                 <flux:modal.trigger name="add-product">
@@ -174,32 +175,55 @@
                         </th>
 
                         {{-- Quantity Column --}}
-                        <th scopetems-centerpx- class="flex row items-center px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider dark:text-zinc-300">
-                            <button class="flex items-center uppercase"  wire:click="setSortBy('quantity_in_stock')">
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider dark:text-zinc-300"  wire:click="setSortBy('quantity_in_stock')">
+                            <button class="flex items-center uppercase">
                                 @include('livewire.includes.table-sortable-th', [
                                     'name' => 'quantity_in_stock',
                                     'displayName' => 'Quantity'
                                 ])
                             </button>
-                            <select wire:model.live="stockFilter" class="ml-2 text-sm border rounded dark:bg-zinc-700 bg-transparent">
-                                <option value="">All</option>
-                                <option value="low">Low</option>
-                                <option value="critical">Critical</option>
-                            </select>
+
                         </th>
 
                         {{-- Inventory Status Column --}}
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider dark:text-zinc-300">
-                            <div class="flex items-center">
-                                <span>Status</span>
-                                <select wire:model.live="statusFilter" class="ml-2 text-sm border rounded dark:bg-zinc-700 bg-transparent">
-                                    <option value="">All</option>
-                                    @foreach(\App\Enums\InventoryStatus::cases() as $status)
-                                        <option value="{{ $status->value }}">{{ str_replace('_', ' ', ucfirst($status->value)) }}</option>
-                                    @endforeach
-                                </select>
+                        <th scope="col" class="px-6 py-3">
+                            <div class="flex items-center gap-2">
+                                <flux:modal.trigger name="detection-info">
+                                    <flux:icon.information-circle class="size-6 cursor-pointer" />
+                                </flux:modal.trigger>
+                                <div class="uppercase text-left text-xs font-medium text-zinc-500 tracking-wider dark:text-zinc-300">
+                                    Status
+                                </div>
+
+                                {{-- Small Detect Button --}}
+                                @if($this->canRunDetection)
+                                    <flux:tooltip content="Run inventory status detection">
+                                        <flux:button
+                                            wire:click="runDetection"
+                                            wire:loading.attr="disabled"
+                                            class="ml-2"
+                                            size="sm"
+                                        >
+                                            <span wire:loading.remove>
+                                                🔍 Detect
+                                            </span>
+                                            <span wire:loading>
+                                                ⏳...
+                                            </span>
+                                        </flux:button>
+                                    </flux:tooltip>
+                                @else
+                                    <flux:tooltip content="Detection already run today">
+                                        <div>
+                                            <flux:button disabled size="sm" class="ml-2">
+                                                🔍 Detect
+                                            </flux:button>
+                                        </div>
+                                    </flux:tooltip>
+                                @endif
                             </div>
                         </th>
+
 
                         {{-- Last Restocked Column --}}
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider dark:text-zinc-300" wire:click="setSortBy('last_restocked')">
@@ -392,6 +416,49 @@
             {{ $this->products->links() }}
         </div>
     </div>
+
+    <flux:modal name="detection-info">
+        <div class="space-y-6">
+            <div class="space-y-2">
+                <h2 class="text-2xl font-bold">🧠 Inventory Status Detection</h2>
+                <p class="text-muted-foreground">
+                    Automatically analyze sales and stock to determine the real-time status of each product.
+                </p>
+            </div>
+
+            <div class="space-y-4">
+                <h3 class="text-xl font-semibold">How Detection Works</h3>
+                <ul class="list-disc list-inside text-muted-foreground space-y-1">
+                    <li><b>Obsolete:</b> No sales for over <b>90 days</b> or never sold but still in stock.</li>
+                    <li><b>Slow Moving:</b> No sales for more than <b>30 days</b> but less than 90 days.</li>
+                    <li><b>Normal:</b> Sold within the last <b>30 days</b> or currently out of stock.</li>
+                </ul>
+            </div>
+
+            <div class="space-y-4">
+                <h3 class="text-xl font-semibold">Technical Overview</h3>
+                <ul class="list-disc list-inside text-muted-foreground space-y-1">
+                    <li><b>Sales Tracking:</b> Calculate the <b>days since last sale</b> and <b>total quantity sold</b>.</li>
+                    <li><b>Classification Rules:</b> Based on simple thresholds:
+                        <ul class="list-disc list-inside ml-5 space-y-1">
+                            <li><b>30 days</b> (for Slow Moving)</li>
+                            <li><b>90 days</b> (for Obsolete)</li>
+                        </ul>
+                    </li>
+                    <li><b>Stock Dependency:</b> Products with no sales history are checked for stock presence.</li>
+                </ul>
+            </div>
+
+            <div class="space-y-4">
+                <h3 class="text-xl font-semibold">Important Notes</h3>
+                <ul class="list-disc list-inside text-muted-foreground space-y-1">
+                    <li>Detection runs automatically once every day.</li>
+                    <li>Products with zero sales are handled differently based on stock status.</li>
+                    <li>Status updates happen seamlessly in the background, no manual action needed.</li>
+                </ul>
+            </div>
+        </div>
+    </flux:modal>
 
     <flux:modal name="show-product" maxWidth="2xl">
         <livewire:inventory.show-product/>

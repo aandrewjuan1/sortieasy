@@ -10,32 +10,65 @@
 
             <flux:modal name="forecast-info">
                 <div class="space-y-6">
-                    <div>
-                        <h2 class="text-lg font-bold">Forecast Overview</h2>
-                        <p>Predicts 30 days of demand with a 5-day safety buffer. Uses LightGBM models trained per product, based on 60+ days of historical sales data.</p>
+                    <div class="space-y-2">
+                        <h2 class="text-2xl font-bold">📈 Demand Forecasting Information</h2>
+                        <p class="text-muted-foreground">
+                            Learn how we predict future sales to help with smarter inventory planning.
+                        </p>
                     </div>
 
-                    <div>
-                        <h2 class="text-lg font-bold">Feature Engineering</h2>
-                        <ul class="list-disc list-inside">
-                            <li>Temporal features: day, month, week</li>
-                            <li>Seasonal indicators: school season, summer, Christmas</li>
-                            <li>Philippine-specific holiday detection</li>
-                            <li>Rolling averages and lag features</li>
+                    <div class="space-y-4">
+                        <h3 class="text-xl font-semibold">How Forecasting Works</h3>
+                        <ul class="list-disc list-inside text-muted-foreground space-y-1">
+                            <li>We predict the next <b>30 days</b> of product sales using machine learning.</li>
+                            <li>A <b>separate model</b> is trained for each product based on historical sales data.</li>
+                            <li>The model learns from patterns like:
+                                <ul class="list-disc list-inside ml-5 space-y-1">
+                                    <li>Day of the week (weekday vs weekend)</li>
+                                    <li>Month and season (school season, Christmas, summer)</li>
+                                    <li>Philippine holidays</li>
+                                    <li>Recent sales trends (7-day and 30-day averages)</li>
+                                    <li>Sales behavior over time (7, 14, and 30 day lags)</li>
+                                </ul>
+                            </li>
+                            <li>Only products with <b>at least 60 historical records</b> are forecasted.</li>
                         </ul>
                     </div>
 
-                    <div>
-                        <h2 class="text-lg font-bold">Forecasting & Recommendations</h2>
-                        <p>Recursive forecasting ensures updated rolling features. Forecasts drive restock recommendations with reorder thresholds and safety stock calculations.</p>
+                    <div class="space-y-4">
+                        <h3 class="text-xl font-semibold">Technical Overview</h3>
+                        <ul class="list-disc list-inside text-muted-foreground space-y-1">
+                            <li><b>Algorithm:</b> We use <b>LightGBM Regressor</b>, a fast and efficient machine learning model.</li>
+                            <li><b>Feature Engineering:</b> We create extra inputs like day, holiday flags, season indicators, moving averages, and lagged sales quantities.</li>
+                            <li><b>Training Method:</b>
+                                <ul class="list-disc list-inside ml-5 space-y-1">
+                                    <li>80% of historical data is used for training.</li>
+                                    <li>20% is reserved for validation (model tuning).</li>
+                                </ul>
+                            </li>
+                            <li><b>Forecasting:</b>
+                                <ul class="list-disc list-inside ml-5 space-y-1">
+                                    <li>We predict one day at a time.</li>
+                                    <li>Each forecasted day is used to predict the next day.</li>
+                                </ul>
+                            </li>
+                            <li><b>Fallback:</b> If there’s not enough data to split, we train on all available history.</li>
+                        </ul>
                     </div>
 
-                    <div>
-                        <h2 class="text-lg font-bold">Business Alignment</h2>
-                        <p>Forecasts are context-aware, incorporating Philippine seasons and holidays. Designed for practical, explainable, and maintainable inventory decisions.</p>
+                    <div class="space-y-4">
+                        <h3 class="text-xl font-semibold">Important Notes</h3>
+                        <ul class="list-disc list-inside text-muted-foreground space-y-1">
+                            <li>Forecasts are based only on <b>historical sales patterns</b>.</li>
+                            <li>They do <b>not</b> account for sudden events like promos, stockouts, or supplier delays.</li>
+                            <li>Philippine holidays and seasonality are automatically considered.</li>
+                            <li>Forecasts are refreshed every time the system runs the forecasting pipeline.</li>
+                        </ul>
                     </div>
                 </div>
             </flux:modal>
+
+
 
             <div class="flex justify-between items-center">
                 <div class="flex flex-wrap gap-4">

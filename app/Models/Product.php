@@ -33,7 +33,8 @@ class Product extends Model
                 $query->where('name', 'like', "%{$search}%")
                     ->orWhere('category', 'like', "%{$search}%")
                     ->orWhere('sku', 'like', "%{$search}%")
-                    ->orWhere('description', 'like', "%{$search}%");
+                    ->orWhere('description', 'like', "%{$search}%")
+                    ->orWhere('inventory_status', 'like', "%{$search}%");
 
                 // Check if the search term is a number and search in quantity_in_stock
                 if (is_numeric($search)) {

@@ -10,27 +10,55 @@
 
             <flux:modal name="restocking-info">
                 <div class="space-y-6">
-                    <div>
-                        <h2 class="text-lg font-bold">Recommendation Overview</h2>
-                        <p>Automated restocking suggestions based on demand forecasts, current inventory levels, and lead times. Designed to optimize inventory turnover while preventing stockouts.</p>
+                    <div class="space-y-2">
+                        <h2 class="text-2xl font-bold">📦 Restocking Recommendation Information</h2>
+                        <p class="text-muted-foreground">
+                            Learn how we suggest when and how much to reorder based on forecasted demand.
+                        </p>
                     </div>
 
-                    <div>
-                        <h2 class="text-lg font-bold">Algorithm Details</h2>
-                        <ul class="list-disc list-inside">
-                            <li>Considers 30-day demand forecasts with safety buffers</li>
-                            <li>Accounts for supplier lead times and order cycles</li>
-                            <li>Adjusts for seasonal variations and trends</li>
-                            <li>Incorporates current stock levels and in-transit inventory</li>
+                    <div class="space-y-4">
+                        <h3 class="text-xl font-semibold">How Restocking Recommendations Work</h3>
+                        <ul class="list-disc list-inside text-muted-foreground space-y-1">
+                            <li>We use the <b>30-day sales forecast</b> to estimate future demand.</li>
+                            <li>For each product, we calculate:
+                                <ul class="list-disc list-inside ml-5 space-y-1">
+                                    <li><b>Average daily demand</b> (predicted quantity ÷ 30 days)</li>
+                                    <li><b>Safety stock</b> (buffer equal to 5 days of average demand)</li>
+                                    <li><b>Reorder threshold</b> (enough stock for 35 days = 30 forecast + 5 safety)</li>
+                                </ul>
+                            </li>
+                            <li>We check current inventory levels against the reorder threshold.</li>
+                            <li>If stock is below the threshold, we recommend the amount to reorder.</li>
                         </ul>
                     </div>
 
-                    <div>
-                        <h2 class="text-lg font-bold">Key Metrics</h2>
-                        <p>Reorder quantities are calculated to cover demand until next expected delivery plus safety stock. Thresholds are dynamically adjusted based on forecast accuracy and variability.</p>
+                    <div class="space-y-4">
+                        <h3 class="text-xl font-semibold">Technical Overview</h3>
+                        <ul class="list-disc list-inside text-muted-foreground space-y-1">
+                            <li><b>Demand Source:</b> Total forecasted sales over 30 days.</li>
+                            <li><b>Safety Days:</b> Fixed at <b>5 days</b> to protect against unexpected spikes or delivery delays.</li>
+                            <li><b>Calculation:</b>
+                                <ul class="list-disc list-inside ml-5 space-y-1">
+                                    <li><b>Reorder threshold = (Average Daily Demand × 30 days) + (Average Daily Demand × 5 days)</b></li>
+                                    <li><b>Reorder quantity = Reorder threshold - Current stock</b></li>
+                                </ul>
+                            </li>
+                            <li><b>Update:</b> Restocking recommendations are refreshed after every new forecast run.</li>
+                        </ul>
+                    </div>
+
+                    <div class="space-y-4">
+                        <h3 class="text-xl font-semibold">Important Notes</h3>
+                        <ul class="list-disc list-inside text-muted-foreground space-y-1">
+                            <li>Recommendations assume forecasted demand is accurate.</li>
+                            <li>External factors like supplier lead times, promotions, or manual overrides are <b>not yet</b> included.</li>
+                            <li>Always consider your supplier schedules when placing actual orders.</li>
+                        </ul>
                     </div>
                 </div>
             </flux:modal>
+
 
             <div class="flex justify-between items-center">
                 <div class="flex flex-wrap gap-4">

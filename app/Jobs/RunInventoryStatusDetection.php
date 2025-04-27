@@ -2,13 +2,14 @@
 
 namespace App\Jobs;
 
-use App\Events\InventeroryStatusCompleted;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Queue\SerializesModels;
 use App\Services\InventoryStatusService;
 use Illuminate\Queue\InteractsWithQueue;
+use App\Events\InventeroryStatusCompleted;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use App\Events\InventoryStatusDetectionCompleted;
@@ -72,6 +73,6 @@ class RunInventoryStatusDetection implements ShouldQueue
                 ->update(['inventory_status' => $update['inventory_status']]);
         }
         logger('✅ Inventory Status Detection Completed. Updated ' . count($updates) . ' products.');
-        InventeroryStatusCompleted::dispatch();
+        Cache::forget('products:page:1:per_page:10:sort:created_at:dir:DESC:search::category::supplier::stock::status:');
     }
 }

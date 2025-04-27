@@ -57,12 +57,36 @@ class Products extends Component
     #[Renderless]
     public function runDetection()
     {
+        // Check if the button was clicked today
+        $lastRunDate = Cache::get('inventory_detection_last_run');
+        $today = now()->format('Y-m-d');
+
+        if ($lastRunDate === $today) {
+            $this->dispatch('notify',
+                type: 'error',
+                message: 'Inventory detection can only be run once per day'
+            );
+            return;
+        }
+
         RunInventoryStatusDetection::dispatch();
+
+        // Store today's date in cache
+        Cache::put('inventory_detection_last_run', $today, now()->addDay());
 
         $this->dispatch('notify',
             type: 'success',
-            message: 'Inventory status detection has been dispatched!'
+            message: 'Inventory status detection is running in the background.'
         );
+    }
+
+    #[Computed]
+    public function canRunDetection()
+    {
+        $lastRunDate = Cache::get('inventory_detection_last_run');
+        $today = now()->format('Y-m-d');
+
+        return $lastRunDate !== $today;
     }
 
 
