@@ -19,6 +19,7 @@ class RunInventoryStatusDetection implements ShouldQueue
     // Set the job's timeout if you expect long-running processes
     public $timeout = 300; // 5 minutes for example
 
+
     public function handle(InventoryStatusService $inventoryStatusService): void
     {
         try {

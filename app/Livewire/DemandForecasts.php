@@ -2,15 +2,20 @@
 
 namespace App\Livewire;
 
-use Livewire\Component;
-use App\Models\DemandForecast;
 use App\Models\Product;
+use Livewire\Component;
+use App\Jobs\RunForecasts;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Url;
 use Livewire\WithPagination;
+use App\Models\DemandForecast;
 use Livewire\Attributes\Title;
+use App\Services\ForecastService;
 use Livewire\Attributes\Computed;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
+use Symfony\Component\Process\Process;
+use Symfony\Component\Process\Exception\ProcessFailedException;
 
 #[Title('Demand Forecasts')]
 class DemandForecasts extends Component
@@ -95,6 +100,67 @@ class DemandForecasts extends Component
         return DemandForecast::where('forecast_date', '<=', now())->count();
     }
 
+    public function generateForecasts()
+    {
+        try {
+            $this->authorize('runForecasts', DemandForecast::class);
+            // Check if the forecasting has been run in the last 30 days
+            $lastRunDate = Cache::get('forecasting_last_run');
+            $today = now()->format('Y-m-d');
+
+            // Calculate the date 30 days ago
+            $thirtyDaysAgo = now()->subDays(30)->format('Y-m-d');
+
+            // If the last run date is within the last 30 days, prevent running the forecast
+            if ($lastRunDate && $lastRunDate >= $thirtyDaysAgo) {
+                $this->dispatch('notify',
+                    type: 'error',
+                    message: 'Demand forecasting can only be run once every 30 days.'
+                );
+                return;
+            }
+
+            // Dispatch the forecast job
+            RunForecasts::dispatch();
+
+            // Store today's date in cache
+            Cache::put('forecasting_last_run', $today, now()->addDays(30));
+
+            // Dispatch a success notification
+            $this->dispatch('notify',
+                type: 'success',
+                message: 'Demand forecasting is running in the background.'
+            );
+
+            Log::info('✅ Demand Forecasting Completed!');
+        } catch (\Exception $e) {
+            // If an error occurs, dispatch an error notification
+            $this->dispatch('notify',
+                type: 'error',
+                message: 'Something went wrong.'
+            );
+
+            Log::error('❌ An error occurred: ' . $e->getMessage());
+        }
+    }
+
+    public function canGenerateForecasts(): bool
+    {
+        // Get the date of the last run from the cache
+        $lastRunDate = Cache::get('forecasting_last_run');
+        $today = now()->format('Y-m-d');
+
+        // Calculate the date 30 days ago
+        $thirtyDaysAgo = now()->subDays(30)->format('Y-m-d');
+
+        // If the last run date exists and is within the last 30 days, return false
+        if ($lastRunDate && $lastRunDate >= $thirtyDaysAgo) {
+            return false;  // Cannot generate forecasts if last run was within 30 days
+        }
+
+        return true;  // Can generate forecasts if it's been more than 30 days
+    }
+
     public function clearAllFilters()
     {
         $this->reset([
@@ -150,6 +216,8 @@ class DemandForecasts extends Component
             $this->productFilter,
             $this->dateRangeFilter
         );
+
+
     }
 
     protected function clearCurrentPageCache(): void

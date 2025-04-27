@@ -75,6 +75,7 @@ class RestockingRecommendations extends Component
 
         return Cache::remember($cacheKey, now()->addMinutes(30), fn() => Product::query()
             ->with('restockingRecommendations')
+            ->has('restockingRecommendations')
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {
                     $q->where('name', 'like', '%'.$this->search.'%')
@@ -95,6 +96,7 @@ class RestockingRecommendations extends Component
             $this->sortDir,
             $this->search
         );
+
 
         // restocking_recommendations:page:1:per_page:10:sort:name:dir:ASC:search:
     }

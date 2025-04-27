@@ -56,30 +56,37 @@ class Products extends Component
 
     public function runDetection()
     {
-        // Check if the button was clicked today
-        $lastRunDate = Cache::get('inventory_detection_last_run');
-        $today = now()->format('Y-m-d');
+        try {
+            // Check if the button was clicked today
+            $lastRunDate = Cache::get('inventory_detection_last_run');
+            $today = now()->format('Y-m-d');
 
-        if ($lastRunDate === $today) {
+            if ($lastRunDate === $today) {
+                $this->dispatch('notify',
+                    type: 'error',
+                    message: 'Inventory detection can only be run once per day'
+                );
+                return;
+            }
+
+            RunInventoryStatusDetection::dispatch();
+
+            // Store today's date in cache
+            Cache::put('inventory_detection_last_run', $today, now()->addDay());
+
+            $this->dispatch('notify',
+                type: 'success',
+                message: 'Inventory status detection is running in the background.'
+            );
+        } catch (\Exception $e) {
+            // Handle the exception
             $this->dispatch('notify',
                 type: 'error',
-                message: 'Inventory detection can only be run once per day'
+                message: 'An error occurred: ' . $e->getMessage()
             );
-            return;
         }
-
-        RunInventoryStatusDetection::dispatch();
-
-        // Store today's date in cache
-        Cache::put('inventory_detection_last_run', $today, now()->addDay());
-
-        $this->dispatch('notify',
-            type: 'success',
-            message: 'Inventory status detection is running in the background.'
-        );
     }
 
-    #[Computed]
     public function canRunDetection()
     {
         $lastRunDate = Cache::get('inventory_detection_last_run');

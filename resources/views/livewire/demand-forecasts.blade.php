@@ -1,80 +1,14 @@
 <div>
-    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4">
+    <div class="flex flex-col justify-between items-start mb-4 gap-4">
         <div class="flex flex-col gap-2">
             <h1 class="inline-flex text-4xl font-bold dark:text-white items-center gap-2 whitespace-nowrap">
                 Demand Forecasts
                 <flux:modal.trigger name="forecast-info">
                     <flux:tooltip content="Learn more">
-                        <flux:icon.information-circle class="size-8 cursor-pointer" />
+                    <flux:icon.information-circle class="size-8 cursor-pointer" />
                     </flux:tooltip>
                 </flux:modal.trigger>
             </h1>
-
-            <p class="text-sm dark:text-gray-300 mt-1">
-                <strong>Note:</strong> Restart the page to see the result after generating.
-            </p>
-
-            <flux:modal name="forecast-info">
-                <div class="space-y-6">
-                    <div class="space-y-2">
-                        <h2 class="text-2xl font-bold">📈 Demand Forecasting Information</h2>
-                        <p class="text-muted-foreground">
-                            Learn how we predict future sales to help with smarter inventory planning.
-                        </p>
-                    </div>
-
-                    <div class="space-y-4">
-                        <h3 class="text-xl font-semibold">How Forecasting Works</h3>
-                        <ul class="list-disc list-inside text-muted-foreground space-y-1">
-                            <li>We predict the next <b>30 days</b> of product sales using machine learning.</li>
-                            <li>A <b>separate model</b> is trained for each product based on historical sales data.</li>
-                            <li>The model learns from patterns like:
-                                <ul class="list-disc list-inside ml-5 space-y-1">
-                                    <li>Day of the week (weekday vs weekend)</li>
-                                    <li>Month and season (school season, Christmas, summer)</li>
-                                    <li>Philippine holidays</li>
-                                    <li>Recent sales trends (7-day and 30-day averages)</li>
-                                    <li>Sales behavior over time (7, 14, and 30 day lags)</li>
-                                </ul>
-                            </li>
-                            <li>Only products with <b>at least 60 historical records</b> are forecasted.</li>
-                        </ul>
-                    </div>
-
-                    <div class="space-y-4">
-                        <h3 class="text-xl font-semibold">Technical Overview</h3>
-                        <ul class="list-disc list-inside text-muted-foreground space-y-1">
-                            <li><b>Algorithm:</b> We use <b>LightGBM Regressor</b>, a fast and efficient machine learning model.</li>
-                            <li><b>Feature Engineering:</b> We create extra inputs like day, holiday flags, season indicators, moving averages, and lagged sales quantities.</li>
-                            <li><b>Training Method:</b>
-                                <ul class="list-disc list-inside ml-5 space-y-1">
-                                    <li>80% of historical data is used for training.</li>
-                                    <li>20% is reserved for validation (model tuning).</li>
-                                </ul>
-                            </li>
-                            <li><b>Forecasting:</b>
-                                <ul class="list-disc list-inside ml-5 space-y-1">
-                                    <li>We predict one day at a time.</li>
-                                    <li>Each forecasted day is used to predict the next day.</li>
-                                </ul>
-                            </li>
-                            <li><b>Fallback:</b> If there’s not enough data to split, we train on all available history.</li>
-                        </ul>
-                    </div>
-
-                    <div class="space-y-4">
-                        <h3 class="text-xl font-semibold">Important Notes</h3>
-                        <ul class="list-disc list-inside text-muted-foreground space-y-1">
-                            <li>Forecasts are based only on <b>historical sales patterns</b>.</li>
-                            <li>They do <b>not</b> account for sudden events like promos, stockouts, or supplier delays.</li>
-                            <li>Philippine holidays and seasonality are automatically considered.</li>
-                            <li>Forecasts are refreshed every time the system runs the forecasting pipeline.</li>
-                        </ul>
-                    </div>
-                </div>
-            </flux:modal>
-
-
 
             <div class="flex justify-between items-center">
                 <div class="flex flex-wrap gap-4">
@@ -95,58 +29,60 @@
             </div>
         </div>
 
-        <div class="flex flex-col items-center md:flex-row gap-4 w-full md:w-auto">
-            <div class="text-sm text-zinc-600 dark:text-zinc-300">
-                <span>Filtering by:</span>
+        <div class="flex flex-col items-center md:flex-row gap-4 w-full">
+            <div class="flex flex-col items-center md:flex-row gap-4 w-full">
+                <div class="text-sm text-zinc-600 dark:text-zinc-300">
+                    <span>Filtering by:</span>
 
-                @php
-                    $hasFilters = $search || $productFilter || $dateRangeFilter;
-                @endphp
+                    @php
+                        $hasFilters = $search || $productFilter || $dateRangeFilter;
+                    @endphp
 
-                @if($hasFilters)
-                    <ul class="inline-block ml-2 space-x-3">
-                        @if($search)
-                            <li class="inline">Search: <strong>"{{ $search }}"</strong></li>
-                        @endif
-                        @if($productFilter)
-                            <li class="inline">Product: <strong>{{ $this->products[$productFilter] ?? $productFilter }}</strong></li>
-                        @endif
-                        @if($dateRangeFilter)
-                            <li class="inline">Date Range: <strong>{{ $this->dateRangeOptions[$dateRangeFilter] ?? $dateRangeFilter }}</strong></li>
-                        @endif
-                    </ul>
-                @else
-                    <span class="ml-2 text-zinc-500 dark:text-zinc-400">None</span>
-                @endif
-                <button
-                    wire:click="clearAllFilters"
-                    class="ml-4 text-blue-600 hover:underline"
-                >
-                    Clear All Filters
-                </button>
-            </div>
-
-
-            {{-- Search --}}
-            <div class="relative w-full md:w-72">
-                <input
-                    type="text"
-                    wire:model.live.debounce.300ms="search"
-                    placeholder="Search products..."
-                    class="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white"
-                >
-                <div class="absolute left-3 top-2.5 text-zinc-400 dark:text-zinc-300">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
+                    @if($hasFilters)
+                        <ul class="inline-block ml-2 space-x-3">
+                            @if($search)
+                                <li class="inline">Search: <strong>"{{ $search }}"</strong></li>
+                            @endif
+                            @if($productFilter)
+                                <li class="inline">Product: <strong>{{ $this->products[$productFilter] ?? $productFilter }}</strong></li>
+                            @endif
+                            @if($dateRangeFilter)
+                                <li class="inline">Date Range: <strong>{{ $this->dateRangeOptions[$dateRangeFilter] ?? $dateRangeFilter }}</strong></li>
+                            @endif
+                        </ul>
+                    @else
+                        <span class="ml-2 text-zinc-500 dark:text-zinc-400">None</span>
+                    @endif
+                    <button
+                        wire:click="clearAllFilters"
+                        class="ml-4 text-blue-600 hover:underline"
+                    >
+                        Clear All Filters
+                    </button>
                 </div>
-                @if($search)
-                    <div class="absolute right-3 top-2.5 text-zinc-400 dark:text-zinc-300 cursor-pointer" wire:click="$set('search', '')">
+
+
+                {{-- Search --}}
+                <div class="relative w-full md:w-72">
+                    <input
+                        type="text"
+                        wire:model.live.debounce.300ms="search"
+                        placeholder="Search products..."
+                        class="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white"
+                    >
+                    <div class="absolute left-3 top-2.5 text-zinc-400 dark:text-zinc-300">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                         </svg>
                     </div>
-                @endif
+                    @if($search)
+                        <div class="absolute right-3 top-2.5 text-zinc-400 dark:text-zinc-300 cursor-pointer" wire:click="$set('search', '')">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </div>
+                    @endif
+                </div>
             </div>
 
             {{-- Product Filter --}}
@@ -172,7 +108,28 @@
                 <option value="50">50 per page</option>
             </select>
 
-            <flux:button icon="play-circle" variant="primary" wire:click="">Generate Forecasts</flux:button>
+            @can('view', Auth::user())
+                @if ($this->canGenerateForecasts())
+                    <flux:tooltip content="Generate demand forecasts for all products.">
+                        <flux:button icon="play"
+                            wire:click="generateForecasts"
+                            wire:loading.attr="disabled"
+                        >
+                            Generate Forecasts
+                        </flux:button>
+                    </flux:tooltip>
+                @else
+                    <flux:tooltip content="You can only generate forecasts once every 30 days.">
+                        <div>
+                            <flux:button icon="play"
+                                disabled
+                            >
+                                Generate Forecasts
+                            </flux:button>
+                        </div>
+                    </flux:tooltip>
+                @endif
+            @endcan
         </div>
     </div>
 
@@ -270,4 +227,63 @@
             {{ $this->forecasts->links() }}
         </div>
     </div>
+    <flux:modal name="forecast-info">
+        <div class="space-y-6">
+            <div class="space-y-2">
+                <h2 class="text-2xl font-bold">📈 Demand Forecasting Information</h2>
+                <p class="text-muted-foreground">
+                    Learn how we predict future sales to help with smarter inventory planning.
+                </p>
+            </div>
+
+            <div class="space-y-4">
+                <h3 class="text-xl font-semibold">How Forecasting Works</h3>
+                <ul class="list-disc list-inside text-muted-foreground space-y-1">
+                    <li>We predict the next <b>30 days</b> of product sales using machine learning.</li>
+                    <li>A <b>separate model</b> is trained for each product based on historical sales data.</li>
+                    <li>The model learns from patterns like:
+                        <ul class="list-disc list-inside ml-5 space-y-1">
+                            <li>Day of the week (weekday vs weekend)</li>
+                            <li>Month and season (school season, Christmas, summer)</li>
+                            <li>Philippine holidays</li>
+                            <li>Recent sales trends (7-day and 30-day averages)</li>
+                            <li>Sales behavior over time (7, 14, and 30 day lags)</li>
+                        </ul>
+                    </li>
+                    <li>Only products with <b>at least 60 historical records</b> are forecasted.</li>
+                </ul>
+            </div>
+
+            <div class="space-y-4">
+                <h3 class="text-xl font-semibold">Technical Overview</h3>
+                <ul class="list-disc list-inside text-muted-foreground space-y-1">
+                    <li><b>Algorithm:</b> We use <b>LightGBM Regressor</b>, a fast and efficient machine learning model.</li>
+                    <li><b>Feature Engineering:</b> We create extra inputs like day, holiday flags, season indicators, moving averages, and lagged sales quantities.</li>
+                    <li><b>Training Method:</b>
+                        <ul class="list-disc list-inside ml-5 space-y-1">
+                            <li>80% of historical data is used for training.</li>
+                            <li>20% is reserved for validation (model tuning).</li>
+                        </ul>
+                    </li>
+                    <li><b>Forecasting:</b>
+                        <ul class="list-disc list-inside ml-5 space-y-1">
+                            <li>We predict one day at a time.</li>
+                            <li>Each forecasted day is used to predict the next day.</li>
+                        </ul>
+                    </li>
+                    <li><b>Fallback:</b> If there’s not enough data to split, we train on all available history.</li>
+                </ul>
+            </div>
+
+            <div class="space-y-4">
+                <h3 class="text-xl font-semibold">Important Notes</h3>
+                <ul class="list-disc list-inside text-muted-foreground space-y-1">
+                    <li>Forecasts are based only on <b>historical sales patterns</b>.</li>
+                    <li>They do <b>not</b> account for sudden events like promos, stockouts, or supplier delays.</li>
+                    <li>Philippine holidays and seasonality are automatically considered.</li>
+                    <li>Forecasts are refreshed every time the system runs the forecasting pipeline.</li>
+                </ul>
+            </div>
+        </div>
+    </flux:modal>
 </div>

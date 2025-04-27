@@ -1,5 +1,5 @@
 <div>
-    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4">
+    <div class="flex flex-col justify-between items-start mb-4 gap-4">
         <div class="flex flex-col gap-2">
             <h1 class="text-4xl font-bold dark:text-white">Products</h1>
             <div class="flex justify-between items-center">
@@ -43,71 +43,72 @@
             </div>
         </div>
 
-        <div class="flex flex-col items-center md:flex-row gap-4 w-full md:w-auto">
-            <div class="text-sm text-zinc-600 dark:text-zinc-300">
-                <span>Filtering by:</span>
+        <div class="flex flex-col items-center md:flex-row gap-4 w-full">
+            <div class="flex flex-col items-center md:flex-row gap-4 w-full">
+                <div class="text-sm text-zinc-600 dark:text-zinc-300">
+                    <span>Filtering by:</span>
+                    @php
+                        $hasFilters = $search || $categoryFilter || $stockFilter;
+                    @endphp
 
-                @php
-                    $hasFilters = $search || $categoryFilter || $stockFilter;
-                @endphp
+                    @if($hasFilters)
+                        <ul class="inline-block ml-2 space-x-3">
+                            @if($search)
+                                <li class="inline">Search: <strong>"{{ $search }}"</strong></li>
+                            @endif
+                            @if($categoryFilter)
+                                <li class="inline">Category: <strong>{{ $categoryFilter }}</strong></li>
+                            @endif
+                            @if($supplierFilter)
+                                <li class="inline">Supplier: <strong>{{ $supplierFilter }}</strong></li>
+                            @endif
+                            @if($stockFilter)
+                                <li class="inline">Stock: <strong>{{ $stockFilter }}</strong></li>
+                            @endif
+                            @if($statusFilter)
+                                <li class="inline">Status: <strong>{{ str_replace('_', ' ', ucfirst($statusFilter)) }}</strong></li>
+                            @endif
+                        </ul>
+                    @else
+                        <span class="ml-2 text-zinc-500 dark:text-zinc-400">None</span>
+                    @endif
+                    <button
+                            wire:click="clearAllFilters"
+                            class="ml-4 text-blue-600 hover:underline"
+                        >
+                            Clear All Filters
+                        </button>
+                </div>
 
-                @if($hasFilters)
-                    <ul class="inline-block ml-2 space-x-3">
-                        @if($search)
-                            <li class="inline">Search: <strong>"{{ $search }}"</strong></li>
-                        @endif
-                        @if($categoryFilter)
-                            <li class="inline">Category: <strong>{{ $categoryFilter }}</strong></li>
-                        @endif
-                        @if($supplierFilter)
-                            <li class="inline">Supplier: <strong>{{ $supplierFilter }}</strong></li>
-                        @endif
-                        @if($stockFilter)
-                            <li class="inline">Stock: <strong>{{ $stockFilter }}</strong></li>
-                        @endif
-                        @if($statusFilter)
-                            <li class="inline">Status: <strong>{{ str_replace('_', ' ', ucfirst($statusFilter)) }}</strong></li>
-                        @endif
-                    </ul>
-                @else
-                    <span class="ml-2 text-zinc-500 dark:text-zinc-400">None</span>
-                @endif
-                <button
-                        wire:click="clearAllFilters"
-                        class="ml-4 text-blue-600 hover:underline"
+                {{-- Search --}}
+                <div class="relative w-full md:w-64">
+                    <input
+                        type="text"
+                        wire:model.live.debounce.300ms="search"
+                        placeholder="Search products, categories, etc..."
+                        class="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white"
                     >
-                        Clear All Filters
-                    </button>
-            </div>
-
-            {{-- Search --}}
-            <div class="relative w-full md:w-64">
-                <input
-                    type="text"
-                    wire:model.live.debounce.300ms="search"
-                    placeholder="Search products, categories, etc..."
-                    class="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white"
-                >
-                <div class="absolute left-3 top-2.5 text-zinc-400">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
+                    <div class="absolute left-3 top-2.5 text-zinc-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                    </div>
                 </div>
             </div>
 
             <select wire:model.live="statusFilter"
-            class="w-full md:w-32 border rounded-lg px-3 py-2 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white">
-                <option value="">All</option>
-                @foreach(\App\Enums\InventoryStatus::cases() as $status)
-                    <option value="{{ $status->value }}">{{ str_replace('_', ' ', ucfirst($status->value)) }}</option>
-                @endforeach
-            </select>
+                class="w-full md:w-32 border rounded-lg px-3 py-2 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white">
+                    <option value="">All</option>
+                    @foreach(\App\Enums\InventoryStatus::cases() as $status)
+                        <option value="{{ $status->value }}">{{ str_replace('_', ' ', ucfirst($status->value)) }}</option>
+                    @endforeach
+                </select>
 
-            <select wire:model.live="stockFilter" class="w-full md:w-32 border rounded-lg px-3 py-2 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white">
-                <option value="">All</option>
-                <option value="low">Low</option>
-                <option value="critical">Critical</option>
-            </select>
+                <select wire:model.live="stockFilter" class="w-full md:w-32 border rounded-lg px-3 py-2 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white">
+                    <option value="">All</option>
+                    <option value="low">Low</option>
+                    <option value="critical">Critical</option>
+                </select>
 
             {{-- Per Page --}}
             <select wire:model.live="perPage"
@@ -125,9 +126,6 @@
             @endcan
         </div>
     </div>
-
-
-
 
     <div class="bg-white rounded-lg shadow overflow-hidden dark:bg-zinc-800">
         <div class="overflow-x-auto">
@@ -154,11 +152,6 @@
                             <span>Supplier</span>
                         </th>
 
-                        {{-- SKU Column --}}
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider dark:text-zinc-300">
-                            <span>SKU</span>
-                        </th>
-
                         {{-- Price Column --}}
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider dark:text-zinc-300" wire:click="setSortBy('price')">
                             <button class="flex items-center uppercase">
@@ -169,11 +162,6 @@
                             </button>
                         </th>
 
-                        {{-- Profit Margin Column --}}
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider dark:text-zinc-300">
-                            <span>Margin</span>
-                        </th>
-
                         {{-- Quantity Column --}}
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider dark:text-zinc-300"  wire:click="setSortBy('quantity_in_stock')">
                             <button class="flex items-center uppercase">
@@ -182,50 +170,7 @@
                                     'displayName' => 'Quantity'
                                 ])
                             </button>
-
                         </th>
-
-                        {{-- Inventory Status Column --}}
-                        <th scope="col" class="px-6 py-3">
-                            <div class="flex items-center gap-2">
-                                <flux:modal.trigger name="detection-info">
-                                    <flux:tooltip content="Learn more">
-                                        <flux:icon.information-circle class="size-6 cursor-pointer" />
-                                    </flux:tooltip>
-                                </flux:modal.trigger>
-                                <div class="uppercase text-left text-xs font-medium text-zinc-500 tracking-wider dark:text-zinc-300">
-                                    Status
-                                </div>
-
-                                {{-- Small Detect Button --}}
-                                @if($this->canRunDetection)
-                                    <flux:tooltip content="Run inventory status detection">
-                                        <flux:button
-                                            wire:click="runDetection"
-                                            wire:loading.attr="disabled"
-                                            class="ml-2"
-                                            size="sm"
-                                        >
-                                            <span wire:loading.remove>
-                                                🔍 Detect
-                                            </span>
-                                            <span wire:loading>
-                                                ⏳...
-                                            </span>
-                                        </flux:button>
-                                    </flux:tooltip>
-                                @else
-                                    <flux:tooltip content="Inventory detection can only be run once per day">
-                                        <div>
-                                            <flux:button disabled size="sm" class="ml-2">
-                                                🔍 Detect
-                                            </flux:button>
-                                        </div>
-                                    </flux:tooltip>
-                                @endif
-                            </div>
-                        </th>
-
 
                         {{-- Last Restocked Column --}}
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider dark:text-zinc-300" wire:click="setSortBy('last_restocked')">
@@ -237,6 +182,41 @@
                             </button>
                         </th>
 
+                         {{-- Inventory Status Column --}}
+                         <th scope="col" class="px-6 py-3">
+                            <div class="flex items-center gap-2">
+                                <flux:modal.trigger name="detection-info">
+                                    <flux:tooltip content="Learn more">
+                                        <flux:icon.information-circle class="size-6 cursor-pointer" />
+                                    </flux:tooltip>
+                                </flux:modal.trigger>
+                                <div class="uppercase text-left text-xs font-medium text-zinc-500 tracking-wider dark:text-zinc-300">
+                                    Status
+                                </div>
+
+                                {{-- Small Detect Button --}}
+                                @if($this->canRunDetection())
+                                    <flux:tooltip content="Run inventory status detection.">
+                                        <flux:button
+                                            wire:click="runDetection"
+                                            wire:loading.attr="disabled"
+                                            class="ml-2"
+                                            size="sm"
+                                        >
+                                            🔍 Detect Status
+                                        </flux:button>
+                                    </flux:tooltip>
+                                @else
+                                    <flux:tooltip content="Inventory detection can only be run once per day.">
+                                        <div>
+                                            <flux:button disabled size="sm" class="ml-2">
+                                                🔍 Detect Status
+                                            </flux:button>
+                                        </div>
+                                    </flux:tooltip>
+                                @endif
+                            </div>
+                        </th>
                         {{-- Actions Column --}}
                         <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-zinc-500 uppercase tracking-wider dark:text-zinc-300">
                             <span>Actions</span>
@@ -261,7 +241,7 @@
                                             @endif
                                         </div>
                                         <div class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
-                                            {{ Str::limit($product->description, 50) }}
+                                            {{ $product->sku }}
                                         </div>
                                         <div class="text-xs text-blue-600 cursor-pointer mt-2">
                                             Click to view product
@@ -280,6 +260,8 @@
                                     </button>
                                 </td>
 
+
+
                                 {{-- Supplier --}}
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-zinc-500 dark:text-zinc-300">
                                     <button
@@ -291,30 +273,11 @@
                                     </button>
                                 </td>
 
-                                {{-- SKU --}}
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-mono text-zinc-500 dark:text-zinc-300">
-                                    {{ $product->sku }}
-                                </td>
-
                                 {{-- Price --}}
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-zinc-500 dark:text-zinc-300">
                                     <div class="font-medium">${{ number_format($product->price, 2) }}</div>
                                     @if($product->cost)
                                         <div class="text-xs text-zinc-400">Cost: ${{ number_format($product->cost, 2) }}</div>
-                                    @endif
-                                </td>
-
-                                {{-- Profit Margin --}}
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-zinc-500 dark:text-zinc-300">
-                                    @if($product->cost && $product->cost > 0)
-                                        @php
-                                            $margin = (($product->price - $product->cost) / $product->price) * 100;
-                                        @endphp
-                                        <span class="{{ $margin >= 50 ? 'text-green-600 dark:text-green-400' : ($margin >= 30 ? 'text-yellow-600 dark:text-yellow-400' : 'text-red-600 dark:text-red-400') }} font-medium">
-                                            {{ number_format($margin, 1) }}%
-                                        </span>
-                                    @else
-                                        <span class="text-zinc-400">N/A</span>
                                     @endif
                                 </td>
 
@@ -347,8 +310,13 @@
                                     </div>
                                 </td>
 
-                                {{-- Inventory Status --}}
+                                {{-- Last Restocked --}}
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-zinc-500 dark:text-zinc-300">
+                                    {{ $product->last_restocked ? $product->last_restocked->format('M d, Y') : 'Never' }}
+                                </td>
+
+                                 {{-- Inventory Status --}}
+                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-zinc-500 dark:text-zinc-300">
                                     @if($product->inventory_status)
                                         @php
                                             $statusClasses = [
@@ -379,10 +347,6 @@
                                     @endif
                                 </td>
 
-                                {{-- Last Restocked --}}
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-zinc-500 dark:text-zinc-300">
-                                    {{ $product->last_restocked ? $product->last_restocked->format('M d, Y') : 'Never' }}
-                                </td>
 
                                 {{-- Actions --}}
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">

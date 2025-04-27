@@ -1,20 +1,15 @@
 <?php
 
-namespace App\Console\Commands;
+namespace App\Services;
 
-use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Cache;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 
-class RunForecast extends Command
+class ForecastService
 {
-    protected $signature = 'forecast:generate';
-    protected $description = 'Run the demand forecasting Python script';
-
-    public function handle()
+    public function runForecasts()
     {
-        $this->info('🚀 Starting Demand Forecasting...');
-
         $pythonPath = base_path('PythonML/venv/Scripts/python.exe');
         $scriptPath = base_path('PythonML/demand_forecasting.py');
 
@@ -23,7 +18,7 @@ class RunForecast extends Command
 
         $process = Process::fromShellCommandline($command);
 
-        $process->setTimeout(3600);
+        $process->setTimeout(3600); // 1 hour timeout
 
         $process->run(function ($type, $buffer) {
             echo $buffer;
@@ -33,6 +28,9 @@ class RunForecast extends Command
             throw new ProcessFailedException($process);
         }
 
-        $this->info('✅ Demand Forecasting Completed!');
+        Cache::forget('demand_forecasts:page:1:per_page:10:sort:forecast_date:dir:DESC:search::product::date_range:');
+        Cache::forget('restocking_recommendations:page:1:per_page:10:sort:name:dir:ASC:search:');
+
+        return true;
     }
 }
