@@ -213,7 +213,7 @@
                                         </flux:button>
                                     </flux:tooltip>
                                 @else
-                                    <flux:tooltip content="Detection already run today">
+                                    <flux:tooltip content="Inventory detection can only be run once per day">
                                         <div>
                                             <flux:button disabled size="sm" class="ml-2">
                                                 🔍 Detect
@@ -452,9 +452,9 @@
             <div class="space-y-4">
                 <h3 class="text-xl font-semibold">Important Notes</h3>
                 <ul class="list-disc list-inside text-muted-foreground space-y-1">
-                    <li>Detection runs automatically once every day.</li>
+                    <li>Detection runs automatically once per week, but can be run manually once per day.</li>
                     <li>Products with zero sales are handled differently based on stock status.</li>
-                    <li>Status updates happen seamlessly in the background, no manual action needed.</li>
+                    <li>Status updates happen seamlessly in the background, restart the page to see the result.</li>
                 </ul>
             </div>
         </div>
