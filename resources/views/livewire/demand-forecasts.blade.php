@@ -8,6 +8,10 @@
                 </flux:modal.trigger>
             </h1>
 
+            <p class="text-sm dark:text-gray-300 mt-1">
+                <strong>Note:</strong> Restart the page to see the result after generating.
+            </p>
+
             <flux:modal name="forecast-info">
                 <div class="space-y-6">
                     <div class="space-y-2">
@@ -165,6 +169,8 @@
                 <option value="25">25 per page</option>
                 <option value="50">50 per page</option>
             </select>
+
+            <flux:button icon="play-circle" variant="primary" wire:click="">Generate Forecasts</flux:button>
         </div>
     </div>
 

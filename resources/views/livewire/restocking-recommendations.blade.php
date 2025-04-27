@@ -8,6 +8,10 @@
                 </flux:modal.trigger>
             </h1>
 
+            <p class="text-sm dark:text-gray-300 mt-1">
+                <strong>Note:</strong> The restocking recommendations are generated based demand forecasts.
+            </p>
+
             <flux:modal name="restocking-info">
                 <div class="space-y-6">
                     <div class="space-y-2">
