@@ -1,78 +1,37 @@
 <?php
 
+// app/Jobs/RunInventoryStatusDetection.php
+
 namespace App\Jobs;
 
-use Carbon\Carbon;
-use Illuminate\Bus\Queueable;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Queue\SerializesModels;
 use App\Services\InventoryStatusService;
+use Illuminate\Bus\Queueable;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
-use App\Events\InventeroryStatusCompleted;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use App\Events\InventoryStatusDetectionCompleted;
 
 class RunInventoryStatusDetection implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    protected $today;
-
-    public function __construct()
-    {
-        // You can pass parameters if needed later
-        $this->today = Carbon::today();
-    }
+    // Set the job's timeout if you expect long-running processes
+    public $timeout = 300; // 5 minutes for example
 
     public function handle(InventoryStatusService $inventoryStatusService): void
     {
-        logger('🚀 Starting Inventory Status Detection Job...');
+        try {
+            Log::info('🚀 Starting inventory status detection from job...');
 
-        $sales = DB::table('sales')
-            ->select('product_id', 'quantity', 'sale_date')
-            ->get();
+            // Call the method in the service to run the detection
+            $inventoryStatusService->runInventoryStatusDetection();
 
-        $products = DB::table('products')
-            ->select('id', 'name', 'quantity_in_stock')
-            ->get()
-            ->keyBy('id');
-
-        if ($sales->isEmpty() || $products->isEmpty()) {
-            logger('❌ No sales or products data found.');
-            return;
+            Log::info('✅ Inventory status detection completed.');
+        } catch (\Throwable $e) {  // Catching a more general exception type for better error tracking
+            Log::error('❌ Error in inventory status detection: ' . $e->getMessage());
+            // Optionally, you can dispatch the job again in case of failure, or handle retries
+            // $this->release(30); // Release the job to retry in 30 seconds, for example.
         }
-
-        // Aggregate sales data
-        $salesAgg = $sales->groupBy('product_id')->map(function ($salesGroup) use ($inventoryStatusService) {
-            return $inventoryStatusService->aggregateSalesData($salesGroup, $this->today);
-        });
-
-        $updates = [];
-
-        foreach ($products as $product) {
-            $stats = $salesAgg->get($product->id, [
-                'total_quantity_sold' => 0,
-                'days_since_last_sale' => 9999,
-            ]);
-
-            $status = $inventoryStatusService->determineStatus($product, $stats);
-
-            logger("🔍 Product {$product->id}: Status determined as {$status->value}");
-
-            $updates[] = [
-                'id' => $product->id,
-                'inventory_status' => $status->value,
-            ];
-        }
-
-        foreach ($updates as $update) {
-            DB::table('products')
-                ->where('id', $update['id'])
-                ->update(['inventory_status' => $update['inventory_status']]);
-        }
-        logger('✅ Inventory Status Detection Completed. Updated ' . count($updates) . ' products.');
-        Cache::forget('products:page:1:per_page:10:sort:created_at:dir:DESC:search::category::supplier::stock::status:');
     }
 }

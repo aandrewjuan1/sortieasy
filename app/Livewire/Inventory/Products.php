@@ -54,7 +54,6 @@ class Products extends Component
             ->sum(DB::raw('quantity_in_stock * price'));
     }
 
-    #[Renderless]
     public function runDetection()
     {
         // Check if the button was clicked today

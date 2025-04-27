@@ -189,7 +189,9 @@
                         <th scope="col" class="px-6 py-3">
                             <div class="flex items-center gap-2">
                                 <flux:modal.trigger name="detection-info">
-                                    <flux:icon.information-circle class="size-6 cursor-pointer" />
+                                    <flux:tooltip content="Learn more">
+                                        <flux:icon.information-circle class="size-6 cursor-pointer" />
+                                    </flux:tooltip>
                                 </flux:modal.trigger>
                                 <div class="uppercase text-left text-xs font-medium text-zinc-500 tracking-wider dark:text-zinc-300">
                                     Status

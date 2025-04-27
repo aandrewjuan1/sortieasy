@@ -4,7 +4,9 @@
             <h1 class="inline-flex text-3xl sm:text-4xl font-bold dark:text-white items-center gap-2 whitespace-nowrap">
                 Restocking Recommendations
                 <flux:modal.trigger name="restocking-info">
-                    <flux:icon.information-circle class="size-8 cursor-pointer" />
+                    <flux:tooltip content="Learn more">
+                        <flux:icon.information-circle class="size-8 cursor-pointer" />
+                    </flux:tooltip>
                 </flux:modal.trigger>
             </h1>
 
