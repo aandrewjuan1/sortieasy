@@ -10,12 +10,9 @@ use Livewire\Attributes\Url;
 use Livewire\WithPagination;
 use App\Models\DemandForecast;
 use Livewire\Attributes\Title;
-use App\Services\ForecastService;
 use Livewire\Attributes\Computed;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
-use Symfony\Component\Process\Process;
-use Symfony\Component\Process\Exception\ProcessFailedException;
 
 #[Title('Demand Forecasts')]
 class DemandForecasts extends Component
@@ -51,8 +48,6 @@ class DemandForecasts extends Component
             'month' => 'This Month',
             'quarter' => 'This Quarter',
             'year' => 'This Year',
-            'future' => 'Future Dates',
-            'past' => 'Past Dates',
         ];
     }
 
@@ -86,18 +81,6 @@ class DemandForecasts extends Component
     public function totalForecasts(): int
     {
         return DemandForecast::count();
-    }
-
-    #[Computed]
-    public function futureForecastsCount(): int
-    {
-        return DemandForecast::where('forecast_date', '>', now())->count();
-    }
-
-    #[Computed]
-    public function pastForecastsCount(): int
-    {
-        return DemandForecast::where('forecast_date', '<=', now())->count();
     }
 
     public function generateForecasts()

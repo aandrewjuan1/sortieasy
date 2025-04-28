@@ -152,7 +152,11 @@ def train_and_forecast(product_df: pd.DataFrame, product_id: int, lag_days: List
     )
 
     # Forecasting
-    forecast_dates = pd.date_range(product_df["sale_date"].max() + timedelta(days=1), periods=FORECAST_DAYS)
+    # Get the first day of next month
+    today = datetime.now().date()
+    first_of_next_month = (today.replace(day=1) + timedelta(days=32)).replace(day=1)
+
+    forecast_dates = pd.date_range(first_of_next_month, periods=FORECAST_DAYS)
     history = product_df.copy()
     forecasts = []
 

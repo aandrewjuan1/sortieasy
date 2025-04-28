@@ -12,18 +12,12 @@
 
             <div class="flex justify-between items-center">
                 <div class="flex flex-wrap gap-4">
-                    <div class="text-sm font-medium text-zinc-700 dark:text-zinc-300">
-
+                    <div class="flex items-center space-x-2 text-sm font-medium text-zinc-700 dark:text-zinc-300">
                         <span class="text-zinc-500 dark:text-zinc-400">Total:</span>
                         <span class="font-semibold">{{ $this->totalForecasts }}</span>
-                    </div>
-                    <div class="text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                        <span class="text-green-600 dark:text-green-400">Future:</span>
-                        <span class="font-semibold">{{ $this->futureForecastsCount }}</span>
-                    </div>
-                    <div class="text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                        <span class="text-blue-600 dark:text-blue-400">Past:</span>
-                        <span class="font-semibold">{{ $this->pastForecastsCount }}</span>
+                        <span class="text-sm text-zinc-500 dark:text-zinc-400 italic">
+                            (Forecasting may take a few minutes. Refresh the page occasionally to see the results.)
+                        </span>
                     </div>
                 </div>
             </div>
@@ -232,25 +226,28 @@
             <div class="space-y-2">
                 <h2 class="text-2xl font-bold">📈 Demand Forecasting Information</h2>
                 <p class="text-muted-foreground">
-                    Learn how we predict future sales to help with smarter inventory planning.
+                    Learn how we predict future sales to support smarter inventory planning.
+                </p>
+                <p class="text-sm text-muted-foreground italic">
+                    <b>Note:</b> Forecasting will officially start <b>next month</b> and can only be run <b>once per month</b>.
                 </p>
             </div>
 
             <div class="space-y-4">
                 <h3 class="text-xl font-semibold">How Forecasting Works</h3>
                 <ul class="list-disc list-inside text-muted-foreground space-y-1">
-                    <li>We predict the next <b>30 days</b> of product sales using machine learning.</li>
-                    <li>A <b>separate model</b> is trained for each product based on historical sales data.</li>
-                    <li>The model learns from patterns like:
+                    <li>We predict product sales for the next <b>30 days</b> using machine learning.</li>
+                    <li>A <b>separate model</b> is trained for each product based on its historical sales data.</li>
+                    <li>The model learns from patterns such as:
                         <ul class="list-disc list-inside ml-5 space-y-1">
                             <li>Day of the week (weekday vs weekend)</li>
                             <li>Month and season (school season, Christmas, summer)</li>
                             <li>Philippine holidays</li>
                             <li>Recent sales trends (7-day and 30-day averages)</li>
-                            <li>Sales behavior over time (7, 14, and 30 day lags)</li>
+                            <li>Sales behavior over time (7, 14, and 30-day lags)</li>
                         </ul>
                     </li>
-                    <li>Only products with <b>at least 60 historical records</b> are forecasted.</li>
+                    <li>Only products with <b>at least 60 historical sales records</b> are forecasted.</li>
                 </ul>
             </div>
 
@@ -258,30 +255,31 @@
                 <h3 class="text-xl font-semibold">Technical Overview</h3>
                 <ul class="list-disc list-inside text-muted-foreground space-y-1">
                     <li><b>Algorithm:</b> We use <b>LightGBM Regressor</b>, a fast and efficient machine learning model.</li>
-                    <li><b>Feature Engineering:</b> We create extra inputs like day, holiday flags, season indicators, moving averages, and lagged sales quantities.</li>
+                    <li><b>Feature Engineering:</b> We create additional inputs such as day and month indicators, holiday flags, seasonality markers, moving averages, and lagged sales values.</li>
                     <li><b>Training Method:</b>
                         <ul class="list-disc list-inside ml-5 space-y-1">
-                            <li>80% of historical data is used for training.</li>
-                            <li>20% is reserved for validation (model tuning).</li>
+                            <li>80% of the historical data is used for training.</li>
+                            <li>20% is reserved for validation (for model tuning and evaluation).</li>
                         </ul>
                     </li>
                     <li><b>Forecasting:</b>
                         <ul class="list-disc list-inside ml-5 space-y-1">
-                            <li>We predict one day at a time.</li>
-                            <li>Each forecasted day is used to predict the next day.</li>
+                            <li>We predict one day at a time sequentially.</li>
+                            <li>Each newly forecasted day is used as input for predicting the next day.</li>
                         </ul>
                     </li>
-                    <li><b>Fallback:</b> If there’s not enough data to split, we train on all available history.</li>
+                    <li><b>Fallback:</b> If there isn't enough data to split, we train on all available historical data.</li>
                 </ul>
             </div>
 
             <div class="space-y-4">
                 <h3 class="text-xl font-semibold">Important Notes</h3>
                 <ul class="list-disc list-inside text-muted-foreground space-y-1">
-                    <li>Forecasts are based only on <b>historical sales patterns</b>.</li>
-                    <li>They do <b>not</b> account for sudden events like promos, stockouts, or supplier delays.</li>
-                    <li>Philippine holidays and seasonality are automatically considered.</li>
-                    <li>Forecasts are refreshed every time the system runs the forecasting pipeline.</li>
+                    <li>Forecasts are based solely on <b>historical sales patterns</b>.</li>
+                    <li>They do <b>not</b> account for unexpected events like promotions, stockouts, or supplier delays.</li>
+                    <li>Philippine holidays and seasonality factors are automatically considered.</li>
+                    <li>Forecasts are refreshed each time the system runs the forecasting pipeline.</li>
+                    <li><b>Forecasting can only be executed once per month</b> to ensure consistency and prevent retraining on partial data.</li>
                 </ul>
             </div>
         </div>
