@@ -47,7 +47,7 @@ class ProductObserver
     public function deleted(Product $product)
     {
         // Optionally, delete or update restocking recommendations when a product is deleted
-        $product->restockingRecommendations()->delete();
+        $product->restockingRecommendation()->delete();
     }
 
     /**
@@ -58,15 +58,10 @@ class ProductObserver
      */
     private function updateRestockingRecommendations(Product $product)
     {
-        $recommendation = $product->restockingRecommendations()->firstOrNew([
-            'product_id' => $product->id
-        ]);
+        $recommendation = $product->restockingRecommendation;
 
         // Calculate average daily demand based on the total forecasted demand (you can adjust this logic as needed)
         $avgDailyDemand = $recommendation->total_forecasted_demand / $this::FORECAST_DAYS;
-
-        // Calculate safety stock
-        $safetyStock = $avgDailyDemand * $this::SAFETY_DAYS;
 
         // Calculate reorder threshold (Safety stock + forecast demand for the forecast days)
         $reorderThreshold = $avgDailyDemand * ($this::SAFETY_DAYS + $this::FORECAST_DAYS);
@@ -96,7 +91,7 @@ class ProductObserver
     private function deleteRestockingRecommendationIfFulfilled(Product $product)
     {
         // Check if the product's stock is sufficient
-        $recommendation = $product->restockingRecommendations()->first();
+        $recommendation = $product->restockingRecommendation()->first();
 
         if ($recommendation && $product->quantity_in_stock >= ($recommendation->total_forecasted_demand + $recommendation->reorder_quantity)) {
             // Delete the restocking recommendation if restocking needs are fulfilled

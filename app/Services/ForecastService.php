@@ -28,7 +28,7 @@ class ForecastService
             throw new ProcessFailedException($process);
         }
 
-        Cache::forget('demand_forecasts:page:1:per_page:10:sort:forecast_date:dir:DESC:search::product::date_range:');
+        Cache::forget('demand_forecasts:page:1:per_page:10:sort:forecast_date:dir:ASC:search::product::date_range:');
         Cache::forget('restocking_recommendations:page:1:per_page:10:sort:name:dir:ASC:search:');
 
         return true;

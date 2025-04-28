@@ -116,9 +116,9 @@ class Product extends Model
     {
         return $this->hasMany(Sale::class);
     }
-    public function restockingRecommendations()
+    public function restockingRecommendation()
     {
-        return $this->hasMany(RestockingRecommendation::class);
+        return $this->hasOne(RestockingRecommendation::class);
     }
 
     // Define the relationship with AnomalyDetectionResult

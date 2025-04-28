@@ -18,7 +18,7 @@ class ProductSummary extends Component
     public function products(): Collection
     {
         return Product
-        ::with('restockingRecommendations') // eager load if you add a relationship
+        ::with('restockingRecommendation') // eager load if you add a relationship
         ->orderBy('name')
         ->get();
     }
@@ -81,7 +81,7 @@ class ProductSummary extends Component
     private function isOverstocked($p): bool
     {
         // Assuming there's a relationship to restocking recommendations
-        $recommendation = $p->restockingRecommendations()->first();
+        $recommendation = $p->restockingRecommendation()->first();
 
         // If no restocking recommendation exists, we might consider it as not overstocked
         if (!$recommendation) {

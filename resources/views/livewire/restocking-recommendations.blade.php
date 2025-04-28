@@ -177,7 +177,7 @@
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-zinc-200 dark:bg-zinc-800 dark:divide-zinc-700">
-                    @if($this->products->isEmpty() || $this->products->every(fn($product) => $product->restockingRecommendations->isEmpty()))
+                    @if($this->products->isEmpty() || $this->products->every(fn($product) => !$product->restockingRecommendation))
                         <tr>
                             <td colspan="6" class="px-6 py-4 text-center text-sm text-zinc-500 dark:text-zinc-300">
                                 No restocking recommendations found
@@ -185,8 +185,8 @@
                         </tr>
                     @else
                         @foreach($this->products as $product)
-                            @if($product->restockingRecommendations->isNotEmpty())
-                                @php $recommendation = $product->restockingRecommendations->first(); @endphp
+                            @if($product->restockingRecommendation)
+                                @php $recommendation = $product->restockingRecommendation; @endphp
                                 <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-700/50 cursor-pointer"
                                     wire:click="$dispatch('edit-stocks', { productId: {{ $product->id }} });
                                     $dispatch('modal-show', { name: 'edit-stocks' })"

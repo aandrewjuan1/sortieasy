@@ -37,7 +37,7 @@ class RestockingRecommendations extends Component
     #[Computed]
     public function productsWithRecommendations(): int
     {
-        return Product::has('restockingRecommendations')->count();
+        return Product::has('restockingRecommendation')->count();
     }
 
     public function setSortBy($sortByField)
@@ -74,8 +74,8 @@ class RestockingRecommendations extends Component
         $cacheKey = $this->getProductsCacheKey();
 
         return Cache::remember($cacheKey, now()->addMinutes(30), fn() => Product::query()
-            ->with('restockingRecommendations')
-            ->has('restockingRecommendations')
+            ->with('restockingRecommendation')
+            ->has('restockingRecommendation')
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {
                     $q->where('name', 'like', '%'.$this->search.'%')
@@ -96,8 +96,6 @@ class RestockingRecommendations extends Component
             $this->sortDir,
             $this->search
         );
-
-
         // restocking_recommendations:page:1:per_page:10:sort:name:dir:ASC:search:
     }
 

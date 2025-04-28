@@ -121,6 +121,8 @@ def train_model(X_train: pd.DataFrame, y_train: pd.Series, X_val: Optional[pd.Da
 
     return model
 
+# ------------------ Forecasting ------------------
+
 def train_and_forecast(product_df: pd.DataFrame, product_id: int, lag_days: List[int]) -> Optional[pd.DataFrame]:
     """Train model per product and generate forecasts."""
     if len(product_df) < MIN_TRAINING_SAMPLES:
@@ -152,11 +154,9 @@ def train_and_forecast(product_df: pd.DataFrame, product_id: int, lag_days: List
     )
 
     # Forecasting
-    # Get the first day of next month
     today = datetime.now().date()
-    first_of_next_month = (today.replace(day=1) + timedelta(days=32)).replace(day=1)
-
-    forecast_dates = pd.date_range(first_of_next_month, periods=FORECAST_DAYS)
+    forecast_start_date = today + timedelta(days=30)  # Start forecasting from 30 days from today
+    forecast_dates = pd.date_range(forecast_start_date, periods=FORECAST_DAYS)
     history = product_df.copy()
     forecasts = []
 
@@ -170,6 +170,7 @@ def train_and_forecast(product_df: pd.DataFrame, product_id: int, lag_days: List
             "predicted_quantity": predicted_quantity
         })
 
+        # Update history with the forecasted value
         history = pd.concat([history, pd.DataFrame({
             "sale_date": [forecast_date],
             "quantity": [predicted_quantity]

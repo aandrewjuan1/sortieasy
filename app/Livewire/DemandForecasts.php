@@ -35,7 +35,7 @@ class DemandForecasts extends Component
     public $sortBy = 'forecast_date';
 
     #[Url(history: true)]
-    public $sortDir = 'DESC';
+    public $sortDir = 'ASC';
 
     #[Computed]
     public function dateRangeOptions()

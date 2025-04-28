@@ -114,8 +114,8 @@
                             <td class="px-4 py-3 text-right font-mono text-gray-500 dark:text-gray-400">
                                 @php
                                     $threshold = $product->reorder_threshold * 3; // Using 3x multiplier
-                                    if ($product->restockingRecommendations->isNotEmpty()) {
-                                        $forecastThreshold = $product->restockingRecommendations->first()->total_forecasted_demand * 1.5;
+                                    if ($product->restockingRecommendation->isNotEmpty()) {
+                                        $forecastThreshold = $product->restockingRecommendation->first()->total_forecasted_demand * 1.5;
                                         $threshold = max($threshold, $forecastThreshold);
                                     }
                                 @endphp

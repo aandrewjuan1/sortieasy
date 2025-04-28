@@ -7,7 +7,7 @@
         @if($this->product)
             <div class="bg-white dark:bg-zinc-800 p-6 rounded-lg">
                 <h2 class="text-2xl font-semibold text-gray-800 dark:text-zinc-100 mb-4">Product Details</h2>
-                @if($this->product->restockingRecommendations->isNotEmpty())
+                @if($this->product->restockingRecommendation)
                     <flux:modal.trigger name="show-recommendation">
                         <flux:button class="mb-4 bg-indigo-500 dark:bg-indigo-700 text-white">
                             View Restocking Recommendation
@@ -16,7 +16,7 @@
                     <flux:modal name="show-recommendation" class="min-w-[30rem]">
                     <div class="space-y-6">
                         @php
-                            $recommendation = $this->product->restockingRecommendations->first();
+                            $recommendation = $this->product->restockingRecommendation;
                         @endphp
 
                         <div class="space-y-4">

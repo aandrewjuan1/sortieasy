@@ -13,8 +13,10 @@
             <div class="flex justify-between items-center">
                 <div class="flex flex-wrap gap-4">
                     <div class="flex items-center space-x-2 text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                        <span class="text-zinc-500 dark:text-zinc-400">Total:</span>
-                        <span class="font-semibold">{{ $this->totalForecasts }}</span>
+                        <div>
+                            <span class="text-zinc-500 dark:text-zinc-400">Total:</span>
+                            <span class="font-semibold">{{ $this->totalForecasts }}</span>
+                        </div>
                         <span class="text-sm text-zinc-500 dark:text-zinc-400 italic">
                             (Forecasting may take a few minutes. Refresh the page occasionally to see the results.)
                         </span>
