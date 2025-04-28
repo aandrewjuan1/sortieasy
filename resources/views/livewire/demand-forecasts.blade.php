@@ -5,7 +5,7 @@
                 Demand Forecasts
                 <flux:modal.trigger name="forecast-info">
                     <flux:tooltip content="Learn more">
-                    <flux:icon.information-circle class="size-8 cursor-pointer" />
+                    <flux:icon.information-circle class="size-8 cursor-pointer text-red-600" />
                     </flux:tooltip>
                 </flux:modal.trigger>
             </h1>

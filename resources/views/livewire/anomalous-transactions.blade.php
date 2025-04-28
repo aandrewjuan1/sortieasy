@@ -2,24 +2,19 @@
     <div class="flex flex-col justify-between items-start mb-4 gap-4">
         <div class="flex flex-col gap-2">
             <h1 class="inline-flex text-4xl font-bold dark:text-white items-center gap-2 whitespace-nowrap">
-                Anomalous Transactions
-                <flux:modal.trigger name="anomaly-info">
-                    <flux:tooltip content="Learn more">
-                    <flux:icon.information-circle class="size-8 cursor-pointer" />
-                    </flux:tooltip>
-                </flux:modal.trigger>
+                Anomaly Detection
+                <flux:tooltip content="Learn more">
+                    <flux:icon.exclamation-circle class="size-8 cursor-pointer text-red-600" />
+                </flux:tooltip>
             </h1>
 
             <div class="flex justify-between items-center">
                 <div class="flex flex-wrap gap-4">
                     <div class="flex items-center space-x-2 text-sm font-medium text-zinc-700 dark:text-zinc-300">
                         <div>
-                            <span class="text-zinc-500 dark:text-zinc-400">Total Anomalous Transactions:</span>
-                            <span class="font-semibold">{{ $this->totalAnomalousTransactions }}</span>
+                            <span class="text-zinc-500 dark:text-zinc-400">Anomalies Detected:</span>
+                            <span class="font-semibold">{{ $this->totalAnomalies }}</span>
                         </div>
-                        <span class="text-sm text-zinc-500 dark:text-zinc-400 italic">
-                            (Review these transactions for potential issues or fraud.)
-                        </span>
                     </div>
                 </div>
             </div>
@@ -31,7 +26,7 @@
                     <span>Filtering by:</span>
 
                     @php
-                        $hasFilters = $search;
+                        $hasFilters = $search || $productFilter || !$showOnlyAnomalies;
                     @endphp
 
                     @if($hasFilters)
@@ -39,9 +34,15 @@
                             @if($search)
                                 <li class="inline">Search: <strong>"{{ $search }}"</strong></li>
                             @endif
+                            @if($productFilter)
+                                <li class="inline">Product: <strong>{{ $this->products[$productFilter] ?? $productFilter }}</strong></li>
+                            @endif
+                            @if(!$showOnlyAnomalies)
+                                <li class="inline">Showing: <strong>All Results</strong></li>
+                            @endif
                         </ul>
                     @else
-                        <span class="ml-2 text-zinc-500 dark:text-zinc-400">None</span>
+                        <span class="ml-2 text-zinc-500 dark:text-zinc-400">Only Anomalies</span>
                     @endif
                     <button
                         wire:click="clearAllFilters"
@@ -56,7 +57,7 @@
                     <input
                         type="text"
                         wire:model.live.debounce.300ms="search"
-                        placeholder="Search transactions..."
+                        placeholder="Search products..."
                         class="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white"
                     >
                     <div class="absolute left-3 top-2.5 text-zinc-400 dark:text-zinc-300">
@@ -74,6 +75,21 @@
                 </div>
             </div>
 
+            {{-- Product Filter --}}
+            <select wire:model.live="productFilter" class="w-full md:w-64 border rounded-lg px-3 py-2 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white">
+                <option value="">All Products</option>
+                @foreach($this->products as $id => $name)
+                    <option value="{{ $id }}">{{ $name }}</option>
+                @endforeach
+            </select>
+
+            {{-- Anomaly Filter --}}
+            <select wire:model.live="showOnlyAnomalies" class="w-full md:w-48 border rounded-lg px-3 py-2 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white">
+                @foreach($this->filterOptions as $value => $label)
+                    <option value="{{ $value }}">{{ $label }}</option>
+                @endforeach
+            </select>
+
             {{-- Per Page --}}
             <select wire:model.live="perPage" class="w-full md:w-32 border rounded-lg px-3 py-2 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white">
                 <option value="5">5 per page</option>
@@ -84,154 +100,81 @@
         </div>
     </div>
 
-    <div class="bg-white rounded-lg shadow overflow-hidden dark:bg-zinc-800">
-        <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-zinc-200 dark:divide-zinc-700">
-                <thead class="bg-zinc-50 dark:bg-zinc-700">
-                    <tr>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider dark:text-zinc-300" wire:click="setSortBy('id')">
-                            <button class="flex items-center uppercase">
-                                @include('livewire.includes.table-sortable-th', [
-                                    'name' => 'id',
-                                    'displayName' => 'Transaction ID'
-                                ])
-                            </button>
-                        </th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider dark:text-zinc-300">
-                            <div class="flex items-center">
-                                <span>Product</span>
-                            </div>
-                        </th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider dark:text-zinc-300" wire:click="setSortBy('amount')">
-                            <button class="flex items-center uppercase">
-                                @include('livewire.includes.table-sortable-th', [
-                                    'name' => 'amount',
-                                    'displayName' => 'Amount'
-                                ])
-                            </button>
-                        </th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider dark:text-zinc-300" wire:click="setSortBy('created_at')">
-                            <button class="flex items-center uppercase">
-                                @include('livewire.includes.table-sortable-th', [
-                                    'name' => 'created_at',
-                                    'displayName' => 'Date'
-                                ])
-                            </button>
-                        </th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider dark:text-zinc-300">
-                            <div class="flex items-center">
-                                <span>Status</span>
-                            </div>
-                        </th>
-                    </tr>
-                </thead>
-                <tbody class="bg-white divide-y divide-zinc-200 dark:bg-zinc-800 dark:divide-zinc-700">
-                    @forelse($this->anomalousTransactions as $transaction)
-                    <tr>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm font-medium text-zinc-900 dark:text-white">
-                                {{ $transaction->id }}
-                            </div>
-                            <div class="text-xs text-zinc-500 dark:text-zinc-400">
-                                {{ $transaction->type }}
-                            </div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="flex items-center">
-                                <div class="text-sm font-medium text-zinc-900 dark:text-white">
-                                    {{ $transaction->product->name ?? 'N/A' }}
-                                </div>
-                            </div>
-                            <div class="text-xs text-zinc-500 dark:text-zinc-400">
-                                {{ $transaction->product->sku ?? '' }}
-                            </div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium {{ $transaction->amount < 0 ? 'text-red-600 dark:text-red-400' : 'text-zinc-900 dark:text-white' }}">
-                            {{ number_format($transaction->amount, 2) }}
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm text-zinc-900 dark:text-white">
-                                {{ $transaction->created_at->format('M d, Y') }}
-                            </div>
-                            <div class="text-xs text-zinc-500 dark:text-zinc-400">
-                                {{ $transaction->created_at->diffForHumans() }}
-                            </div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            @if($transaction->anomalyDetectionResult?->status === 'anomalous')
-                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">
-                                    Anomalous
-                                </span>
-                                <div class="text-xs text-red-500 dark:text-red-400 mt-1">
-                                    {{ $transaction->anomalyDetectionResult?->reason }}
-                                </div>
-                            @else
-                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
-                                    Normal
-                                </span>
-                            @endif
-                        </td>
-                    </tr>
-                    @empty
-                    <tr>
-                        <td colspan="5" class="px-6 py-4 text-center text-sm text-zinc-500 dark:text-zinc-300">
-                            No anomalous transactions found
-                        </td>
-                    </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
+    <div>
+        <!-- Header and filters remain the same as before -->
 
-        <div class="px-4 py-3 border-t border-zinc-200 dark:border-zinc-700 sm:px-6">
-            {{ $this->anomalousTransactions->links() }}
+        <div class="bg-white rounded-lg shadow overflow-hidden dark:bg-zinc-800">
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-zinc-200 dark:divide-zinc-700">
+                    <thead class="bg-zinc-50 dark:bg-zinc-700">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider dark:text-zinc-300">
+                                Transaction ID
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider dark:text-zinc-300">
+                                Product
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider dark:text-zinc-300" wire:click="setSortBy('status')">
+                                <button class="flex items-center uppercase">
+                                    Status
+                                </button>
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-500 uppercase tracking-wider dark:text-zinc-300">
+                                Detected At
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-zinc-200 dark:bg-zinc-800 dark:divide-zinc-700">
+                        @forelse($this->results as $result)
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-zinc-900 dark:text-white">
+                                #{{ $result->transaction->id }}
+                                <div class="text-xs text-zinc-500 dark:text-zinc-400">
+                                    {{ $result->transaction->created_at->format('M d, Y') }}
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex items-center">
+                                    <div class="text-sm font-medium text-zinc-900 dark:text-white">
+                                        {{ $result->product->name }}
+                                    </div>
+                                </div>
+                                <div class="text-xs text-zinc-500 dark:text-zinc-400">
+                                    {{ $result->product->sku }}
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                @php
+                                    $statusClass = match($result->status) {
+                                        App\Enums\AnomalyStatus::Anomalous->value => 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200',
+                                        default => 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
+                                    };
+                                @endphp
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $statusClass }}">
+                                    {{ $result->status }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-zinc-500 dark:text-zinc-300">
+                                {{ $result->created_at->format('M d, Y H:i') }}
+                            </td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="5" class="px-6 py-4 text-center text-sm text-zinc-500 dark:text-zinc-300">
+                                @if($showOnlyAnomalies)
+                                    No anomalies detected
+                                @else
+                                    No results found
+                                @endif
+                            </td>
+                        </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="px-4 py-3 border-t border-zinc-200 dark:border-zinc-700 sm:px-6">
+                {{ $this->results->links() }}
+            </div>
         </div>
     </div>
-
-    <flux:modal name="anomaly-info">
-        <div class="space-y-6">
-            <div class="space-y-2">
-                <h2 class="text-2xl font-bold">⚠️ Anomalous Transactions Information</h2>
-                <p class="text-muted-foreground">
-                    Learn how we detect unusual transaction patterns that may indicate fraud or errors.
-                </p>
-            </div>
-
-            <div class="space-y-4">
-                <h3 class="text-xl font-semibold">How Detection Works</h3>
-                <ul class="list-disc list-inside text-muted-foreground space-y-1">
-                    <li>We analyze transactions in real-time using <b>machine learning algorithms</b>.</li>
-                    <li>Each transaction is scored based on multiple risk factors including:
-                        <ul class="list-disc list-inside ml-5 space-y-1">
-                            <li>Transaction amount compared to historical averages</li>
-                            <li>Frequency of transactions from same source</li>
-                            <li>Time of day and day of week patterns</li>
-                            <li>Geographic location anomalies</li>
-                            <li>Product purchase combinations</li>
-                        </ul>
-                    </li>
-                    <li>Transactions scoring above a <b>threshold value</b> are flagged as anomalous.</li>
-                </ul>
-            </div>
-
-            <div class="space-y-4">
-                <h3 class="text-xl font-semibold">Technical Overview</h3>
-                <ul class="list-disc list-inside text-muted-foreground space-y-1">
-                    <li><b>Algorithm:</b> We use <b>Isolation Forest</b>, an unsupervised learning algorithm effective for anomaly detection.</li>
-                    <li><b>Features Analyzed:</b> Amount, frequency, timing, product combinations, customer history, and more.</li>
-                    <li><b>Threshold:</b> Adjustable sensitivity based on business requirements.</li>
-                </ul>
-            </div>
-
-            <div class="space-y-4">
-                <h3 class="text-xl font-semibold">Important Notes</h3>
-                <ul class="list-disc list-inside text-muted-foreground space-y-1">
-                    <li>Not all anomalies are fraudulent — some may be legitimate but rare events.</li>
-                    <li>Regularly review flagged transactions to confirm or dismiss them.</li>
-                    <li>The system learns from your decisions to improve accuracy over time.</li>
-                    <li>Thresholds can be adjusted based on your risk tolerance.</li>
-                </ul>
-            </div>
-        </div>
-    </flux:modal>
-</div>

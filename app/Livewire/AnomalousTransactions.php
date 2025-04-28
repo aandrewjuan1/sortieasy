@@ -2,14 +2,16 @@
 
 namespace App\Livewire;
 
+use App\Models\Product;
 use Livewire\Component;
+use App\Models\Transaction;
+use Livewire\Attributes\On;
+use App\Enums\AnomalyStatus;
+use Livewire\Attributes\Url;
 use Livewire\WithPagination;
 use Livewire\Attributes\Title;
-use Livewire\Attributes\Url;
-use Livewire\Attributes\On;
 use Livewire\Attributes\Computed;
 use Illuminate\Support\Facades\Cache;
-use App\Models\Transaction;
 use App\Models\AnomalyDetectionResult;
 
 #[Title('Anomalous Transactions')]
@@ -24,15 +26,67 @@ class AnomalousTransactions extends Component
     public $perPage = 10;
 
     #[Url(history: true)]
-    public $sortBy = 'created_at';
+    public $productFilter = null;
 
     #[Url(history: true)]
-    public $sortDir = 'ASC';
+    public $showOnlyAnomalies = true;
+
+    #[Url(history: true)]
+    public $sortBy = 'transaction_id';
+
+    #[Url(history: true)]
+    public $sortDir = 'DESC';
+
+    #[Computed]
+    public function filterOptions()
+    {
+        return [
+            true => 'Show Only Anomalies',
+            false => 'Show All Results',
+        ];
+    }
+
+    #[Computed]
+    public function products()
+    {
+        return Product::orderBy('name')
+            ->get(['id', 'name', 'sku'])
+            ->mapWithKeys(fn ($product) => [
+                $product->id => "{$product->name} ({$product->sku})"
+            ]);
+    }
+
+    public function setSortBy($sortByField)
+    {
+        if ($this->sortBy === $sortByField) {
+            $this->sortDir = $this->sortDir === 'ASC' ? 'DESC' : 'ASC';
+        } else {
+            $this->sortDir = 'DESC';
+        }
+        $this->sortBy = $sortByField;
+        $this->clearCurrentPageCache();
+    }
+
+    public function updated($property)
+    {
+        if (in_array($property, ['search', 'productFilter', 'showOnlyAnomalies', 'perPage'])) {
+            $this->clearCurrentPageCache();
+            $this->resetPage();
+        }
+    }
+
+    #[Computed]
+    public function totalAnomalies(): int
+    {
+        return AnomalyDetectionResult::where('status', AnomalyStatus::Anomalous->value)->count();
+    }
 
     public function clearAllFilters()
     {
         $this->reset([
             'search',
+            'productFilter',
+            'showOnlyAnomalies',
             'perPage',
             'sortBy',
             'sortDir',
@@ -42,57 +96,47 @@ class AnomalousTransactions extends Component
     }
 
     #[Computed]
-    public function totalAnomalousTransactions(): int
+    public function results()
     {
-        return AnomalyDetectionResult::where('status', 'anomalous')->count();
-    }
+        $cacheKey = $this->getResultsCacheKey();
 
-    #[Computed]
-    public function anomalousTransactions()
-    {
-        $cacheKey = $this->getAnomalousTransactionsCacheKey();
-
-        return Cache::remember($cacheKey, now()->addMinutes(30), function () {
-
+        return Cache::remember($cacheKey, now()->addMinutes(15), function() {
+            return AnomalyDetectionResult::with(['product', 'transaction'])
+                ->when($this->showOnlyAnomalies, function ($query) {
+                    $query->where('status', AnomalyStatus::Anomalous->value);
+                })
+                ->when($this->search, function ($query) {
+                    $query->whereHas('product', function ($q) {
+                        $q->where('name', 'like', '%' . $this->search . '%')
+                          ->orWhere('sku', 'like', '%' . $this->search . '%');
+                    });
+                })
+                ->when($this->productFilter, function ($query) {
+                    $query->where('product_id', $this->productFilter);
+                })
+                ->orderBy($this->sortBy, $this->sortDir)
+                ->paginate($this->perPage);
         });
     }
 
-    public function updated($property)
-    {
-        if (in_array($property, ['search', 'perPage', 'sortBy', 'sortDir'])) {
-            $this->clearCurrentPageCache();
-            $this->resetPage();
-        }
-    }
-
-    public function setSortBy($sortByField)
-    {
-        $isSameSortColumn = $this->sortBy === $sortByField;
-        $this->sortBy = $sortByField;
-        $this->sortDir = $isSameSortColumn ? ($this->sortDir == "ASC" ? 'DESC' : 'ASC') : 'DESC';
-        $this->clearCurrentPageCache();
-    }
-
-    protected function getAnomalousTransactionsCacheKey(): string
+    protected function getResultsCacheKey(): string
     {
         return sprintf(
-            'anomalous_transactions:page:%d:per_page:%d:sort:%s:dir:%s:search:%s',
+            'anomaly_results:page:%d:per_page:%d:sort:%s:dir:%s:search:%s:product:%s:anomalies_only:%s',
             $this->getPage(),
             $this->perPage,
             $this->sortBy,
             $this->sortDir,
-            $this->search
+            $this->search,
+            $this->productFilter,
+            $this->showOnlyAnomalies ? 'true' : 'false'
         );
+
+        // anomaly_results:page:1:per_page:10:sort:transaction_id:dir:DESC:search::product::anomalies_only:true:
     }
 
     protected function clearCurrentPageCache(): void
     {
-        Cache::forget($this->getAnomalousTransactionsCacheKey());
-    }
-
-    #[On('anomaly-detected')]
-    public function clearCache()
-    {
-        $this->clearCurrentPageCache();
+        Cache::forget($this->getResultsCacheKey());
     }
 }

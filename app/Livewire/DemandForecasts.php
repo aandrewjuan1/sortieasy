@@ -185,8 +185,6 @@ class DemandForecasts extends Component
             $this->productFilter,
             $this->dateRangeFilter
         );
-
-
     }
 
     protected function clearCurrentPageCache(): void
