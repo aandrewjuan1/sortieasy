@@ -1,5 +1,6 @@
 <?php
 
+use App\Livewire\AnomalousTransactions;
 use App\Livewire\AuditLogs;
 use App\Livewire\Sales\Sales;
 use App\Livewire\DemandForecasts;
@@ -50,6 +51,7 @@ Route::middleware(['auth'])->group(function () {
 
 // Authenticated and admins users only
 Route::middleware(['auth','admin'])->group(function () {
+    Route::get('anomaly-detect', AnomalousTransactions::class)->name('anomaly-detect');
     Route::get('audit-logs', AuditLogs::class)->name('audit-logs');
     Route::get('manage-users', Users::class)->name('manage-users');
 });

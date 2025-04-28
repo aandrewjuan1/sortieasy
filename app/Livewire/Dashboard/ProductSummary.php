@@ -81,7 +81,7 @@ class ProductSummary extends Component
     private function isOverstocked($p): bool
     {
         // Assuming there's a relationship to restocking recommendations
-        $recommendation = $p->restockingRecommendation()->first();
+        $recommendation = $p->restockingRecommendation;
 
         // If no restocking recommendation exists, we might consider it as not overstocked
         if (!$recommendation) {

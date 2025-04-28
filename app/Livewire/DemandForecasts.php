@@ -208,9 +208,6 @@ class DemandForecasts extends Component
         Cache::forget($this->getForecastCacheKey());
     }
 
-    #[On('forecast-created')]
-    #[On('forecast-updated')]
-    #[On('forecast-deleted')]
     public function clearCache()
     {
         $this->clearCurrentPageCache();

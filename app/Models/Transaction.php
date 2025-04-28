@@ -39,7 +39,8 @@ class Transaction extends Model
                 $userQuery->where('name', 'like', '%' . $search . '%');
             })
             ->orWhere('notes', 'like', '%' . $search . '%')
-            ->orWhere('type', 'like', '%' . $search . '%');
+            ->orWhere('type', 'like', '%' . $search . '%')
+            ->orWhere('id', 'like', '%' . $search . '%');
         });
     }
 
@@ -107,8 +108,8 @@ class Transaction extends Model
     }
 
     // Define the relationship with AnomalyDetectionResult
-    public function anomalyDetectionResults()
+    public function anomalyDetectionResult()
     {
-        return $this->hasMany(AnomalyDetectionResult::class);
+        return $this->hasOne(AnomalyDetectionResult::class);
     }
 }

@@ -71,6 +71,8 @@
             @can('view', Auth::user())
                 <flux:navlist variant="outline">
                     <!-- Admin-specific links -->
+                        <flux:navlist.item icon="bug-ant" :href="route('anomaly-detect')" :current="request()->routeIs('anomaly-detect')" wire:navigate>{{ __('Anomaly Detection') }}</flux:navlist.item>
+
                         <flux:navlist.item icon="users" :href="route('manage-users')" :current="request()->routeIs('manage-users')" wire:navigate>{{ __('Manage Users') }}</flux:navlist.item>
 
                         <flux:navlist.item icon="newspaper" :href="route('audit-logs')" :current="request()->routeIs('audit-logs')" wire:navigate>{{ __('Audit Logs') }}</flux:navlist.item>
