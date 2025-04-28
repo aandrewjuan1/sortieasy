@@ -3,9 +3,11 @@
         <div class="flex flex-col gap-2">
             <h1 class="inline-flex text-4xl font-bold dark:text-white items-center gap-2 whitespace-nowrap">
                 Anomaly Detection
-                <flux:tooltip content="Learn more">
-                    <flux:icon.exclamation-circle class="size-8 cursor-pointer text-red-600" />
-                </flux:tooltip>
+                <flux:modal.trigger name="anomaly-info">
+                    <flux:tooltip content="Learn more">
+                        <flux:icon.exclamation-circle class="size-8 cursor-pointer text-red-600" />
+                    </flux:tooltip>
+                </flux:modal.trigger>
             </h1>
 
             <div class="flex justify-between items-center">
@@ -177,4 +179,74 @@
                 {{ $this->results->links() }}
             </div>
         </div>
+        <flux:modal name="anomaly-info">
+            <div class="space-y-6">
+                <div class="space-y-2">
+                    <h2 class="text-2xl font-bold">🔍 Anomaly Detection Information</h2>
+                    <p class="text-muted-foreground">
+                        Learn how we identify unusual transaction patterns to detect potential issues.
+                    </p>
+                    <p class="text-sm text-muted-foreground italic">
+                        <b>Note:</b> Anomaly detection runs <b>automatically</b> and flags transactions that deviate from normal patterns.
+                    </p>
+                </div>
+
+                <div class="space-y-4">
+                    <h3 class="text-xl font-semibold">How Anomaly Detection Works</h3>
+                    <ul class="list-disc list-inside text-muted-foreground space-y-1">
+                        <li>We analyze transactions in <b>real-time</b> using machine learning.</li>
+                        <li>Each transaction is scored based on how much it deviates from normal patterns.</li>
+                        <li>The system considers multiple factors:
+                            <ul class="list-disc list-inside ml-5 space-y-1">
+                                <li>Transaction <b>quantity</b> compared to product averages</li>
+                                <li>Transaction <b>value</b> (quantity × price)</li>
+                                <li>Time of day and <b>day of week</b> patterns</li>
+                                <li>User's <b>typical behavior</b></li>
+                                <li>Product's <b>historical sales patterns</b></li>
+                            </ul>
+                        </li>
+                        <li>Transactions scoring below threshold are flagged as <b>anomalous</b>.</li>
+                    </ul>
+                </div>
+
+                <div class="space-y-4">
+                    <h3 class="text-xl font-semibold">Technical Overview</h3>
+                    <ul class="list-disc list-inside text-muted-foreground space-y-1">
+                        <li><b>Algorithm:</b> We use <b>Isolation Forest</b>, an unsupervised machine learning model designed for anomaly detection.</li>
+                        <li><b>Feature Engineering:</b> We create features from:
+                            <ul class="list-disc list-inside ml-5 space-y-1">
+                                <li>Raw transaction data (quantity, type)</li>
+                                <li>Derived values (transaction value)</li>
+                                <li>Temporal features (hour, day of week)</li>
+                                <li>Categorical encodings (transaction type)</li>
+                            </ul>
+                        </li>
+                        <li><b>Scaling:</b> All features are standardized using <b>StandardScaler</b>.</li>
+                        <li><b>Dimensionality Reduction:</b> Optional PCA to improve detection accuracy.</li>
+                        <li><b>Threshold:</b> Default contamination rate set to <b>5%</b> of transactions.</li>
+                    </ul>
+                </div>
+
+                <div class="space-y-4">
+                    <h3 class="text-xl font-semibold">Understanding Anomaly Scores</h3>
+                    <ul class="list-disc list-inside text-muted-foreground space-y-1">
+                        <li><b>Score = -1</b>: Definite anomaly (flagged as anomalous)</li>
+                        <li><b>Score = 1</b>: Normal transaction</li>
+                        <li>Scores between -1 and 1 indicate varying degrees of abnormality</li>
+                        <li>Higher absolute values indicate stronger signals</li>
+                    </ul>
+                </div>
+
+                <div class="space-y-4">
+                    <h3 class="text-xl font-semibold">Important Notes</h3>
+                    <ul class="list-disc list-inside text-muted-foreground space-y-1">
+                        <li>Anomalies <b>do not necessarily indicate fraud</b> - they flag unusual patterns for review.</li>
+                        <li>The system adapts to <b>seasonal patterns</b> and <b>business changes</b> over time.</li>
+                        <li>Products with <b>≥30% anomalous transactions</b> are flagged at product level.</li>
+                        <li>Detection runs <b>automatically</b> on all new transactions.</li>
+                        <li>Thresholds can be adjusted based on business needs.</li>
+                    </ul>
+                </div>
+            </div>
+        </flux:modal>
     </div>
