@@ -4,7 +4,7 @@
 
 namespace App\Jobs;
 
-use App\Services\ForecastService;
+use App\Services\AnomalyDetectionService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Queue\SerializesModels;
@@ -12,21 +12,21 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 
-class RunForecasts implements ShouldQueue
+class RunAnomalyDetection implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     // Set the job's timeout if you expect long-running processes
     public $timeout = 300; // 5 minutes for example
 
-    public function handle(ForecastService $forecastService): void
+    public function handle(AnomalyDetectionService $anomalyDetectionService): void
     {
         try {
-            Log::info('🚀 Starting demand forecast from job...');
+            Log::info('🚀 Starting anomaly detection from job...');
 
-            $forecastService->runForecasts();
-            Log::info('✅ Demand forecasts completed.');
-        } catch (\Throwable $e) {  // Catching a more general exception type for better error tracking
+            $anomalyDetectionService->runAnomalyDetection();
+            Log::info(message: '✅ Anomaly detection completed.');
+        } catch (\Throwable $e) {
             Log::error('❌ Error: ' . $e->getMessage());
         }
     }

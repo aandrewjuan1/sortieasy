@@ -47,7 +47,7 @@
 
                     <!-- Predictive Tools Section -->
                     <div class="px-3 pt-2 pb-1 text-xs font-semibold uppercase text-zinc-500 dark:text-zinc-400">
-                        {{ __('Predictive Tools') }}
+                        {{ __('ML FEATURES') }}
                     </div>
 
                     <flux:navlist.item icon="rectangle-group" :href="route('restocking-recommendations')" :current="request()->routeIs('restocking-recommendations')" wire:navigate>
