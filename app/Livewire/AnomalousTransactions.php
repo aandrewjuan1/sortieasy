@@ -53,16 +53,7 @@ class AnomalousTransactions extends Component
         $cacheKey = $this->getAnomalousTransactionsCacheKey();
 
         return Cache::remember($cacheKey, now()->addMinutes(30), function () {
-            return Transaction::with('anomalyDetectionResult')
-                ->whereHas('anomalyDetectionResult', function ($query) {
-                    $query->where('status', 'anomalous');
-                })
-                ->when($this->search, function ($query) {
-                    $query->where('description', 'like', '%' . $this->search . '%')
-                          ->orWhere('id', 'like', '%' . $this->search . '%');
-                })
-                ->orderBy($this->sortBy, $this->sortDir)
-                ->paginate($this->perPage);
+
         });
     }
 

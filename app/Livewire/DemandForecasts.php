@@ -26,7 +26,7 @@ class DemandForecasts extends Component
     public $perPage = 10;
 
     #[Url(history: true)]
-    public $productFilter = '';
+    public $productFilter = null;
 
     #[Url(history: true)]
     public $dateRangeFilter = '';
@@ -163,28 +163,14 @@ class DemandForecasts extends Component
     {
         $cacheKey = $this->getForecastCacheKey();
 
-        return Cache::remember($cacheKey, now()->addMinutes(30), fn() => DemandForecast::with(['product'])
-            ->when($this->search, function ($query) {
-                $query->whereHas('product', function ($q) {
-                    $q->where('name', 'like', '%' . $this->search . '%')
-                      ->orWhere('sku', 'like', '%' . $this->search . '%');
-                });
-            })
-            ->when($this->productFilter, fn ($query) => $query->where('product_id', $this->productFilter))
-            ->when($this->dateRangeFilter, function ($query) {
-                match ($this->dateRangeFilter) {
-                    'today' => $query->whereDate('forecast_date', today()),
-                    'tomorrow' => $query->whereDate('forecast_date', today()->addDay()),
-                    'week' => $query->whereBetween('forecast_date', [now()->startOfWeek(), now()->endOfWeek()]),
-                    'month' => $query->whereBetween('forecast_date', [now()->startOfMonth(), now()->endOfMonth()]),
-                    'quarter' => $query->whereBetween('forecast_date', [now()->startOfQuarter(), now()->endOfQuarter()]),
-                    'year' => $query->whereBetween('forecast_date', [now()->startOfYear(), now()->endOfYear()]),
-                    'future' => $query->where('forecast_date', '>', now()),
-                    'past' => $query->where('forecast_date', '<=', now()),
-                };
-            })
-            ->orderBy($this->sortBy, $this->sortDir)
-            ->paginate($this->perPage));
+        return Cache::remember($cacheKey, now()->addMinutes(30), function() {
+            return DemandForecast::with(['product'])
+                ->search($this->search)
+                ->forProduct($this->productFilter)
+                ->forDateRange($this->dateRangeFilter)
+                ->orderByColumn($this->sortBy, $this->sortDir)
+                ->paginate($this->perPage);
+        });
     }
 
     protected function getForecastCacheKey(): string

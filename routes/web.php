@@ -51,7 +51,7 @@ Route::middleware(['auth'])->group(function () {
 
 // Authenticated and admins users only
 Route::middleware(['auth','admin'])->group(function () {
-    Route::get('anomaly-detect', AnomalousTransactions::class)->name('anomaly-detect');
+    Route::get('anomalous-transactions', AnomalousTransactions::class)->name('anomalous-transactions');
     Route::get('audit-logs', AuditLogs::class)->name('audit-logs');
     Route::get('manage-users', Users::class)->name('manage-users');
 });
