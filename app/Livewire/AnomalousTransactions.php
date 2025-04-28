@@ -4,13 +4,13 @@ namespace App\Livewire;
 
 use App\Models\Product;
 use Livewire\Component;
-use App\Models\Transaction;
-use Livewire\Attributes\On;
 use App\Enums\AnomalyStatus;
 use Livewire\Attributes\Url;
 use Livewire\WithPagination;
 use Livewire\Attributes\Title;
+use App\Jobs\RunAnomalyDetection;
 use Livewire\Attributes\Computed;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 use App\Models\AnomalyDetectionResult;
 
@@ -81,6 +81,30 @@ class AnomalousTransactions extends Component
         return AnomalyDetectionResult::where('status', AnomalyStatus::Anomalous->value)->count();
     }
 
+    public function detectAnomaly()
+    {
+        try {
+            // Dispatch the forecast job
+            RunAnomalyDetection::dispatch();
+
+            // Dispatch a success notification
+            $this->dispatch('notify',
+                type: 'success',
+                message: 'Anomaly detection is running in the background.'
+            );
+
+            Log::info('✅ Anomaly detection Completed!');
+        } catch (\Exception $e) {
+            // If an error occurs, dispatch an error notification
+            $this->dispatch('notify',
+                type: 'error',
+                message: 'Something went wrong.'
+            );
+
+            Log::error('❌ An error occurred: ' . $e->getMessage());
+        }
+    }
+
     public function clearAllFilters()
     {
         $this->reset([
@@ -129,7 +153,7 @@ class AnomalousTransactions extends Component
             $this->sortDir,
             $this->search,
             $this->productFilter,
-            $this->showOnlyAnomalies ? 'true' : 'false'
+            $this->showOnlyAnomalies
         );
 
         // anomaly_results:page:1:per_page:10:sort:transaction_id:dir:DESC:search::product::anomalies_only:true:

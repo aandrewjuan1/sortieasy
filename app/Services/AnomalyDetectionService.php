@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Facades\Cache;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 
@@ -26,6 +27,8 @@ class AnomalyDetectionService
         if (!$process->isSuccessful()) {
             throw new ProcessFailedException($process);
         }
+
+        Cache::forget('anomaly_results:page:1:per_page:10:sort:transaction_id:dir:DESC:search::product::anomalies_only:1');
 
         return true;
     }

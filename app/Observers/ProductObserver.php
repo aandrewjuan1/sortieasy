@@ -60,6 +60,11 @@ class ProductObserver
     {
         $recommendation = $product->restockingRecommendation;
 
+        if (!$recommendation)
+        {
+            return;
+        }
+
         // Calculate average daily demand based on the total forecasted demand (you can adjust this logic as needed)
         $avgDailyDemand = $recommendation->total_forecasted_demand / $this::FORECAST_DAYS;
 

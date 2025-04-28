@@ -17,6 +17,9 @@
                             <span class="text-zinc-500 dark:text-zinc-400">Anomalies Detected:</span>
                             <span class="font-semibold">{{ $this->totalAnomalies }}</span>
                         </div>
+                        <span class="text-sm text-zinc-500 dark:text-zinc-400 italic">
+                            (Detection of transactions may take a few minutes. Refresh the page occasionally to see the results.)
+                        </span>
                     </div>
                 </div>
             </div>
@@ -99,6 +102,17 @@
                 <option value="25">25 per page</option>
                 <option value="50">50 per page</option>
             </select>
+
+            @can('view', arguments: Auth::user())
+                <flux:tooltip content="Detect anomaly for all transactions.">
+                    <flux:button icon="play"
+                        wire:click="detectAnomaly"
+                        wire:loading.attr="disabled"
+                    >
+                        Detect Anomaly
+                    </flux:button>
+                </flux:tooltip>
+            @endcan
         </div>
     </div>
 

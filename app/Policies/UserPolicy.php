@@ -83,6 +83,11 @@ class UserPolicy
         return $user->role === UserRole::Admin;
     }
 
+    public function detectAnomaly(User $user)
+    {
+        return $user->role === UserRole::Admin;
+    }
+
     /**
      * Determine whether the user can change user roles.
      */
