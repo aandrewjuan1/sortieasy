@@ -50,6 +50,7 @@ class EditLogistic extends Component
         $this->delivery_date = $logistic->delivery_date->format('Y-m-d');
         $this->status = $logistic->status->value;
         $this->product = Product::find($logistic->product_id);
+        $this->available_stock = $this->product->quantity_in_stock;
     }
 
     #[On('edit-logistic')]
@@ -64,6 +65,7 @@ class EditLogistic extends Component
     public function update()
     {
         $this->validate();
+
 
         if ($this->quantity > $this->available_stock) {
             $this->quantityError = "Quantity exceeds available stock of {$this->available_stock}";
@@ -132,10 +134,9 @@ class EditLogistic extends Component
         }
     }
 
-
     public function delete()
     {
-        $this->authorize('delete', Auth::user());
+        $this->authorize('delete', $this->logistic);
         $this->logistic->delete();
 
         $this->dispatch('modal-close', name: 'delete-logistic');

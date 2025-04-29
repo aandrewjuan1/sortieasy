@@ -12,7 +12,7 @@ class LogisticPolicy
     /**
      * Create a new policy instance.
      */
-    public function delete(User $user)
+    public function delete(User $user, Logistic $logistic)
     {
         return $user->role === UserRole::Admin;
     }

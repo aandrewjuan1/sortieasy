@@ -132,7 +132,8 @@ class AnomalousTransactions extends Component
                 ->when($this->search, function ($query) {
                     $query->whereHas('product', function ($q) {
                         $q->where('name', 'like', '%' . $this->search . '%')
-                          ->orWhere('sku', 'like', '%' . $this->search . '%');
+                          ->orWhere('sku', 'like', '%' . $this->search . '%')
+                          ->orWhere('id', 'like', '%' . $this->search . '%');
                     });
                 })
                 ->when($this->productFilter, function ($query) {
