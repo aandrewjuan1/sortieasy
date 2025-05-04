@@ -6,6 +6,7 @@ use App\Models\Product;
 use Livewire\Component;
 use App\Models\Supplier;
 use App\Models\Transaction;
+use Illuminate\Support\Str;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Validate;
@@ -63,6 +64,15 @@ class EditProduct extends Component
         $this->product = Product::findOrFail($productId);
         $this->fillInputs($this->product);
         $this->originalSupplierId = $this->product->supplier_id;
+    }
+
+    public function generateSKU()
+    {
+        if (empty($this->sku)) {
+            $categoryPrefix = Str::upper(Str::substr($this->category, 0, 3));
+            $randomString = Str::upper(Str::random(4));
+            $this->sku = $categoryPrefix . '-' . $randomString;
+        }
     }
 
     public function fillInputs($product)
