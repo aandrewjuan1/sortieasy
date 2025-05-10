@@ -8,6 +8,7 @@ use Livewire\Component;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Computed;
 use Illuminate\Support\Collection;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 #[Title('Dashboard')]
 class LogisticSummary extends Component
@@ -70,5 +71,21 @@ class LogisticSummary extends Component
                 $logistic->days_late = now()->diffInDays($logistic->delivery_date);
                 return $logistic;
             });
+    }
+
+    public function downloadPdf()
+    {
+        $data = [
+            'totalShipments' => $this->totalShipments,
+            'upcomingDeliveries' => $this->upcomingDeliveries,
+            'shipmentsByStatus' => $this->shipmentsByStatus,
+            'lateShipments' => $this->lateShipments,
+        ];
+
+        $pdf = PDF::loadView('pdf.logistic-summary', $data);
+
+        return response()->streamDownload(function () use ($pdf) {
+            echo $pdf->output();
+        }, 'logistic-summary.pdf');
     }
 }

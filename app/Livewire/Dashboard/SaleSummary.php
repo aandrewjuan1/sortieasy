@@ -7,6 +7,7 @@ use Livewire\Component;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Computed;
 use Illuminate\Support\Collection;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 #[Title('Dashboard')]
 class SaleSummary extends Component
@@ -111,5 +112,21 @@ class SaleSummary extends Component
         }
 
         return ($this->salesByChannel[$channel][$metric] / $total) * 100;
+    }
+
+    public function downloadPdf()
+    {
+        $data = [
+            'totalVolume' => $this->totalVolume,
+            'totalRevenue' => $this->totalRevenue,
+            'salesByChannel' => $this->salesByChannel,
+            'recentSales' => $this->recentSales,
+        ];
+
+        $pdf = PDF::loadView('pdf.sale-summary', $data);
+
+        return response()->streamDownload(function () use ($pdf) {
+            echo $pdf->output();
+        }, 'sale-summary.pdf');
     }
 }

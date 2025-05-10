@@ -9,6 +9,7 @@ use Livewire\Attributes\Title;
 use Livewire\Attributes\Computed;
 use Illuminate\Support\Collection;
 use App\Models\RestockingRecommendation;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 #[Title('Dashboard')]
 class ProductSummary extends Component
@@ -95,5 +96,24 @@ class ProductSummary extends Component
         // Consider overstocked if the quantity is greater than the reorder threshold
         // and the stock exceeds the demand forecast by a significant amount
         return $p->quantity_in_stock > ($reorderThreshold + $forecastedDemand);
+    }
+
+    public function downloadPdf()
+    {
+        $data = [
+            'products' => $this->products,
+            'totalProducts' => $this->totalProducts,
+            'totalStocks' => $this->totalStocks,
+            'lowStockProducts' => $this->lowStockProducts,
+            'outOfStockProducts' => $this->outOfStockProducts,
+            'criticalStockProducts' => $this->criticalStockProducts,
+            'overstockedProducts' => $this->overstockedProducts,
+        ];
+
+        $pdf = PDF::loadView('pdf.product-summary', $data);
+
+        return response()->streamDownload(function () use ($pdf) {
+            echo $pdf->output();
+        }, 'product-summary.pdf');
     }
 }

@@ -5,7 +5,7 @@
                 icon="cube"
                 :href="route('dashboard.product-summary')"
                 wire:navigate
-                :active="request()->routeIs('dashboard.product-summary')">
+                :current="request()->routeIs('dashboard.product-summary')">
                 Product Summary
 
             </flux:navbar.item>
@@ -14,7 +14,7 @@
                 icon="users"
                 :href="route('dashboard.supplier-overview')"
                 wire:navigate
-                :active="request()->routeIs('dashboard.supplier-overview')">
+                :current="request()->routeIs('dashboard.supplier-overview')">
                 Supplier Overview
             </flux:navbar.item>
 
@@ -22,7 +22,7 @@
                 icon="banknotes"
                 :href="route('dashboard.transaction-summary')"
                 wire:navigate
-                :active="request()->routeIs('dashboard.transaction-summary')">
+                :current="request()->routeIs('dashboard.transaction-summary')">
                 Transaction Summary
             </flux:navbar.item>
 
@@ -30,7 +30,7 @@
                 icon="currency-dollar"
                 :href="route('dashboard.sale-summary')"
                 wire:navigate
-                :active="request()->routeIs('dashboard.sale-summary')">
+                :current="request()->routeIs('dashboard.sale-summary')">
                 Sale Summary
             </flux:navbar.item>
 
@@ -38,7 +38,7 @@
                 icon="currency-dollar"
                 :href="route('dashboard.logistic-summary')"
                 wire:navigate
-                :active="request()->routeIs('dashboard.logistic-summary')">
+                :current="request()->routeIs('dashboard.logistic-summary')">
                 Logistic Summary
             </flux:navbar.item>
         </flux:navbar>

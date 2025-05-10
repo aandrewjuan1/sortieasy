@@ -9,6 +9,7 @@ use Livewire\Attributes\Computed;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Livewire\Attributes\Title;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 #[Title('Dashboard')]
 class TransactionSummary extends Component
@@ -125,5 +126,21 @@ class TransactionSummary extends Component
     public function transactionTypes(): array
     {
         return array_map(fn($case) => $case->value, TransactionType::cases());
+    }
+
+    public function downloadPdf()
+    {
+        $data = [
+            'recentTransactions' => $this->recentTransactions,
+            'totalTransactions' => $this->totalTransactions,
+            'transactionVolume' => $this->transactionVolume,
+            'transactionTypes' => $this->transactionTypes,
+        ];
+
+        $pdf = PDF::loadView('pdf.transaction-summary', $data);
+
+        return response()->streamDownload(function () use ($pdf) {
+            echo $pdf->output();
+        }, 'transaction-summary.pdf');
     }
 }

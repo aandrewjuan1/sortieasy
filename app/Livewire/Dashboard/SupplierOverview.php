@@ -7,6 +7,7 @@ use App\Models\Logistic;
 use Livewire\Component;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Title;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 #[Title('Dashboard')]
 class SupplierOverview extends Component
@@ -35,5 +36,20 @@ class SupplierOverview extends Component
             ->orderByDesc('products_count')
             ->limit(5)
             ->get();
+    }
+
+    public function downloadPdf()
+    {
+        $data = [
+            'totalSuppliers' => $this->totalSuppliers,
+            'recentDeliveries' => $this->recentDeliveries,
+            'topSuppliers' => $this->topSuppliers,
+        ];
+
+        $pdf = PDF::loadView('pdf.supplier-overview', $data);
+
+        return response()->streamDownload(function () use ($pdf) {
+            echo $pdf->output();
+        }, 'supplier-overview.pdf');
     }
 }
