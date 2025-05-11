@@ -126,6 +126,10 @@
                     </flux:tooltip>
                 @endif
             @endcan
+
+            <flux:tooltip content="Download PDF">
+                <flux:button icon="arrow-down-tray" wire:click="downloadPdf" />
+            </flux:tooltip>
         </div>
     </div>
 

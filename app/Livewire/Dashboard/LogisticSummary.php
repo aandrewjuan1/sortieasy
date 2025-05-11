@@ -9,6 +9,7 @@ use Livewire\Attributes\Title;
 use Livewire\Attributes\Computed;
 use Illuminate\Support\Collection;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Log;
 
 #[Title('Dashboard')]
 class LogisticSummary extends Component
@@ -75,17 +76,25 @@ class LogisticSummary extends Component
 
     public function downloadPdf()
     {
-        $data = [
-            'totalShipments' => $this->totalShipments,
-            'upcomingDeliveries' => $this->upcomingDeliveries,
-            'shipmentsByStatus' => $this->shipmentsByStatus,
-            'lateShipments' => $this->lateShipments,
-        ];
+        try {
+            $data = [
+                'totalShipments' => $this->totalShipments,
+                'upcomingDeliveries' => $this->upcomingDeliveries,
+                'shipmentsByStatus' => $this->shipmentsByStatus,
+                'lateShipments' => $this->lateShipments,
+            ];
 
-        $pdf = PDF::loadView('pdf.logistic-summary', $data);
+            $pdf = PDF::loadView('pdf.logistic-summary', $data);
 
-        return response()->streamDownload(function () use ($pdf) {
-            echo $pdf->output();
-        }, 'logistic-summary.pdf');
+            return response()->streamDownload(function () use ($pdf) {
+                echo $pdf->output();
+            }, 'logistic-summary.pdf');
+        } catch (\Exception $e) {
+            $this->dispatch('notify',
+                type: 'error',
+                message: 'Unable to generate PDF. Please try again later.'
+            );
+            Log::error('PDF Generation Error: ' . $e->getMessage());
+        }
     }
 }

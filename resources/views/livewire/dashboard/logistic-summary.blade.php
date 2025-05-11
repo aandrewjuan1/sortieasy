@@ -15,11 +15,7 @@
         </div>
         <div class="flex items-center gap-3">
             <flux:tooltip content="Download PDF">
-                <button wire:click="downloadPdf" class="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-lg transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                    </svg>
-                </button>
+                <flux:button icon="arrow-down-tray" wire:click="downloadPdf" />
             </flux:tooltip>
             <div class="flex items-center gap-3 bg-gray-100 dark:bg-zinc-700 px-3 py-2 rounded-lg">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500 dark:text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">

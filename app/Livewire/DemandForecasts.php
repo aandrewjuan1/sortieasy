@@ -13,6 +13,7 @@ use Livewire\Attributes\Title;
 use Livewire\Attributes\Computed;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 #[Title('Demand Forecasts')]
 class DemandForecasts extends Component
@@ -195,5 +196,53 @@ class DemandForecasts extends Component
     public function clearCache()
     {
         $this->clearCurrentPageCache();
+    }
+
+    public function downloadPdf()
+    {
+        try {
+            // Count total records that would be included
+            $totalRecords = DemandForecast::with(['product'])
+                ->search($this->search)
+                ->forProduct($this->productFilter)
+                ->forDateRange($this->dateRangeFilter)
+                ->count();
+
+            // If more than 1000 records, show warning
+            if ($totalRecords > 1000) {
+                $this->dispatch('notify',
+                    type: 'warning',
+                    message: 'The dataset is too large to download as PDF. Please apply more filters to reduce the number of records (currently ' . number_format($totalRecords) . ' records).'
+                );
+                return;
+            }
+
+            $forecasts = DemandForecast::with(['product'])
+                ->search($this->search)
+                ->forProduct($this->productFilter)
+                ->forDateRange($this->dateRangeFilter)
+                ->orderByColumn($this->sortBy, $this->sortDir)
+                ->get();
+
+            $pdf = Pdf::loadView('pdf.demand-forecasts', [
+                'forecasts' => $forecasts,
+                'generatedAt' => now()->format('Y-m-d H:i:s'),
+                'filters' => [
+                    'search' => $this->search,
+                    'product' => $this->productFilter ? $this->products[$this->productFilter] : null,
+                    'dateRange' => $this->dateRangeFilter ? $this->dateRangeOptions[$this->dateRangeFilter] : null,
+                ]
+            ]);
+
+            return response()->streamDownload(function () use ($pdf) {
+                echo $pdf->output();
+            }, 'demand-forecasts.pdf');
+        } catch (\Exception $e) {
+            $this->dispatch('notify',
+                type: 'error',
+                message: 'Unable to generate PDF. The dataset might be too large. Please try applying more filters.'
+            );
+            Log::error('PDF Generation Error: ' . $e->getMessage());
+        }
     }
 }

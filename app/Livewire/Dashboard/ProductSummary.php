@@ -10,6 +10,7 @@ use Livewire\Attributes\Computed;
 use Illuminate\Support\Collection;
 use App\Models\RestockingRecommendation;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Log;
 
 #[Title('Dashboard')]
 class ProductSummary extends Component
@@ -100,20 +101,28 @@ class ProductSummary extends Component
 
     public function downloadPdf()
     {
-        $data = [
-            'products' => $this->products,
-            'totalProducts' => $this->totalProducts,
-            'totalStocks' => $this->totalStocks,
-            'lowStockProducts' => $this->lowStockProducts,
-            'outOfStockProducts' => $this->outOfStockProducts,
-            'criticalStockProducts' => $this->criticalStockProducts,
-            'overstockedProducts' => $this->overstockedProducts,
-        ];
+        try {
+            $data = [
+                'products' => $this->products,
+                'totalProducts' => $this->totalProducts,
+                'totalStocks' => $this->totalStocks,
+                'lowStockProducts' => $this->lowStockProducts,
+                'outOfStockProducts' => $this->outOfStockProducts,
+                'criticalStockProducts' => $this->criticalStockProducts,
+                'overstockedProducts' => $this->overstockedProducts,
+            ];
 
-        $pdf = PDF::loadView('pdf.product-summary', $data);
+            $pdf = PDF::loadView('pdf.product-summary', $data);
 
-        return response()->streamDownload(function () use ($pdf) {
-            echo $pdf->output();
-        }, 'product-summary.pdf');
+            return response()->streamDownload(function () use ($pdf) {
+                echo $pdf->output();
+            }, 'product-summary.pdf');
+        } catch (\Exception $e) {
+            $this->dispatch('notify',
+                type: 'error',
+                message: 'Unable to generate PDF. Please try again later.'
+            );
+            Log::error('PDF Generation Error: ' . $e->getMessage());
+        }
     }
 }

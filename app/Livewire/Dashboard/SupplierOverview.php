@@ -8,6 +8,7 @@ use Livewire\Component;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Title;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Log;
 
 #[Title('Dashboard')]
 class SupplierOverview extends Component
@@ -40,16 +41,24 @@ class SupplierOverview extends Component
 
     public function downloadPdf()
     {
-        $data = [
-            'totalSuppliers' => $this->totalSuppliers,
-            'recentDeliveries' => $this->recentDeliveries,
-            'topSuppliers' => $this->topSuppliers,
-        ];
+        try {
+            $data = [
+                'totalSuppliers' => $this->totalSuppliers,
+                'recentDeliveries' => $this->recentDeliveries,
+                'topSuppliers' => $this->topSuppliers,
+            ];
 
-        $pdf = PDF::loadView('pdf.supplier-overview', $data);
+            $pdf = PDF::loadView('pdf.supplier-overview', $data);
 
-        return response()->streamDownload(function () use ($pdf) {
-            echo $pdf->output();
-        }, 'supplier-overview.pdf');
+            return response()->streamDownload(function () use ($pdf) {
+                echo $pdf->output();
+            }, 'supplier-overview.pdf');
+        } catch (\Exception $e) {
+            $this->dispatch('notify',
+                type: 'error',
+                message: 'Unable to generate PDF. Please try again later.'
+            );
+            Log::error('PDF Generation Error: ' . $e->getMessage());
+        }
     }
 }

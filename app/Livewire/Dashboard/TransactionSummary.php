@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Livewire\Attributes\Title;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Log;
 
 #[Title('Dashboard')]
 class TransactionSummary extends Component
@@ -130,17 +131,25 @@ class TransactionSummary extends Component
 
     public function downloadPdf()
     {
-        $data = [
-            'recentTransactions' => $this->recentTransactions,
-            'totalTransactions' => $this->totalTransactions,
-            'transactionVolume' => $this->transactionVolume,
-            'transactionTypes' => $this->transactionTypes,
-        ];
+        try {
+            $data = [
+                'recentTransactions' => $this->recentTransactions,
+                'totalTransactions' => $this->totalTransactions,
+                'transactionVolume' => $this->transactionVolume,
+                'transactionTypes' => $this->transactionTypes,
+            ];
 
-        $pdf = PDF::loadView('pdf.transaction-summary', $data);
+            $pdf = PDF::loadView('pdf.transaction-summary', $data);
 
-        return response()->streamDownload(function () use ($pdf) {
-            echo $pdf->output();
-        }, 'transaction-summary.pdf');
+            return response()->streamDownload(function () use ($pdf) {
+                echo $pdf->output();
+            }, 'transaction-summary.pdf');
+        } catch (\Exception $e) {
+            $this->dispatch('notify',
+                type: 'error',
+                message: 'Unable to generate PDF. Please try again later.'
+            );
+            Log::error('PDF Generation Error: ' . $e->getMessage());
+        }
     }
 }

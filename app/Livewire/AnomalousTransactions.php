@@ -13,6 +13,7 @@ use Livewire\Attributes\Computed;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 use App\Models\AnomalyDetectionResult;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 #[Title('Anomalous Transactions')]
 class AnomalousTransactions extends Component
@@ -163,5 +164,74 @@ class AnomalousTransactions extends Component
     protected function clearCurrentPageCache(): void
     {
         Cache::forget($this->getResultsCacheKey());
+    }
+
+    public function downloadPdf()
+    {
+        try {
+            // Count total records that would be included
+            $totalRecords = AnomalyDetectionResult::with(['product', 'transaction'])
+                ->when($this->showOnlyAnomalies, function ($query) {
+                    $query->where('status', AnomalyStatus::Anomalous->value);
+                })
+                ->when($this->search, function ($query) {
+                    $query->whereHas('product', function ($q) {
+                        $q->where('name', 'like', '%' . $this->search . '%')
+                          ->orWhere('sku', 'like', '%' . $this->search . '%')
+                          ->orWhere('id', 'like', '%' . $this->search . '%');
+                    });
+                })
+                ->when($this->productFilter, function ($query) {
+                    $query->where('product_id', $this->productFilter);
+                })
+                ->count();
+
+            // If more than 1000 records, show warning
+            if ($totalRecords > 1000) {
+                $this->dispatch('notify',
+                    type: 'warning',
+                    message: 'The dataset is too large to download as PDF. Please apply more filters to reduce the number of records (currently ' . number_format($totalRecords) . ' records).'
+                );
+                return;
+            }
+
+            $allResults = AnomalyDetectionResult::with(['product', 'transaction'])
+                ->when($this->showOnlyAnomalies, function ($query) {
+                    $query->where('status', AnomalyStatus::Anomalous->value);
+                })
+                ->when($this->search, function ($query) {
+                    $query->whereHas('product', function ($q) {
+                        $q->where('name', 'like', '%' . $this->search . '%')
+                          ->orWhere('sku', 'like', '%' . $this->search . '%')
+                          ->orWhere('id', 'like', '%' . $this->search . '%');
+                    });
+                })
+                ->when($this->productFilter, function ($query) {
+                    $query->where('product_id', $this->productFilter);
+                })
+                ->orderBy($this->sortBy, $this->sortDir)
+                ->get();
+
+            $data = [
+                'results' => $allResults,
+                'totalAnomalies' => $this->totalAnomalies,
+                'search' => $this->search,
+                'productFilter' => $this->productFilter ? $this->products[$this->productFilter] : null,
+                'showOnlyAnomalies' => $this->showOnlyAnomalies,
+                'generatedAt' => now()->format('Y-m-d H:i:s'),
+            ];
+
+            $pdf = PDF::loadView('pdf.anomalous-transactions', $data);
+
+            return response()->streamDownload(function () use ($pdf) {
+                echo $pdf->output();
+            }, 'anomalous-transactions.pdf');
+        } catch (\Exception $e) {
+            $this->dispatch('notify',
+                type: 'error',
+                message: 'Unable to generate PDF. The dataset might be too large. Please try applying more filters.'
+            );
+            Log::error('PDF Generation Error: ' . $e->getMessage());
+        }
     }
 }
