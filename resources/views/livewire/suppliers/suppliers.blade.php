@@ -166,22 +166,47 @@
                             <!-- Products Cell -->
                             <td class="px-6 py-4 text-sm text-zinc-500 dark:text-zinc-300">
                                 @if($supplier->products->count() > 0)
-                                    <div class="flex flex-wrap gap-1">
-                                        @foreach($supplier->products as $product)
-                                            <button x-cloak
-                                                wire:click="$set('productFilter', '{{ $product->name }}')"
-                                                class="cursor-pointer px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors"
-                                            >
-                                                {{ $product->name }}
-                                            </button>
-                                        @endforeach
+                                    <div x-data="{ showAll: false }" x-cloak class="flex flex-col gap-1">
+                                        <div class="flex flex-wrap gap-1">
+                                            {{-- Show first 3 products by default --}}
+                                            @foreach($supplier->products->take(3) as $product)
+                                                <button
+                                                    wire:click="$set('productFilter', '{{ $product->name }}')"
+                                                    class="cursor-pointer px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors"
+                                                >
+                                                    {{ $product->name }}
+                                                </button>
+                                            @endforeach
+
+                                            {{-- Show remaining products when toggled --}}
+                                            <div x-show="showAll" class="flex flex-wrap gap-1">
+                                                @foreach($supplier->products->skip(3) as $product)
+                                                    <button
+                                                        wire:click="$set('productFilter', '{{ $product->name }}')"
+                                                        class="cursor-pointer px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors"
+                                                    >
+                                                        {{ $product->name }}
+                                                    </button>
+                                                @endforeach
+                                            </div>
+
+                                            @if($supplier->products->count() > 3)
+                                                <button
+                                                    @click="showAll = !showAll"
+                                                    class="cursor-pointer px-2 py-1 text-xs rounded-full bg-zinc-100 text-zinc-600 dark:bg-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-600 transition-colors"
+                                                >
+                                                    <span x-show="!showAll">+{{ $supplier->products->count() - 3 }} more</span>
+                                                    <span x-show="showAll">Show less</span>
+                                                </button>
+                                            @endif
+                                        </div>
+                                        <div class="mt-1 text-xs text-zinc-400">
+                                            Total: {{ $supplier->products->count() }}
+                                        </div>
                                     </div>
                                 @else
                                     <span class="text-zinc-400">No products</span>
                                 @endif
-                                <div class="mt-1 text-xs text-zinc-400">
-                                    Total: {{ $supplier->products->count() }}
-                                </div>
                             </td>
 
                             {{-- Created At --}}
